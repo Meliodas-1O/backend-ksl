@@ -1,17 +1,8 @@
 // src/app/controllers/AuthController.ts
 
-import {
-  DeleteUser,
-  deleteUser,
-} from "../../application/use-cases/auth/DeleteUser";
-import {
-  LoginUser,
-  loginUser,
-} from "../../application/use-cases/auth/LoginUser";
-import {
-  RegisterUser,
-  registerUser,
-} from "../../application/use-cases/auth/RegisterUser";
+import { DeleteUser } from "../../application/use-cases/auth/DeleteUser";
+import { LoginUser } from "../../application/use-cases/auth/LoginUser";
+import { RegisterUser } from "../../application/use-cases/auth/RegisterUser";
 import {
   createRegisterRequest,
   validateBodyRequest,
@@ -29,7 +20,6 @@ export class AuthController {
   register = async (req: Request, res: Response) => {
     try {
       const body = req.body;
-
       const isErrorInBodyRequest = validateBodyRequest(body);
 
       if (isErrorInBodyRequest) {
@@ -43,7 +33,8 @@ export class AuthController {
         registerRequest.password,
         registerRequest.role
       );
-      res.status(201).send("User created");
+
+      res.status(201).send(`User created.`);
     } catch (err: any) {
       res.status(400).send({ error: err.message });
     }

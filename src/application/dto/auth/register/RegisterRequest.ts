@@ -6,6 +6,11 @@ interface RegisterRequest {
   email: string;
   password: string;
   role: Role;
+
+  // TODO add roles
+
+  // Classes : Niveau --- Nom
+  //            6e         A
 }
 
 export function createRegisterRequest(bodyRequest: any): RegisterRequest {
