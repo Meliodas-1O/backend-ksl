@@ -24,7 +24,8 @@ import { ApiError } from "common/application/dto/ApiError";
 
 const register: RequestHandler = async (req, res) => {
   try {
-    const { email, password, roles, schoolId, nom, prenom, telephone, profession } = req.body;
+    const { email, password, roles, schoolId, nom, prenom, telephone, profession, students } =
+      req.body;
     const bodyRequest: RegisterRequest = {
       email,
       password,
@@ -34,6 +35,7 @@ const register: RequestHandler = async (req, res) => {
       prenom,
       telephone,
       profession,
+      students,
     };
     const error = registerRequestValidator(bodyRequest);
     if (error) {
@@ -48,7 +50,8 @@ const register: RequestHandler = async (req, res) => {
       prenom,
       schoolId,
       telephone,
-      profession
+      profession,
+      students
     );
 
     const result: AppUser = await mediator.send<RegisterCommand, AppUser>(command);

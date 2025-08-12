@@ -9,6 +9,7 @@ export class Student extends Entity {
   private moyenne: number;
   public schoolId: string;
   public classe: string;
+  public parentId: string | null = null;
 
   private constructor(
     nom: string,

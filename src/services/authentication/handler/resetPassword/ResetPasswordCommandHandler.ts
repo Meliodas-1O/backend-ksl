@@ -42,7 +42,8 @@ export class ResetPasswordCommandHandler implements ICommandHandler<ResetPasswor
       existingUser.getPrenom(),
       existingUser.getTelephone(),
       existingUser.getProfession(),
-      existingUser.getBiographie()
+      existingUser.getBiographie(),
+      existingUser.getChildren()
     );
     await this.userRepository.update(existingUser.id!, user);
   }

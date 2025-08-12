@@ -1,7 +1,10 @@
 export interface CreateStudentResponse {
+  id: string;
+  schoolId: string | null;
   nom: string;
   prenom: string;
-  dateOfBirth: Date;
-  schoolId: string;
-  classe: string;
+  abscence: number;
+  retards: number;
+  moyenne: number;
+  parentId: string | null;
 }

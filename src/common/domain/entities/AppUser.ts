@@ -1,6 +1,7 @@
 import { Role } from "../../application/dto/Role";
 import { Entity } from "../contracts/Entity";
 import { ValidationError } from "../../application/dto/ValidationError";
+import { StudentDtoCreation } from "../../../common/application/dto/studentDto/StudentDtoCreation";
 
 export class AppUser extends Entity {
   private email: string;
@@ -13,6 +14,7 @@ export class AppUser extends Entity {
   private telephone: string | null;
   private profession: string | null;
   private biographie: string | null;
+  private children: StudentDtoCreation[] = [];
 
   // PRIVATE base constructor
   private constructor(
@@ -24,7 +26,8 @@ export class AppUser extends Entity {
     prenom: string,
     telephone: string | null,
     profession: string | null,
-    biographie: string | null
+    biographie: string | null,
+    children: StudentDtoCreation[]
   ) {
     super();
     this.email = email;
@@ -36,6 +39,7 @@ export class AppUser extends Entity {
     this.telephone = telephone;
     this.profession = profession;
     this.biographie = biographie;
+    this.children = children;
   }
 
   // ✅ Static creation methods
@@ -49,7 +53,8 @@ export class AppUser extends Entity {
     prenom: string,
     telephone: string | null,
     profession: string | null,
-    biographie: string | null
+    biographie: string | null,
+    children: StudentDtoCreation[] | null
   ): AppUser {
     const errors: string[] = [];
 
@@ -71,7 +76,8 @@ export class AppUser extends Entity {
       prenom,
       telephone,
       profession,
-      biographie
+      biographie,
+      children ?? []
     );
   }
 
@@ -129,7 +135,11 @@ export class AppUser extends Entity {
   public getPassword(): string {
     return this.password;
   }
-  getBiographie(): string | null {
+  public getBiographie(): string | null {
     return this.biographie;
+  }
+
+  public getChildren(): StudentDtoCreation[] {
+    return this.children;
   }
 }

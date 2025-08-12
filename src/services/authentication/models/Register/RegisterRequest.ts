@@ -1,6 +1,7 @@
 import { ApiError } from "../../../../common/application/dto/ApiError";
 import { StatusCode } from "../../../../common/application/dto/StatusCode";
 import { Role } from "../../../../common/application/dto/Role";
+import { StudentDtoCreation } from "../../../../common/application/dto/studentDto/StudentDtoCreation";
 
 export interface RegisterRequest {
   email: string;
@@ -11,6 +12,7 @@ export interface RegisterRequest {
   schoolId: string;
   telephone?: string;
   profession?: string;
+  students?: StudentDtoCreation[];
 }
 
 export function registerRequestValidator(data: Partial<RegisterRequest>): ApiError | null {

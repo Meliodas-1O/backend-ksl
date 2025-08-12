@@ -1,4 +1,5 @@
-import { Role } from "common/application/dto/Role";
+import { Role } from "../../../../common/application/dto/Role";
+import { StudentDtoCreation } from "../../../../common/application/dto/studentDto/StudentDtoCreation";
 
 export class RegisterCommand {
   constructor(
@@ -9,6 +10,7 @@ export class RegisterCommand {
     public prenom: string,
     public readonly schoolId: string,
     public telephone: string | null,
-    public profession: string | null
+    public profession: string | null,
+    public students: StudentDtoCreation[]
   ) {}
 }

@@ -4,4 +4,7 @@ import { AppUser } from "../entities/AppUser";
 export interface IUserRepository extends IRepository<AppUser> {
   findUserByEmail(email: string): Promise<any>;
   findUserByEmailAndSchool(email: string, schoolName: string): Promise<AppUser | null>;
+
+  findParentsBySchool(schoolName: string): Promise<AppUser[]>;
+  findClassesBySchool(schoolName: string): Promise<AppUser[]>;
 }

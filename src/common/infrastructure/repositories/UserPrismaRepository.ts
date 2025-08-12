@@ -10,6 +10,8 @@ const prisma = new PrismaClient();
 export const userPrismaRepository: IUserRepository = {
   async create(user) {
     try {
+      const schoolName = user.getSchoolId();
+
       const rolesRequest = [];
 
       for (const role of user.getRoles()) {
@@ -18,31 +20,46 @@ export const userPrismaRepository: IUserRepository = {
         });
       }
 
-      const schoolRequest = {
-        create: [{ school: { connect: { name: user.getSchoolId() } } }],
-      };
+      const childrenRequest = [];
+      for (const student of user.getChildren()) {
+        childrenRequest.push({
+          nom: student.nom,
+          prenom: student.prenom,
+          dateOfBirth: new Date(student.dateOfBirth),
+          abscence: 0,
+          retards: 0,
+          moyenne: 0,
+          schoolId: schoolName,
+          classeId: student.classe,
+        });
+      }
 
+      const schoolRequest = {
+        connect: { id: user.getSchoolId() },
+      };
       const request: any = {
         nom: user.getNom(),
         prenom: user.getPrenom(),
         email: user.getEmail(),
         password: user.getPassword(),
-        schoolId: user.getSchoolId(),
+        School: schoolRequest,
         userRoles: { create: rolesRequest },
-        userSchools: schoolRequest,
+        //userSchools: schoolRequest,
+        children: { create: childrenRequest },
         telephone: user.getTelephone() ?? "",
         profession: user.getProfession() ?? "",
+        //classes: x,
       };
 
-      const createdUser: PrismaAppUser = await prisma.appUser.create({
+      const createdUser: any = await prisma.appUser.create({
         data: request,
         include: {
           userRoles: {
             include: { role: true },
           },
-          userSchools: {
-            include: { school: true },
-          },
+          classes: true,
+          children: true,
+          School: true,
         },
       });
       const domainUser = mapPrismaUserToDomain(createdUser);
@@ -75,9 +92,10 @@ export const userPrismaRepository: IUserRepository = {
             deleteMany: {}, // remove all existing roles
             create: rolesRequest,
           },
-          userSchools: {
-            deleteMany: {},
-            create: schoolRequest.create,
+        },
+        include: {
+          userRoles: {
+            include: { role: true },
           },
         },
       });
@@ -101,32 +119,19 @@ export const userPrismaRepository: IUserRepository = {
         userRoles: {
           include: { role: true },
         },
-        userSchools: {
-          include: { school: true },
-        },
       },
     });
     return appUser;
   },
 
   async findUserByEmailAndSchool(email: string, schoolName: string): Promise<AppUser | null> {
-    const appUser: PrismaAppUser | null = await prisma.appUser.findFirst({
+    const appUser: any | null = await prisma.appUser.findFirst({
       where: {
         email,
-        userSchools: {
-          some: {
-            school: {
-              name: schoolName,
-            },
-          },
-        },
       },
       include: {
         userRoles: {
           include: { role: true },
-        },
-        userSchools: {
-          include: { school: true },
         },
       },
     });
@@ -137,5 +142,12 @@ export const userPrismaRepository: IUserRepository = {
     }
     const existingUser = mapPrismaUserToDomain(appUser);
     return existingUser;
+  },
+
+  async findParentsBySchool(schoolId: string): Promise<AppUser[]> {
+    throw new Error("Function not implemented.");
+  },
+  async findClassesBySchool(schoolId: string): Promise<AppUser[]> {
+    throw new Error("Function not implemented.");
   },
 };

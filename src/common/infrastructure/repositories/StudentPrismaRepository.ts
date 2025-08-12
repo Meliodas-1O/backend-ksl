@@ -1,11 +1,15 @@
 import { Student } from "common/domain/entities/Student";
 import { IStudentRepository } from "../../../common/domain/repository/IStudentRepository";
 import { PrismaClient } from "../../../generated/prisma";
+import { MapPrismaStudentToDomain } from "../models/PrismaStudent";
 
 const prisma = new PrismaClient();
 export const studentPrismaRepository: IStudentRepository = {
   findStudentBySchool: function (schoolId: string): Promise<any> {
-    return prisma.student.findMany({ where: { schoolId } });
+    return prisma.student.findMany({
+      where: { schoolId },
+      include: { parent: true, classe: true },
+    });
   },
   findStudentByClass: function (classId: string, schoolName: string): Promise<Student | null> {
     throw new Error("Function not implemented.");
@@ -25,19 +29,27 @@ export const studentPrismaRepository: IStudentRepository = {
     throw new Error("Function not implemented.");
   },
   create: async function (entity: Student): Promise<any> {
+    const data: any = {
+      nom: entity.getNom(),
+      prenom: entity.getPrenom(),
+      dateOfBirth: entity.getDateOfBirth(),
+      abscence: entity.getAbscence(),
+      retards: entity.getRetards(),
+      moyenne: entity.getMoyenne(),
+      classeId: entity.classe,
+      schoolId: entity.schoolId,
+    };
+
+    if (entity.parentId) {
+      data.parentId = entity.parentId;
+    }
+
     try {
       const student = await prisma.student.create({
-        data: {
-          nom: entity.getNom(),
-          prenom: entity.getPrenom(),
-          dateOfBirth: entity.getDateOfBirth(),
-          abscence: entity.getAbscence(),
-          retards: entity.getRetards(),
-          moyenne: entity.getMoyenne(),
-          //schoolId: entity.schoolId,
-        },
+        data,
+        include: { parent: true, classe: true },
       });
-      return student;
+      return MapPrismaStudentToDomain(student);
     } catch (error) {
       console.error("Failed to create student:", error);
       throw error;
@@ -49,6 +61,7 @@ export const studentPrismaRepository: IStudentRepository = {
     try {
       const updated = await prisma.student.update({
         where: { id },
+        include: { parent: true, classe: true },
         data: {
           nom: entity.getNom(),
           prenom: entity.getPrenom(),
@@ -75,6 +88,6 @@ export const studentPrismaRepository: IStudentRepository = {
     }
   },
   findStudentById: async function (id: string): Promise<any | null> {
-    return prisma.student.findFirst({ where: { id } });
+    return prisma.student.findFirst({ where: { id }, include: { parent: true, classe: true } });
   },
 };

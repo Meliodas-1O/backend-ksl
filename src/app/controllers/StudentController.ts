@@ -17,6 +17,8 @@ export const createStudent: RequestHandler = async (req, res) => {
     }
     const dob = new Date(dateOfBirth);
     const command = new CreateStudentCommand(nom, prenom, dob, schoolId, classe);
+    command.parentId = req.body.parentId;
+
     const result: string = await mediator.send<CreateStudentCommand, any>(command);
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error) {

@@ -38,7 +38,8 @@ export class RegisterCommandHandler implements ICommandHandler<RegisterCommand, 
         command.prenom,
         command.telephone,
         command.profession,
-        /* biographie */ null
+        /* biographie */ null,
+        command.students
       );
 
       // persist via repository interface
@@ -72,7 +73,8 @@ export class RegisterCommandHandler implements ICommandHandler<RegisterCommand, 
       command.prenom,
       command.telephone,
       command.profession,
-      /* biographie */ null
+      /* biographie */ null,
+      command.students
     );
     return await this.userRepository.update(existingUser.id!, user);
   }

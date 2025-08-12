@@ -17,6 +17,7 @@ export class CreateStudentCommandHandler implements ICommandHandler<CreateStuden
       command.classe,
       command.schoolId
     );
+    student.parentId = command.parentId;
     return this.studentRepository.create(student);
   }
 }

@@ -29,6 +29,24 @@ import { UpdateStudentCommandHandler } from "../services/studentsvc/handler/Upda
 import schoolRouter from "./routes/SchoolRouter";
 import { GetStudentsByIdQuery } from "../services/studentsvc/handler/Read/ById/GetStudentsByIdQuery";
 import { GetStudentsByIdQueryHandler } from "../services/studentsvc/handler/Read/ById/GetStudentsByIdQueryHandler";
+import { CreateSchoolCommand } from "services/schoolsvc/handler/CreateSchool/CreateSchoolCommand";
+import { schoolPrismaRepository } from "../common/infrastructure/repositories/SchoolPrismaRepository";
+import { CreateSchoolCommandHandler } from "../services/schoolsvc/handler/CreateSchool/CreateSchoolCommandHandler";
+import { DeleteSchoolCommand } from "../services/schoolsvc/handler/DeleteSchool/DeleteSchoolCommand";
+import { DeleteSchoolCommandHandler } from "../services/schoolsvc/handler/DeleteSchool/DeleteSchoolCommandHandler";
+import { GetSchoolByIdQuery } from "../services/schoolsvc/handler/GetSchoolById/GetSchoolByIdQuery";
+import { GetSchoolByIdQueryHandler } from "../services/schoolsvc/handler/GetSchoolById/GetSchoolIdQueryHandler";
+import { GetAllSchoolsQuery } from "../services/schoolsvc/handler/GetSchools/GetAllSchoolsQuery";
+import { GetAllSchoolsQueryHandler } from "../services/schoolsvc/handler/GetSchools/GetAllSchoolsQueryHandler";
+import { GetTeachersBySchoolQuery } from "../services/schoolsvc/handler/getTeachers/GetTeachersBySchoolQuery";
+import { GetAdminsBySchoolQuery } from "../services/schoolsvc/handler/getAdmins/GetAdminsBySchoolQuery";
+import { GetAdminsBySchoolQueryHandler } from "../services/schoolsvc/handler/getAdmins/GetAdminsBySchoolQueryHandler";
+import { GetClassesBySchoolQuery } from "../services/schoolsvc/handler/getClass/GetClassesBySchoolQuery";
+import { GetClassesBySchoolQueryHandler } from "../services/schoolsvc/handler/getClass/GetClassesBySchoolQueryHandler";
+import { GetParentsBySchoolQuery } from "../services/schoolsvc/handler/getParents/GetParentsBySchoolQuery";
+import { GetTeachersBySchoolQueryHandler } from "../services/schoolsvc/handler/getTeachers/GetTeachersBySchoolQueryHandler";
+import { GetParentsBySchoolQueryHandler } from "../services/schoolsvc/handler/getParents/GetParentsBySchoolQueryHandler";
+import { ISchoolRepository } from "../common/domain/repository/ISchoolRepository";
 config();
 
 // #region Dependance injection
@@ -36,6 +54,7 @@ config();
 // Add repositories
 const userRepository: IUserRepository = userPrismaRepository;
 const studentRepository: IStudentRepository = studentPrismaRepository;
+const schoolRepository: ISchoolRepository = schoolPrismaRepository;
 
 // Add services
 const pwdHasher: IPasswordHasher = passwordHasher;
@@ -62,27 +81,68 @@ mediator.register<ResetPasswordCommand>(
 // Create student handler
 mediator.register<CreateStudentCommand>(
   "CreateStudentCommand",
-  new CreateStudentCommandHandler(studentPrismaRepository)
+  new CreateStudentCommandHandler(studentRepository)
 );
 
 mediator.register<UpdateStudentCommand>(
   "UpdateStudentCommand",
-  new UpdateStudentCommandHandler(studentPrismaRepository)
+  new UpdateStudentCommandHandler(studentRepository)
 );
 
 mediator.register<DeleteStudentCommand>(
   "DeleteStudentCommand",
-  new DeleteStudentCommandHandler(studentPrismaRepository)
+  new DeleteStudentCommandHandler(studentRepository)
 );
 
 mediator.register<GetStudentsByIdQuery>(
   "GetStudentsByIdQuery",
-  new GetStudentsByIdQueryHandler(studentPrismaRepository)
+  new GetStudentsByIdQueryHandler(studentRepository)
 );
 
 mediator.register<GetStudentsBySchoolQuery>(
   "GetStudentsBySchoolQuery",
-  new GetStudentsBySchoolQueryHandler(studentPrismaRepository)
+  new GetStudentsBySchoolQueryHandler(studentRepository)
+);
+
+// ---------------------------------------------
+// Register School Handlers
+// ---------------------------------------------
+
+// Commands
+mediator.register<CreateSchoolCommand>(
+  "CreateSchoolCommand",
+  new CreateSchoolCommandHandler(schoolRepository)
+);
+
+mediator.register<DeleteSchoolCommand>(
+  "DeleteSchoolCommand",
+  new DeleteSchoolCommandHandler(schoolRepository)
+);
+
+// Queries
+mediator.register<GetSchoolByIdQuery>(
+  "GetSchoolByIdQuery",
+  new GetSchoolByIdQueryHandler(schoolRepository)
+);
+mediator.register<GetAllSchoolsQuery>(
+  "GetAllSchoolsQuery",
+  new GetAllSchoolsQueryHandler(schoolRepository)
+);
+mediator.register<GetTeachersBySchoolQuery>(
+  "GetTeachersBySchoolQuery",
+  new GetTeachersBySchoolQueryHandler(schoolRepository)
+);
+mediator.register<GetParentsBySchoolQuery>(
+  "GetParentsBySchoolQuery",
+  new GetParentsBySchoolQueryHandler(schoolRepository)
+);
+mediator.register<GetAdminsBySchoolQuery>(
+  "GetAdminsBySchoolQuery",
+  new GetAdminsBySchoolQueryHandler(schoolRepository)
+);
+mediator.register<GetClassesBySchoolQuery>(
+  "GetClassesBySchoolQuery",
+  new GetClassesBySchoolQueryHandler(schoolRepository)
 );
 
 // #endregion
@@ -90,6 +150,7 @@ mediator.register<GetStudentsBySchoolQuery>(
 const app = express();
 app.use(cors());
 app.use(express.json());
+
 app.use("/api/auth", authRouter); // ✅ Plug the router
 app.use("/api/students", studentRouter);
 app.use("/api/schools", schoolRouter);
