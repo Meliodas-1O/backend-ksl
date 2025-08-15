@@ -6,6 +6,6 @@ export class GetAdminsBySchoolQueryHandler implements IQueryHandler<GetAdminsByS
   constructor(private schoolRepository: ISchoolRepository) {}
 
   async execute(query: GetAdminsBySchoolQuery): Promise<any[]> {
-    return this.schoolRepository.findClassesBySchool(query.schoolId);
+    return this.schoolRepository.findAdminsBySchool(query.schoolId);
   }
 }

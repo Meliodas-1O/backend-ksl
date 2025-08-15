@@ -47,6 +47,36 @@ import { GetParentsBySchoolQuery } from "../services/schoolsvc/handler/getParent
 import { GetTeachersBySchoolQueryHandler } from "../services/schoolsvc/handler/getTeachers/GetTeachersBySchoolQueryHandler";
 import { GetParentsBySchoolQueryHandler } from "../services/schoolsvc/handler/getParents/GetParentsBySchoolQueryHandler";
 import { ISchoolRepository } from "../common/domain/repository/ISchoolRepository";
+import classeRouter from "./routes/ClasseRouter";
+import {
+  AssignMatiereToClasseCommand,
+  AssignProfesseurToClasseCommand,
+  CreateClasseCommand,
+  DeleteClasseCommand,
+  GetAllClassesQuery,
+  GetClasseByIdQuery,
+  GetDisciplinesInClasseQuery,
+  GetParentsInClasseQuery,
+  GetProfessorsInClasseQuery,
+  GetStudentsInClasseQuery,
+  UpdateClasseCommand,
+} from "../services/classesvc/handler/Commands";
+import { IClasseRepository } from "../common/domain/repository/IClasseRepository";
+import { classePrismaRepository } from "../common/infrastructure/repositories/ClassePrismaRepository";
+import {
+  CreateClasseCommandHandler,
+  UpdateClasseCommandHandler,
+  DeleteClasseCommandHandler,
+  GetAllClassesQueryHandler,
+  GetClasseByIdQueryHandler,
+  GetStudentsInClasseQueryHandler,
+  GetProfessorsInClasseQueryHandler,
+  GetParentsInClasseQueryHandler,
+  GetDisciplinesInClasseQueryHandler,
+  AssignMatiereToClasseCommandHandler,
+  AssignProfesseurToClasseCommandHandler,
+} from "../services/classesvc/handler/CommandHandler";
+
 config();
 
 // #region Dependance injection
@@ -55,6 +85,7 @@ config();
 const userRepository: IUserRepository = userPrismaRepository;
 const studentRepository: IStudentRepository = studentPrismaRepository;
 const schoolRepository: ISchoolRepository = schoolPrismaRepository;
+const classRepository: IClasseRepository = classePrismaRepository;
 
 // Add services
 const pwdHasher: IPasswordHasher = passwordHasher;
@@ -145,6 +176,68 @@ mediator.register<GetClassesBySchoolQuery>(
   new GetClassesBySchoolQueryHandler(schoolRepository)
 );
 
+// ---------------------------------------------
+// Register Classe Command Handlers (Mutations)
+// ---------------------------------------------
+
+mediator.register<CreateClasseCommand>(
+  CreateClasseCommand.name,
+  new CreateClasseCommandHandler(classRepository)
+);
+
+mediator.register<UpdateClasseCommand>(
+  UpdateClasseCommand.name,
+  new UpdateClasseCommandHandler(classRepository)
+);
+
+mediator.register<DeleteClasseCommand>(
+  DeleteClasseCommand.name,
+  new DeleteClasseCommandHandler(classRepository)
+);
+
+mediator.register<AssignProfesseurToClasseCommand>(
+  AssignProfesseurToClasseCommand.name,
+  new AssignProfesseurToClasseCommandHandler(classRepository)
+);
+
+mediator.register<AssignMatiereToClasseCommand>(
+  AssignMatiereToClasseCommand.name,
+  new AssignMatiereToClasseCommandHandler(classRepository)
+);
+// ---------------------------------------------
+// Register Classe Query Handlers (Reads)
+// ---------------------------------------------
+
+mediator.register<GetAllClassesQuery>(
+  GetAllClassesQuery.name,
+  new GetAllClassesQueryHandler(classRepository)
+);
+
+mediator.register<GetClasseByIdQuery>(
+  GetClasseByIdQuery.name,
+  new GetClasseByIdQueryHandler(classRepository)
+);
+
+mediator.register<GetStudentsInClasseQuery>(
+  GetStudentsInClasseQuery.name,
+  new GetStudentsInClasseQueryHandler(classRepository)
+);
+
+mediator.register<GetProfessorsInClasseQuery>(
+  GetProfessorsInClasseQuery.name,
+  new GetProfessorsInClasseQueryHandler(classRepository)
+);
+
+mediator.register<GetParentsInClasseQuery>(
+  GetParentsInClasseQuery.name,
+  new GetParentsInClasseQueryHandler(classRepository)
+);
+
+mediator.register<GetDisciplinesInClasseQuery>(
+  GetDisciplinesInClasseQuery.name,
+  new GetDisciplinesInClasseQueryHandler(classRepository)
+);
+
 // #endregion
 
 const app = express();
@@ -152,8 +245,9 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRouter); // ✅ Plug the router
-app.use("/api/students", studentRouter);
 app.use("/api/schools", schoolRouter);
+app.use("/api/students", studentRouter);
+app.use("/api/schools", classeRouter);
 // ✅ Simple hello route
 app.get("/", (req, res) => {
   res.status(201).send("Hello");

@@ -115,6 +115,7 @@ export const schoolPrismaRepository: ISchoolRepository = {
     return prisma.school.findMany();
   },
   getSchoolById: function (schoolId: string): Promise<any> {
+    console.log("idd", schoolId);
     return prisma.school.findFirst({
       where: {
         id: schoolId,

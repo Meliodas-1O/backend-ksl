@@ -57,8 +57,8 @@ const deleteSchool: RequestHandler = async (req, res) => {
 
 const getSchoolById: RequestHandler = async (req, res) => {
   try {
-    const { id } = req.params;
-    const query = new GetSchoolByIdQuery(id);
+    const { schoolId } = req.params;
+    const query = new GetSchoolByIdQuery(schoolId);
     const result: School = await mediator.send(query);
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {
