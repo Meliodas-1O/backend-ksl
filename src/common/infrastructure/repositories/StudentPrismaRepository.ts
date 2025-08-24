@@ -45,6 +45,7 @@ export const studentPrismaRepository: IStudentRepository = {
     }
 
     try {
+      console.log("Data", data);
       const student = await prisma.student.create({
         data,
         include: { parent: true, classe: true },
@@ -70,7 +71,6 @@ export const studentPrismaRepository: IStudentRepository = {
           retards: entity.getRetards(),
           moyenne: entity.getMoyenne(),
           schoolId: entity.schoolId,
-          //classe: entity.classe,
         },
       });
       return updated;

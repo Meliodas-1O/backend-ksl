@@ -42,6 +42,8 @@ export class RegisterCommandHandler implements ICommandHandler<RegisterCommand, 
         command.students
       );
 
+      user.disciplineIds = command.disciplineIds ?? [];
+
       // persist via repository interface
       return await this.userRepository.create(user);
     }

@@ -20,12 +20,23 @@ import {
   resetPasswordRequestValidator,
 } from "../../services/authentication/models/ResetPassword/ResetPasswordRequest";
 import { ResetPasswordCommand } from "../../services/authentication/handler/resetPassword/ResetPasswordCommand";
-import { ApiError } from "common/application/dto/ApiError";
+import { ApiError } from "../../common/application/dto/ApiError";
+import { DeleteUserCommand } from "../../services/authentication/handler/delete/DeleteUserCommand";
 
 const register: RequestHandler = async (req, res) => {
   try {
-    const { email, password, roles, schoolId, nom, prenom, telephone, profession, students } =
-      req.body;
+    const {
+      email,
+      password,
+      roles,
+      schoolId,
+      nom,
+      prenom,
+      telephone,
+      profession,
+      students,
+      disciplineIds,
+    } = req.body;
     const bodyRequest: RegisterRequest = {
       email,
       password,
@@ -36,6 +47,7 @@ const register: RequestHandler = async (req, res) => {
       telephone,
       profession,
       students,
+      disciplineIds,
     };
     const error = registerRequestValidator(bodyRequest);
     if (error) {
@@ -51,7 +63,8 @@ const register: RequestHandler = async (req, res) => {
       schoolId,
       telephone,
       profession,
-      students
+      students,
+      disciplineIds
     );
 
     const result: AppUser = await mediator.send<RegisterCommand, AppUser>(command);
@@ -147,4 +160,20 @@ const resetPassword: RequestHandler = async (req, res) => {
   }
 };
 
-export const AuthController = { register, login, resetPassword };
+const deleteUser: RequestHandler = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const command = new DeleteUserCommand(userId);
+    await mediator.send(command);
+    res.status(StatusCode.SUCCESS).json({ message: "Course deleted successfully." });
+  } catch (error: any) {
+    console.error("Delete user error:", error);
+    if (error instanceof UserNotFoundError) {
+      res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
+      return;
+    }
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+  }
+};
+
+export const AuthController = { register, login, resetPassword, deleteUser };

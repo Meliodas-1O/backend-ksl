@@ -1,0 +1,10 @@
+INSERT INTO "main"."School" ("id", "name") VALUES ('1', 'Salahuddin Academy');
+INSERT INTO "main"."School" ("id", "name") VALUES ('2', 'Eisenhower High School');
+INSERT INTO "main"."School" ("id", "name") VALUES ('3', 'Jules Verne School of Discovery');
+INSERT INTO "main"."School" ("id", "name") VALUES ('4', 'Leonardo da Vinci School of the Arts');
+INSERT INTO "main"."School" ("id", "name") VALUES ('5', 'Plato Academy');
+INSERT INTO "main"."School" ("id", "name") VALUES ('6', 'Leo Tolstoy Institute');
+INSERT INTO "main"."School" ("id", "name") VALUES ('7', 'Aristotle College');
+INSERT INTO "main"."School" ("id", "name") VALUES ('8', 'Queen Elizabeth I College');
+INSERT INTO "main"."School" ("id", "name") VALUES ('9', 'Sun Tzu Strategic Institute');
+INSERT INTO "main"."School" ("id", "name") VALUES ('10', 'Alexander the Great Academy');

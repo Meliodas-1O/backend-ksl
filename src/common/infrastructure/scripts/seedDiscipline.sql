@@ -1,0 +1,10 @@
+INSERT INTO "main"."Discipline" ("id", "name") VALUES ('1', 'Mathematiques');
+INSERT INTO "main"."Discipline" ("id", "name") VALUES ('2', 'Physique-Chimie');
+INSERT INTO "main"."Discipline" ("id", "name") VALUES ('3', 'Histoire');
+INSERT INTO "main"."Discipline" ("id", "name") VALUES ('4', 'Géographie');
+INSERT INTO "main"."Discipline" ("id", "name") VALUES ('5', 'Français');
+INSERT INTO "main"."Discipline" ("id", "name") VALUES ('6', 'Anglais');
+INSERT INTO "main"."Discipline" ("id", "name") VALUES ('7', 'Espagnol');
+INSERT INTO "main"."Discipline" ("id", "name") VALUES ('8', 'Biologie');
+INSERT INTO "main"."Discipline" ("id", "name") VALUES ('9', 'Arts Plastiques');
+INSERT INTO "main"."Discipline" ("id", "name") VALUES ('10', 'Musique');

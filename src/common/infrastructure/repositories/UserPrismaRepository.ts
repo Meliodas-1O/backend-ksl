@@ -10,6 +10,7 @@ const prisma = new PrismaClient();
 export const userPrismaRepository: IUserRepository = {
   async create(user) {
     try {
+      console.log("user", user);
       const schoolName = user.getSchoolId();
 
       const rolesRequest = [];
@@ -34,6 +35,10 @@ export const userPrismaRepository: IUserRepository = {
         });
       }
 
+      const disciplineRequest = {
+        connect: user.disciplineIds.map((id) => ({ id })),
+      };
+
       const schoolRequest = {
         connect: { id: user.getSchoolId() },
       };
@@ -44,11 +49,10 @@ export const userPrismaRepository: IUserRepository = {
         password: user.getPassword(),
         School: schoolRequest,
         userRoles: { create: rolesRequest },
-        //userSchools: schoolRequest,
         children: { create: childrenRequest },
         telephone: user.getTelephone() ?? "",
         profession: user.getProfession() ?? "",
-        //classes: x,
+        disciplines: disciplineRequest,
       };
 
       const createdUser: any = await prisma.appUser.create({
@@ -60,6 +64,7 @@ export const userPrismaRepository: IUserRepository = {
           classes: true,
           children: true,
           School: true,
+          disciplines: true,
         },
       });
       const domainUser = mapPrismaUserToDomain(createdUser);

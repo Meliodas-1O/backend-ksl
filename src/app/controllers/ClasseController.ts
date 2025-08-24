@@ -28,7 +28,6 @@ import { Discipline } from "../../common/domain/entities/Discipline";
 const createClasse: RequestHandler = async (req, res) => {
   try {
     const { nom, niveau } = req.body;
-    console.log("params", req.params);
     const command = new CreateClasseCommand(nom, niveau, req.params.schoolId);
     const result: Classe = await mediator.send(command);
     res.status(StatusCode.CREATED).json(result);
@@ -84,7 +83,11 @@ const assignProfesseurToClasse: RequestHandler = async (req, res) => {
   try {
     const { classeId } = req.params;
     const { professeurId } = req.body;
-    const command = new AssignProfesseurToClasseCommand(classeId, professeurId, req.params.scholId);
+    const command = new AssignProfesseurToClasseCommand(
+      classeId,
+      professeurId,
+      req.params.schoolId
+    );
     const result: Classe = await mediator.send(command);
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {

@@ -76,6 +76,55 @@ import {
   AssignMatiereToClasseCommandHandler,
   AssignProfesseurToClasseCommandHandler,
 } from "../services/classesvc/handler/CommandHandler";
+import { ICoursRepository } from "../common/domain/repository/ICoursRepository";
+import { coursPrismaRepository } from "../common/infrastructure/repositories/CoursPrismaRepository";
+import {
+  AssignMatiereToCoursCommandHandler,
+  AssignProfesseurToCoursCommandHandler,
+  CreateCoursCommandHandler,
+  DeleteCoursCommandHandler,
+  GetAllCoursQueryHandler,
+  GetAllDisciplinesQueryHandler,
+  GetCoursByClasseQueryHandler,
+  GetCoursByDayQueryHandler,
+  GetCoursByIdQueryHandler,
+  GetCoursByProfesseurQueryHandler,
+  GetCoursByWeekQueryHandler,
+  GetDisciplineByIdQueryHandler,
+  UpdateCoursCommandHandler,
+} from "../services/courssvc/CommandHandler";
+import {
+  AssignMatiereToCoursCommand,
+  AssignProfesseurToCoursCommand,
+  CreateCoursCommand,
+  DeleteCoursCommand,
+  GetAllCoursQuery,
+  GetAllDisciplinesQuery,
+  GetCoursByClasseQuery,
+  GetCoursByDayQuery,
+  GetCoursByIdQuery,
+  GetCoursByProfesseurQuery,
+  GetCoursByWeekQuery,
+  GetDisciplineByIdQuery,
+  UpdateCoursCommand,
+} from "../services/courssvc/Commands";
+import { DeleteUserCommand } from "../services/authentication/handler/delete/DeleteUserCommand";
+import { DeleteUserCommandHandler } from "../services/authentication/handler/delete/DeleteUserCommandHandler";
+import {
+  GetStudentByIdQuery,
+  GetTeacherByIdQuery,
+  GetParentByIdQuery,
+  GetOneClasseByIdQuery,
+} from "../services/schoolsvc/handler/SchoolQueries";
+import {
+  GetStudentByIdQueryHandler,
+  GetTeacherByIdQueryHandler,
+  GetParentByIdQueryHandler,
+  GetOneClasseByIdQueryHandler,
+} from "../services/schoolsvc/handler/SchoolQueryHandler";
+import { IDisciplineRepository } from "../common/domain/repository/IDisciplineRepository";
+import { disciplinePrismaRepository } from "../common/infrastructure/repositories/DisciplinePrismaRepository";
+import disciplineRouter from "./routes/DisciplineRouter";
 
 config();
 
@@ -86,6 +135,8 @@ const userRepository: IUserRepository = userPrismaRepository;
 const studentRepository: IStudentRepository = studentPrismaRepository;
 const schoolRepository: ISchoolRepository = schoolPrismaRepository;
 const classRepository: IClasseRepository = classePrismaRepository;
+const coursRepository: ICoursRepository = coursPrismaRepository;
+const disciplineRepository: IDisciplineRepository = disciplinePrismaRepository;
 
 // Add services
 const pwdHasher: IPasswordHasher = passwordHasher;
@@ -107,6 +158,11 @@ mediator.register<LoginCommand>(
 mediator.register<ResetPasswordCommand>(
   "ResetPasswordCommand",
   new ResetPasswordCommandHandler(userRepository, pwdHasher)
+);
+
+mediator.register<DeleteUserCommand>(
+  "DeleteUserCommand",
+  new DeleteUserCommandHandler(userRepository)
 );
 
 // Create student handler
@@ -176,6 +232,25 @@ mediator.register<GetClassesBySchoolQuery>(
   new GetClassesBySchoolQueryHandler(schoolRepository)
 );
 
+mediator.register<GetStudentByIdQuery>(
+  "GetStudentByIdQuery",
+  new GetStudentByIdQueryHandler(schoolRepository)
+);
+
+mediator.register<GetTeacherByIdQuery>(
+  "GetTeacherByIdQuery",
+  new GetTeacherByIdQueryHandler(schoolRepository)
+);
+
+mediator.register<GetParentByIdQuery>(
+  "GetParentByIdQuery",
+  new GetParentByIdQueryHandler(schoolRepository)
+);
+
+mediator.register<GetOneClasseByIdQuery>(
+  "GetOneClasseByIdQuery",
+  new GetOneClasseByIdQueryHandler(schoolRepository)
+);
 // ---------------------------------------------
 // Register Classe Command Handlers (Mutations)
 // ---------------------------------------------
@@ -238,16 +313,90 @@ mediator.register<GetDisciplinesInClasseQuery>(
   new GetDisciplinesInClasseQueryHandler(classRepository)
 );
 
+// ---------------------------------------------
+// Register Cours Command Handlers (Mutations)
+// ---------------------------------------------
+
+mediator.register<CreateCoursCommand>(
+  CreateCoursCommand.name,
+  new CreateCoursCommandHandler(coursRepository)
+);
+
+mediator.register<UpdateCoursCommand>(
+  UpdateCoursCommand.name,
+  new UpdateCoursCommandHandler(coursRepository)
+);
+
+mediator.register<DeleteCoursCommand>(
+  DeleteCoursCommand.name,
+  new DeleteCoursCommandHandler(coursRepository)
+);
+
+mediator.register<AssignProfesseurToCoursCommand>(
+  AssignProfesseurToCoursCommand.name,
+  new AssignProfesseurToCoursCommandHandler(coursRepository)
+);
+
+mediator.register<AssignMatiereToCoursCommand>(
+  AssignMatiereToCoursCommand.name,
+  new AssignMatiereToCoursCommandHandler(coursRepository)
+);
+
+// ---------------------------------------------
+// Register Cours Query Handlers (Reads)
+// ---------------------------------------------
+
+mediator.register<GetAllCoursQuery>(
+  GetAllCoursQuery.name,
+  new GetAllCoursQueryHandler(coursRepository)
+);
+
+mediator.register<GetCoursByIdQuery>(
+  GetCoursByIdQuery.name,
+  new GetCoursByIdQueryHandler(coursRepository)
+);
+
+mediator.register<GetCoursByProfesseurQuery>(
+  GetCoursByProfesseurQuery.name,
+  new GetCoursByProfesseurQueryHandler(coursRepository)
+);
+
+mediator.register<GetCoursByClasseQuery>(
+  GetCoursByClasseQuery.name,
+  new GetCoursByClasseQueryHandler(coursRepository)
+);
+
+mediator.register<GetCoursByDayQuery>(
+  GetCoursByDayQuery.name,
+  new GetCoursByDayQueryHandler(coursRepository)
+);
+
+mediator.register<GetCoursByWeekQuery>(
+  GetCoursByWeekQuery.name,
+  new GetCoursByWeekQueryHandler(coursRepository)
+);
+
+mediator.register<GetAllDisciplinesQuery>(
+  GetAllDisciplinesQuery.name,
+  new GetAllDisciplinesQueryHandler(disciplineRepository)
+);
+
+mediator.register<GetDisciplineByIdQuery>(
+  GetDisciplineByIdQuery.name,
+  new GetDisciplineByIdQueryHandler(disciplineRepository)
+);
+
 // #endregion
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/auth", authRouter); // ✅ Plug the router
+app.use("/api/auth", authRouter);
 app.use("/api/schools", schoolRouter);
 app.use("/api/students", studentRouter);
 app.use("/api/schools", classeRouter);
+app.use("/api/schools", disciplineRouter);
 // ✅ Simple hello route
 app.get("/", (req, res) => {
   res.status(201).send("Hello");

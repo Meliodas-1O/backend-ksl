@@ -18,6 +18,7 @@ export interface PrismaAppUser {
   userRoles: PrismaUserRole[];
   userSchools: PrismaUserSchool[];
   children: any;
+  disciplines: any[];
 }
 
 export function mapPrismaUserToDomain(prismaAppUser: PrismaAppUser): AppUser {
@@ -36,5 +37,7 @@ export function mapPrismaUserToDomain(prismaAppUser: PrismaAppUser): AppUser {
     prismaAppUser.children
   );
   user.setId(prismaAppUser.id);
+  console.log("prismaUser, ", prismaAppUser);
+  user.disciplineIds = prismaAppUser.disciplines?.map((d) => d.name) ?? [];
   return user;
 }

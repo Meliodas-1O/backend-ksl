@@ -13,6 +13,7 @@ export interface RegisterRequest {
   telephone?: string;
   profession?: string;
   students?: StudentDtoCreation[];
+  disciplineIds: string[];
 }
 
 export function registerRequestValidator(data: Partial<RegisterRequest>): ApiError | null {

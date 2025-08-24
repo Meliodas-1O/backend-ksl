@@ -99,9 +99,9 @@ export const classePrismaRepository: IClasseRepository = {
     const classe = await prisma.classe.findUnique({
       where: { id: classeId, schoolId },
       include: {
-        matieres: {
+        cours: {
           include: {
-            disciplines: true, // Include the many-to-many relation
+            discipline: true, // Include the many-to-many relation
           },
         },
       },
@@ -112,7 +112,7 @@ export const classePrismaRepository: IClasseRepository = {
     }
 
     // Flatten the array of disciplines from all subjects
-    const allDisciplines = classe.matieres.flatMap((matiere) => matiere.disciplines);
+    const allDisciplines = classe.cours.flatMap((matiere) => matiere.discipline);
 
     // Filter for unique disciplines using a Set to avoid duplicates
     const uniqueDisciplines = Array.from(new Map(allDisciplines.map((d) => [d.id, d])).values());
@@ -143,7 +143,7 @@ export const classePrismaRepository: IClasseRepository = {
     const updatedClasse = await prisma.classe.update({
       where: { id: classeId, schoolId },
       data: {
-        matieres: {
+        cours: {
           connect: {
             id: matiereId,
           },

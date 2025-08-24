@@ -14,6 +14,12 @@ import { CreateSchoolCommand } from "../../services/schoolsvc/handler/CreateScho
 import { GetAllSchoolsQuery } from "../../services/schoolsvc/handler/GetSchools/GetAllSchoolsQuery";
 import { GetSchoolByIdQuery } from "../../services/schoolsvc/handler/GetSchoolById/GetSchoolByIdQuery";
 import { DeleteSchoolCommand } from "../../services/schoolsvc/handler/DeleteSchool/DeleteSchoolCommand";
+import {
+  GetStudentByIdQuery,
+  GetTeacherByIdQuery,
+  GetParentByIdQuery,
+  GetOneClasseByIdQuery,
+} from "../../services/schoolsvc/handler/SchoolQueries";
 
 // ---------------------------------------------
 // Command Handlers (Mutations)
@@ -143,6 +149,102 @@ const findClassesBySchool: RequestHandler = async (req, res) => {
   }
 };
 
+// ---------------------------------------------
+// Get One Student
+// ---------------------------------------------
+const getStudentById: RequestHandler = async (req, res) => {
+  try {
+    const { schoolId, studentId } = req.params;
+    const query = new GetStudentByIdQuery(studentId, schoolId);
+    const result = await mediator.send(query);
+
+    if (!result) {
+      throw new NotFoundError(`Student with ID ${studentId} not found.`);
+    }
+
+    res.status(StatusCode.SUCCESS).json(result);
+  } catch (error: any) {
+    console.error("Get student by ID error:", error);
+    if (error instanceof NotFoundError) {
+      res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
+      return;
+    }
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+  }
+};
+
+// ---------------------------------------------
+// Get One Teacher
+// ---------------------------------------------
+const getTeacherById: RequestHandler = async (req, res) => {
+  try {
+    const { schoolId, teacherId } = req.params;
+    const query = new GetTeacherByIdQuery(teacherId, schoolId);
+    const result = await mediator.send(query);
+
+    if (!result) {
+      throw new NotFoundError(`Teacher with ID ${teacherId} not found.`);
+    }
+
+    res.status(StatusCode.SUCCESS).json(result);
+  } catch (error: any) {
+    console.error("Get teacher by ID error:", error);
+    if (error instanceof NotFoundError) {
+      res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
+      return;
+    }
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+  }
+};
+
+// ---------------------------------------------
+// Get One Parent
+// ---------------------------------------------
+const getParentById: RequestHandler = async (req, res) => {
+  try {
+    const { schoolId, parentId } = req.params;
+    const query = new GetParentByIdQuery(parentId, schoolId);
+    const result = await mediator.send(query);
+
+    if (!result) {
+      throw new NotFoundError(`Parent with ID ${parentId} not found.`);
+    }
+
+    res.status(StatusCode.SUCCESS).json(result);
+  } catch (error: any) {
+    console.error("Get parent by ID error:", error);
+    if (error instanceof NotFoundError) {
+      res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
+      return;
+    }
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+  }
+};
+
+// ---------------------------------------------
+// Get One Classe
+// ---------------------------------------------
+const getClasseById: RequestHandler = async (req, res) => {
+  try {
+    const { schoolId, classId } = req.params;
+    const query = new GetOneClasseByIdQuery(classId, schoolId);
+    const result = await mediator.send(query);
+
+    if (!result) {
+      throw new NotFoundError(`Classe with ID ${classId} not found.`);
+    }
+
+    res.status(StatusCode.SUCCESS).json(result);
+  } catch (error: any) {
+    console.error("Get classe by ID error:", error);
+    if (error instanceof NotFoundError) {
+      res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
+      return;
+    }
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+  }
+};
+
 export const SchoolController = {
   createSchool,
   deleteSchool,
@@ -153,4 +255,8 @@ export const SchoolController = {
   findParentsBySchool,
   findAdminsBySchool,
   findClassesBySchool,
+  getStudentById,
+  getTeacherById,
+  getParentById,
+  getClasseById,
 };

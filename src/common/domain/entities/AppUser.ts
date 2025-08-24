@@ -15,6 +15,7 @@ export class AppUser extends Entity {
   private profession: string | null;
   private biographie: string | null;
   private children: StudentDtoCreation[] = [];
+  public disciplineIds: string[] = [];
 
   // PRIVATE base constructor
   private constructor(

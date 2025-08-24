@@ -11,6 +11,7 @@ export class RegisterCommand {
     public readonly schoolId: string,
     public telephone: string | null,
     public profession: string | null,
-    public students: StudentDtoCreation[]
+    public students: StudentDtoCreation[],
+    public disciplineIds: string[]
   ) {}
 }
