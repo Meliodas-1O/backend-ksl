@@ -1,0 +1,170 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model AppUser {
+  id          String       @id @default(uuid())
+  email       String
+  password    String
+
+  schoolId    String?
+  School      School?      @relation(fields: [schoolId], references: [id])
+
+  nom         String?      // last name
+  prenom      String?      // first name
+  telephone   String?
+  profession  String?
+  biographie  String?
+  createdAt   DateTime     @default(now())
+
+  @@unique([schoolId, email])
+
+  userRoles   UserRole[]
+  children    Student[]    @relation("ParentChildren")
+  classes     ClasseProfesseur[] // Classes si l'utilisateur est un professeur
+  
+  // Relation inverse pour les cours
+  cours       Cours[]      @relation("ProfesseurCours")
+  disciplines Discipline[] @relation("TeacherDisciplines")
+
+}
+
+
+model Role {
+  id        String      @id @default(uuid())
+  name      String      @unique
+
+  userRoles UserRole[]
+}
+
+model UserRole {
+  userId String
+  roleId String
+
+  user AppUser @relation(fields: [userId], references: [id])
+  role Role    @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+model School {
+  id       String     @id @default(uuid())
+  name     String     @unique
+
+  students Student[]
+  classes  Classe[]
+  users    AppUser[]
+  cours   Cours[]
+}
+
+model Student {
+  id           String     @id @default(uuid())
+  createdAt    DateTime   @default(now())
+  nom          String
+  prenom       String
+  dateOfBirth  DateTime
+  abscence     Int
+  retards      Int
+  moyenne      Float
+
+  schoolId     String?
+  School       School?    @relation(fields: [schoolId], references: [id])
+
+  parentId     String?
+  parent       AppUser?   @relation("ParentChildren", fields: [parentId], references: [id])
+
+  classeId     String
+  classe       Classe     @relation(fields: [classeId], references: [id])
+
+  notes        Note[]     // Notes de l’élève
+}
+
+model Classe {
+  id          String            @id @default(uuid())
+  createdAt   DateTime          @default(now())
+  niveau      String            // Exemple : "6e", "Terminale"
+  nom         String            // Exemple : "A", "B", "C"
+
+  schoolId    String?
+  School      School?           @relation(fields: [schoolId], references: [id])
+
+  students    Student[]         // Élèves de la classe
+  professeurs ClasseProfesseur[] 
+  notes       Note[]            // Notes données dans cette classe
+  
+  cours       Cours[]           // Relation inverse pour les cours associés à la classe
+}
+
+model ClasseProfesseur {
+  classeId      String
+  professeurId  String
+
+  classe        Classe   @relation(fields: [classeId], references: [id])
+  professeur    AppUser  @relation(fields: [professeurId], references: [id])
+
+  @@id([classeId, professeurId])
+}
+
+model Discipline {
+  id           String    @id @default(uuid())
+  name         String    @unique
+
+  // Relations inverses
+  cours        Cours[]   @relation("DisciplineCours")
+  notes        Note[]    @relation("DisciplineNotes")
+  teachers AppUser[] @relation("TeacherDisciplines")
+}
+
+
+model Note {
+  id            String     @id @default(uuid())
+  createdAt     DateTime   @default(now())
+  
+  classeId      String
+  classe        Classe     @relation(fields: [classeId], references: [id])
+
+  type          String     // Type de la note (ex : "DS", "Examen", etc.)
+  devoir        Boolean    // Est-ce un devoir ?
+  note          Float      // La note elle-même
+  date          DateTime   // La date de la note
+  appreciation  String?    // Appréciation de la note
+  coefficient   Float      // Coefficient de la note
+  
+  disciplineId  String
+  discipline    Discipline @relation("DisciplineNotes", fields: [disciplineId], references: [id])
+
+  studentId     String
+  student       Student    @relation(fields: [studentId], references: [id])
+
+}
+
+
+model Cours {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  
+  discipline  Discipline @relation("DisciplineCours", fields: [disciplineId], references: [id])
+  disciplineId String
+  
+  jour        String    // Jour du cours (ex : "Lundi", "Mardi")
+  heure       String    // Heure du cours (ex : "08:00", "14:00")
+
+  professeur  AppUser   @relation("ProfesseurCours", fields: [professeurId], references: [id])
+  professeurId String
+  
+  classe      Classe    @relation(fields: [classeId], references: [id])
+  classeId    String
+
+  schoolId    String
+  School      School           @relation(fields: [schoolId], references: [id])
+}
+
