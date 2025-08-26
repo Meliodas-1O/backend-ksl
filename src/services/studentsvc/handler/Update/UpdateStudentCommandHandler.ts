@@ -23,7 +23,9 @@ export class UpdateStudentCommandHandler implements ICommandHandler<UpdateStuden
       existingStudent.classe,
       existingStudent.schoolId
     );
-    //const student : Student = Student.createStudent(command.)
+
+    student.classe = command.student.classeId ?? "";
+    student.parentId = command.student.parentId ?? "";
     return this.repository.update(command.id, student);
   }
 }

@@ -57,21 +57,27 @@ export const studentPrismaRepository: IStudentRepository = {
     }
   },
   update: async function (id: string, entity: Student): Promise<any> {
-    console.log("je suis id : ", id);
-    console.log("Je suis students : ", entity);
     try {
+      const request: any = {
+        nom: entity.getNom(),
+        prenom: entity.getPrenom(),
+        dateOfBirth: entity.getDateOfBirth(),
+        abscence: entity.getAbscence(),
+        retards: entity.getRetards(),
+        moyenne: entity.getMoyenne(),
+      };
+      if (entity.parentId != "") {
+        request.parentId = entity.parentId;
+      }
+
+      if (entity.classe != "") {
+        request.classeId = entity.classe;
+      }
+      console.log("req", request);
       const updated = await prisma.student.update({
-        where: { id },
+        where: { id, schoolId: entity.schoolId },
         include: { parent: true, classe: true },
-        data: {
-          nom: entity.getNom(),
-          prenom: entity.getPrenom(),
-          dateOfBirth: entity.getDateOfBirth(),
-          abscence: entity.getAbscence(),
-          retards: entity.getRetards(),
-          moyenne: entity.getMoyenne(),
-          schoolId: entity.schoolId,
-        },
+        data: request,
       });
       return updated;
     } catch (error) {

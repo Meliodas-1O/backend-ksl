@@ -37,7 +37,6 @@ export function mapPrismaUserToDomain(prismaAppUser: PrismaAppUser): AppUser {
     prismaAppUser.children
   );
   user.setId(prismaAppUser.id);
-  console.log("prismaUser, ", prismaAppUser);
   user.disciplineIds = prismaAppUser.disciplines?.map((d) => d.name) ?? [];
   return user;
 }

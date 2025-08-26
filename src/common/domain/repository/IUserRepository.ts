@@ -5,6 +5,6 @@ export interface IUserRepository extends IRepository<AppUser> {
   findUserByEmail(email: string): Promise<any>;
   findUserByEmailAndSchool(email: string, schoolName: string): Promise<AppUser | null>;
 
-  findParentsBySchool(schoolName: string): Promise<AppUser[]>;
-  findClassesBySchool(schoolName: string): Promise<AppUser[]>;
+  updateParent(id: string, parent: any, schoolId: string): Promise<void>;
+  updateTeacher(id: string, teacher: any, schoolId: string): Promise<void>;
 }

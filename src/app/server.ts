@@ -125,6 +125,19 @@ import {
 import { IDisciplineRepository } from "../common/domain/repository/IDisciplineRepository";
 import { disciplinePrismaRepository } from "../common/infrastructure/repositories/DisciplinePrismaRepository";
 import disciplineRouter from "./routes/DisciplineRouter";
+import {
+  UpdateParentFromAdminCommandHandler,
+  UpdateTeacherFromAdminCommandHandler,
+  UpdateSelfTeacherCommandHandler,
+  UpdateSelfParentCommandHandler,
+} from "../services/usersvc/handlers/CommandHandlers";
+import {
+  UpdateParentFromAdminQuery,
+  UpdateTeacherFromAdminQuery,
+  UpdateSelfTeacherQuery,
+  UpdateSelfParentQuery,
+} from "../services/usersvc/handlers/Commands";
+import userRouter from "./routes/UserRouter";
 
 config();
 
@@ -386,6 +399,30 @@ mediator.register<GetDisciplineByIdQuery>(
   new GetDisciplineByIdQueryHandler(disciplineRepository)
 );
 
+// Register UpdateParentFromAdminCommandHandler
+mediator.register<UpdateParentFromAdminQuery>(
+  UpdateParentFromAdminQuery.name,
+  new UpdateParentFromAdminCommandHandler(userRepository)
+);
+
+// Register UpdateTeacherFromAdminCommandHandler
+mediator.register<UpdateTeacherFromAdminQuery>(
+  UpdateTeacherFromAdminQuery.name,
+  new UpdateTeacherFromAdminCommandHandler(userRepository)
+);
+
+// Register UpdateSelfTeacherCommandHandler
+mediator.register<UpdateSelfTeacherQuery>(
+  UpdateSelfTeacherQuery.name,
+  new UpdateSelfTeacherCommandHandler(userRepository)
+);
+
+// Register UpdateSelfParentCommandHandler
+mediator.register<UpdateSelfParentQuery>(
+  UpdateSelfParentQuery.name,
+  new UpdateSelfParentCommandHandler(userRepository)
+);
+
 // #endregion
 
 const app = express();
@@ -397,6 +434,8 @@ app.use("/api/schools", schoolRouter);
 app.use("/api/students", studentRouter);
 app.use("/api/schools", classeRouter);
 app.use("/api/schools", disciplineRouter);
+app.use("/api/schools", userRouter);
+
 // ✅ Simple hello route
 app.get("/", (req, res) => {
   res.status(201).send("Hello");

@@ -52,6 +52,16 @@ export const schoolPrismaRepository: ISchoolRepository = {
 
   async findTeachersBySchool(schoolId: string): Promise<any[]> {
     return prisma.appUser.findMany({
+      select: {
+        id: true,
+        nom: true,
+        prenom: true,
+        email: true,
+        schoolId: true,
+        telephone: true,
+        classes: true,
+        disciplines: true,
+      },
       where: {
         schoolId: schoolId,
         userRoles: {
@@ -62,15 +72,19 @@ export const schoolPrismaRepository: ISchoolRepository = {
           },
         },
       },
-      include: {
-        classes: true,
-        disciplines: true,
-      },
     });
   },
 
   async findParentsBySchool(schoolId: string): Promise<any[]> {
     return prisma.appUser.findMany({
+      select: {
+        id: true,
+        nom: true,
+        prenom: true,
+        email: true,
+        telephone: true,
+        children: true,
+      },
       where: {
         schoolId: schoolId,
         userRoles: {
@@ -81,14 +95,17 @@ export const schoolPrismaRepository: ISchoolRepository = {
           },
         },
       },
-      include: {
-        children: true, // You can include the children of the parent
-      },
     });
   },
 
   async findAdminsBySchool(schoolId: string): Promise<any[]> {
     return prisma.appUser.findMany({
+      select: {
+        id: true,
+        nom: true,
+        prenom: true,
+        telephone: true,
+      },
       where: {
         schoolId: schoolId,
         userRoles: {
@@ -145,7 +162,7 @@ export const schoolPrismaRepository: ISchoolRepository = {
   },
 
   async findTeacherById(teacherId: string, schoolId: string): Promise<any | null> {
-    return prisma.appUser.findFirst({
+    const teacher = await prisma.appUser.findFirst({
       where: {
         id: teacherId,
         schoolId: schoolId,
@@ -157,16 +174,40 @@ export const schoolPrismaRepository: ISchoolRepository = {
           },
         },
       },
-      include: {
+      select: {
+        id: true,
+        nom: true,
+        prenom: true,
+        biographie: true,
+        telephone: true,
+        email: true,
+        schoolId: true,
         classes: {
           include: {
-            classe: true,
+            classe: {
+              include: {
+                students: true, // ✅ Include students in each class
+              },
+            },
           },
         },
         disciplines: true,
       },
     });
+
+    if (!teacher) return null;
+
+    // ✅ Sum the total number of students across all classes
+    const totalStudents = teacher.classes.reduce((acc, classeProf) => {
+      return acc + (classeProf.classe.students.length || 0);
+    }, 0);
+
+    return {
+      ...teacher,
+      totalStudents,
+    };
   },
+
   async findParentById(parentId: string, schoolId: string): Promise<any | null> {
     return prisma.appUser.findFirst({
       where: {
@@ -180,7 +221,14 @@ export const schoolPrismaRepository: ISchoolRepository = {
           },
         },
       },
-      include: {
+      select: {
+        id: true,
+        nom: true,
+        prenom: true,
+        telephone: true,
+        email: true,
+        schoolId: true,
+        profession: true,
         children: {
           include: {
             classe: true,

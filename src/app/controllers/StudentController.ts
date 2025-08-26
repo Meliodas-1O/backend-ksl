@@ -34,11 +34,14 @@ const updateStudentById: RequestHandler = async (req, res) => {
 
     if (error) {
       res.status(error.statusCode).json(error.statusCode);
-      return;
     }
+    console.log("HOLA");
     const command = new UpdateStudentCommand(id, data);
+    command.student.classeId = data.classeId ?? null;
+    command.student.parentId = data.parentId ?? null;
     const updated = await mediator.send(command);
     res.status(200).json(updated);
+    return;
   } catch (error) {
     console.error("Update error:", error);
     res.status(500).json({ message: "Internal server error" });

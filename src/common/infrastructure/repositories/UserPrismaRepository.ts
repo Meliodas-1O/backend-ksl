@@ -1,7 +1,7 @@
 // Assuming your User type and Prisma client are defined like this:
 
 import { PrismaClient } from "../../../generated/prisma";
-import { mapPrismaUserToDomain, PrismaAppUser } from "../models/PrismaAppUser";
+import { mapPrismaUserToDomain } from "../models/PrismaAppUser";
 import { IUserRepository } from "../../../common/domain/repository/IUserRepository";
 import { AppUser } from "../../../common/domain/entities/AppUser";
 
@@ -10,7 +10,6 @@ const prisma = new PrismaClient();
 export const userPrismaRepository: IUserRepository = {
   async create(user) {
     try {
-      console.log("user", user);
       const schoolName = user.getSchoolId();
 
       const rolesRequest = [];
@@ -149,10 +148,66 @@ export const userPrismaRepository: IUserRepository = {
     return existingUser;
   },
 
-  async findParentsBySchool(schoolId: string): Promise<AppUser[]> {
-    throw new Error("Function not implemented.");
+  updateParent: async function (id: string, parent: any, schoolId: string): Promise<void> {
+    try {
+      // Update the parent in the database using Prisma
+      await prisma.appUser.update({
+        where: {
+          id, // The parent's unique ID
+        },
+        data: {
+          nom: parent.nom,
+          prenom: parent.prenom,
+          email: parent.email,
+          telephone: parent.telephone,
+          profession: parent.profession,
+          schoolId: schoolId, // Ensure the school ID is correctly associated
+        },
+      });
+    } catch (error) {
+      console.error("Error updating parent:", error);
+      throw new Error("Failed to update parent");
+    }
   },
-  async findClassesBySchool(schoolId: string): Promise<AppUser[]> {
-    throw new Error("Function not implemented.");
+
+  updateTeacher: async function (id: string, teacher: any, schoolId: string): Promise<void> {
+    const request = {
+      nom: teacher.nom,
+      prenom: teacher.prenom,
+      email: teacher.email,
+      telephone: teacher.telephone,
+      biographie: teacher.biographie ?? "",
+    };
+
+    console.log("teachers ", id);
+    try {
+      // Optionally, update teacher's associated classes, if needed
+      if (teacher.classes && teacher.classes.length > 0) {
+        await prisma.classeProfesseur.deleteMany({
+          where: {
+            professeurId: id, // Delete existing teacher-class associations
+          },
+        });
+        const teacherClassRequest = teacher.classes.map((c: any) => ({
+          professeurId: id,
+          classeId: c,
+        }));
+
+        await prisma.classeProfesseur.createMany({
+          data: teacherClassRequest,
+        });
+      }
+
+      await prisma.appUser.update({
+        where: {
+          id,
+          schoolId,
+        },
+        data: request,
+      });
+    } catch (error) {
+      console.error("Error updating teacher:", error);
+      throw new Error("Failed to update teacher");
+    }
   },
 };

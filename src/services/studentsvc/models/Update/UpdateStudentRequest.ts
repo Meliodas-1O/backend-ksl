@@ -8,6 +8,8 @@ export interface UpdateStudentRequest {
   abscence: number;
   retards: number;
   moyenne: number;
+  classeId?: string;
+  parentId: string;
 }
 
 export function validateStudentData(data: any): ApiError | null {
