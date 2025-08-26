@@ -4,4 +4,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./db.sqlite3:/usr/src/app/prisma/dev.db:rw
+      - db_data:/usr/src/app/prisma
+
+volumes:
+  db_data:
