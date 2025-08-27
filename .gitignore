@@ -1,5 +1,6 @@
 node_modules
 /src/generated/prisma
+prisma/dev.db
 generated
-/prisma/dev.db
 /src/generated/prisma
+dist
