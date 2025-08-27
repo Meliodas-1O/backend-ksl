@@ -47,7 +47,11 @@ export const coursPrismaRepository: ICoursRepository = {
    * @param schoolId The ID of the school.
    * @returns A promise that resolves to the updated course.
    */
-  async assignMatiere(coursId: string, matiereId: string, schoolId: string): Promise<boolean> {
+  async assignMatiere(
+    coursId: string,
+    matiereId: string,
+    schoolId: string
+  ): Promise<boolean> {
     // First, check if the course exists
     const cours = await prisma.cours.findUnique({
       where: { id: coursId, schoolId },
@@ -212,7 +216,10 @@ export const coursPrismaRepository: ICoursRepository = {
   },
 
   // Find all courses taught by a specific professor
-  async findByProfesseur(professeurId: string, schoolId: string): Promise<Cours[]> {
+  async findByProfesseur(
+    professeurId: string,
+    schoolId: string
+  ): Promise<Cours[]> {
     const courses = await prisma.cours.findMany({
       where: { professeurId: professeurId, schoolId: schoolId },
       include: {
@@ -293,7 +300,11 @@ export const coursPrismaRepository: ICoursRepository = {
   },
 
   // Find all courses at a specific hour on a specific day
-  async findByDayAndHour(day: string, hour: string, schoolId: string): Promise<Cours[]> {
+  async findByDayAndHour(
+    day: string,
+    hour: string,
+    schoolId: string
+  ): Promise<Cours[]> {
     const courses = await prisma.cours.findMany({
       where: { jour: day, heure: hour, schoolId: schoolId },
       include: {
@@ -320,7 +331,11 @@ export const coursPrismaRepository: ICoursRepository = {
   },
 
   // Find all courses within a specific week (start and end date)
-  async findByWeek(weekStart: Date, weekEnd: Date, schoolId: string): Promise<Cours[]> {
+  async findByWeek(
+    weekStart: Date,
+    weekEnd: Date,
+    schoolId: string
+  ): Promise<Cours[]> {
     const courses = await prisma.cours.findMany({
       where: {
         schoolId: schoolId,
@@ -423,7 +438,11 @@ export const coursPrismaRepository: ICoursRepository = {
   },
 
   // Find all courses for a class on a specific day
-  async findByClasseAndDay(classeId: string, day: string, schoolId: string): Promise<Cours[]> {
+  async findByClasseAndDay(
+    classeId: string,
+    day: string,
+    schoolId: string
+  ): Promise<Cours[]> {
     const courses = await prisma.cours.findMany({
       where: { classeId: classeId, jour: day, schoolId: schoolId },
       include: {

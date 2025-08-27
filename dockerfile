@@ -10,11 +10,11 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Build the TypeScript project
-RUN npm run build
-
 # Generate Prisma client
 RUN npx prisma generate
+
+# Build the TypeScript project
+RUN npm run build
 
 # Make entrypoint executable
 COPY entrypoint.sh .
