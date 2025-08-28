@@ -2,15 +2,20 @@
 
 ## Run the project locally using node
 Requiremets:
-- [node](https://nodejs.org/en/download)
+- [node 20+](https://nodejs.org/en/download)
 
 Install depencies:
 ```shell
 npm install
 ```
 
+Generate prisma client:
+```shell
+npm run prisma-client
+npm run seed-db # (optional) database seeding
+```
+
 Run the server in dev mode:
 ```shell
-npx run seed-db # optional database seeding
 npm run dev
 ```

@@ -59,6 +59,7 @@ export const classePrismaRepository: IClasseRepository = {
             const prof = await prisma.appUser.findFirst({
                 where: { id: profClass.professeurId },
             });
+            // @ts-ignore
             professeurs.push(prof);
         }
         // We map the join table records to get the actual professor objects

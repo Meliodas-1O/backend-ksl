@@ -15,6 +15,7 @@ export const userPrismaRepository: IUserRepository = {
             const rolesRequest = [];
 
             for (const role of user.getRoles()) {
+                // @ts-ignore
                 rolesRequest.push({
                     role: { connect: { name: role } },
                 });
@@ -22,6 +23,7 @@ export const userPrismaRepository: IUserRepository = {
 
             const childrenRequest = [];
             for (const student of user.getChildren()) {
+                // @ts-ignore
                 childrenRequest.push({
                     nom: student.nom,
                     prenom: student.prenom,
@@ -78,6 +80,7 @@ export const userPrismaRepository: IUserRepository = {
         try {
             const rolesRequest = [];
             for (const role of user.getRoles()) {
+                // @ts-ignore
                 rolesRequest.push({
                     role: { connect: { name: role.toLocaleString() } },
                 });
