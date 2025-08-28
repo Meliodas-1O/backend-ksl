@@ -4,10 +4,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-dev": "ts-node src/app/server.ts",
-    "dev": "nodemon src/app/server.ts",
-    "build": "tsc && npx prisma generate && cp -r ./src/generated ./dist",
-    "start": "node dist/app/server.js"
+    "prisma-client": "prisma migrate dev",
+    "dev": "migrate dev && nodemon src/app/server.ts",
+    "seed-db": "ts-node prisma/seed.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -21,12 +21,12 @@
     "@types/node": "^24.0.13",
     "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.10",
-    "prisma": "^6.11.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "prisma": "^6.11.1",
     "@prisma/client": "^6.11.1",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",

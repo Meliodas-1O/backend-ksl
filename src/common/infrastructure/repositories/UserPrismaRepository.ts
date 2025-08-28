@@ -1,6 +1,6 @@
 // Assuming your User type and Prisma client are defined like this:
 
-import { PrismaClient } from "../../../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { mapPrismaUserToDomain } from "../models/PrismaAppUser";
 import { IUserRepository } from "../../../common/domain/repository/IUserRepository";
 import { AppUser } from "../../../common/domain/entities/AppUser";
@@ -8,206 +8,209 @@ import { AppUser } from "../../../common/domain/entities/AppUser";
 const prisma = new PrismaClient();
 
 export const userPrismaRepository: IUserRepository = {
-  async create(user) {
-    try {
-      const schoolName = user.getSchoolId();
+    async create(user) {
+        try {
+            const schoolName = user.getSchoolId();
 
-      const rolesRequest = [];
+            const rolesRequest = [];
 
-      for (const role of user.getRoles()) {
-        rolesRequest.push({
-          role: { connect: { name: role } },
+            for (const role of user.getRoles()) {
+                // @ts-ignore
+                rolesRequest.push({
+                    role: { connect: { name: role } },
+                });
+            }
+
+            const childrenRequest = [];
+            for (const student of user.getChildren()) {
+                // @ts-ignore
+                childrenRequest.push({
+                    nom: student.nom,
+                    prenom: student.prenom,
+                    dateOfBirth: new Date(student.dateOfBirth),
+                    abscence: 0,
+                    retards: 0,
+                    moyenne: 0,
+                    schoolId: schoolName,
+                    classeId: student.classe,
+                });
+            }
+
+            const disciplineRequest = {
+                connect: user.disciplineIds.map((id) => ({ id })),
+            };
+
+            const schoolRequest = {
+                connect: { id: user.getSchoolId() },
+            };
+            const request: any = {
+                nom: user.getNom(),
+                prenom: user.getPrenom(),
+                email: user.getEmail(),
+                password: user.getPassword(),
+                School: schoolRequest,
+                userRoles: { create: rolesRequest },
+                children: { create: childrenRequest },
+                telephone: user.getTelephone() ?? "",
+                profession: user.getProfession() ?? "",
+                disciplines: disciplineRequest,
+            };
+
+            const createdUser: any = await prisma.appUser.create({
+                data: request,
+                include: {
+                    userRoles: {
+                        include: { role: true },
+                    },
+                    classes: true,
+                    children: true,
+                    School: true,
+                    disciplines: true,
+                },
+            });
+            const domainUser = mapPrismaUserToDomain(createdUser);
+            return domainUser;
+        } catch (error) {
+            console.error("Error creating user in database:", error);
+            throw new Error("Failed to create user in database");
+        }
+    },
+
+    async update(id: string, user) {
+        try {
+            const rolesRequest = [];
+            for (const role of user.getRoles()) {
+                // @ts-ignore
+                rolesRequest.push({
+                    role: { connect: { name: role.toLocaleString() } },
+                });
+            }
+
+            const schoolRequest = {
+                create: [{ school: { connect: { name: user.getSchoolId() } } }],
+            };
+
+            const updatedUser = await prisma.appUser.update({
+                where: { id },
+                data: {
+                    email: user.getEmail(),
+                    password: user.getPassword(),
+                    userRoles: {
+                        deleteMany: {}, // remove all existing roles
+                        create: rolesRequest,
+                    },
+                },
+                include: {
+                    userRoles: {
+                        include: { role: true },
+                    },
+                },
+            });
+            return updatedUser;
+        } catch (error) {
+            console.error("Error updating user in database:", error);
+            throw new Error(`Failed to update user with id ${id} in database`);
+        }
+    },
+
+    async delete(id) {
+        await prisma.appUser.delete({
+            where: { id },
         });
-      }
+    },
 
-      const childrenRequest = [];
-      for (const student of user.getChildren()) {
-        childrenRequest.push({
-          nom: student.nom,
-          prenom: student.prenom,
-          dateOfBirth: new Date(student.dateOfBirth),
-          abscence: 0,
-          retards: 0,
-          moyenne: 0,
-          schoolId: schoolName,
-          classeId: student.classe,
+    async findUserByEmail(email: string): Promise<any> {
+        const appUser = await prisma.appUser.findFirst({
+            where: { email },
+            include: {
+                userRoles: {
+                    include: { role: true },
+                },
+            },
         });
-      }
+        return appUser;
+    },
 
-      const disciplineRequest = {
-        connect: user.disciplineIds.map((id) => ({ id })),
-      };
-
-      const schoolRequest = {
-        connect: { id: user.getSchoolId() },
-      };
-      const request: any = {
-        nom: user.getNom(),
-        prenom: user.getPrenom(),
-        email: user.getEmail(),
-        password: user.getPassword(),
-        School: schoolRequest,
-        userRoles: { create: rolesRequest },
-        children: { create: childrenRequest },
-        telephone: user.getTelephone() ?? "",
-        profession: user.getProfession() ?? "",
-        disciplines: disciplineRequest,
-      };
-
-      const createdUser: any = await prisma.appUser.create({
-        data: request,
-        include: {
-          userRoles: {
-            include: { role: true },
-          },
-          classes: true,
-          children: true,
-          School: true,
-          disciplines: true,
-        },
-      });
-      const domainUser = mapPrismaUserToDomain(createdUser);
-      return domainUser;
-    } catch (error) {
-      console.error("Error creating user in database:", error);
-      throw new Error("Failed to create user in database");
-    }
-  },
-
-  async update(id: string, user) {
-    try {
-      const rolesRequest = [];
-      for (const role of user.getRoles()) {
-        rolesRequest.push({
-          role: { connect: { name: role.toLocaleString() } },
+    async findUserByEmailAndSchool(email: string, schoolName: string): Promise<AppUser | null> {
+        const appUser: any | null = await prisma.appUser.findFirst({
+            where: {
+                email,
+            },
+            include: {
+                userRoles: {
+                    include: { role: true },
+                },
+            },
         });
-      }
 
-      const schoolRequest = {
-        create: [{ school: { connect: { name: user.getSchoolId() } } }],
-      };
+        if (!appUser) {
+            console.error(`No user found for email : ${email} and schoolName : ${schoolName}`);
+            return null;
+        }
+        const existingUser = mapPrismaUserToDomain(appUser);
+        return existingUser;
+    },
 
-      const updatedUser = await prisma.appUser.update({
-        where: { id },
-        data: {
-          email: user.getEmail(),
-          password: user.getPassword(),
-          userRoles: {
-            deleteMany: {}, // remove all existing roles
-            create: rolesRequest,
-          },
-        },
-        include: {
-          userRoles: {
-            include: { role: true },
-          },
-        },
-      });
-      return updatedUser;
-    } catch (error) {
-      console.error("Error updating user in database:", error);
-      throw new Error(`Failed to update user with id ${id} in database`);
-    }
-  },
+    updateParent: async function(id: string, parent: any, schoolId: string): Promise<void> {
+        try {
+            // Update the parent in the database using Prisma
+            await prisma.appUser.update({
+                where: {
+                    id, // The parent's unique ID
+                },
+                data: {
+                    nom: parent.nom,
+                    prenom: parent.prenom,
+                    email: parent.email,
+                    telephone: parent.telephone,
+                    profession: parent.profession,
+                    schoolId: schoolId, // Ensure the school ID is correctly associated
+                },
+            });
+        } catch (error) {
+            console.error("Error updating parent:", error);
+            throw new Error("Failed to update parent");
+        }
+    },
 
-  async delete(id) {
-    await prisma.appUser.delete({
-      where: { id },
-    });
-  },
+    updateTeacher: async function(id: string, teacher: any, schoolId: string): Promise<void> {
+        const request = {
+            nom: teacher.nom,
+            prenom: teacher.prenom,
+            email: teacher.email,
+            telephone: teacher.telephone,
+            biographie: teacher.biographie ?? "",
+        };
 
-  async findUserByEmail(email: string): Promise<any> {
-    const appUser = await prisma.appUser.findFirst({
-      where: { email },
-      include: {
-        userRoles: {
-          include: { role: true },
-        },
-      },
-    });
-    return appUser;
-  },
+        console.log("teachers ", id);
+        try {
+            // Optionally, update teacher's associated classes, if needed
+            if (teacher.classes && teacher.classes.length > 0) {
+                await prisma.classeProfesseur.deleteMany({
+                    where: {
+                        professeurId: id, // Delete existing teacher-class associations
+                    },
+                });
+                const teacherClassRequest = teacher.classes.map((c: any) => ({
+                    professeurId: id,
+                    classeId: c,
+                }));
 
-  async findUserByEmailAndSchool(email: string, schoolName: string): Promise<AppUser | null> {
-    const appUser: any | null = await prisma.appUser.findFirst({
-      where: {
-        email,
-      },
-      include: {
-        userRoles: {
-          include: { role: true },
-        },
-      },
-    });
+                await prisma.classeProfesseur.createMany({
+                    data: teacherClassRequest,
+                });
+            }
 
-    if (!appUser) {
-      console.error(`No user found for email : ${email} and schoolName : ${schoolName}`);
-      return null;
-    }
-    const existingUser = mapPrismaUserToDomain(appUser);
-    return existingUser;
-  },
-
-  updateParent: async function (id: string, parent: any, schoolId: string): Promise<void> {
-    try {
-      // Update the parent in the database using Prisma
-      await prisma.appUser.update({
-        where: {
-          id, // The parent's unique ID
-        },
-        data: {
-          nom: parent.nom,
-          prenom: parent.prenom,
-          email: parent.email,
-          telephone: parent.telephone,
-          profession: parent.profession,
-          schoolId: schoolId, // Ensure the school ID is correctly associated
-        },
-      });
-    } catch (error) {
-      console.error("Error updating parent:", error);
-      throw new Error("Failed to update parent");
-    }
-  },
-
-  updateTeacher: async function (id: string, teacher: any, schoolId: string): Promise<void> {
-    const request = {
-      nom: teacher.nom,
-      prenom: teacher.prenom,
-      email: teacher.email,
-      telephone: teacher.telephone,
-      biographie: teacher.biographie ?? "",
-    };
-
-    console.log("teachers ", id);
-    try {
-      // Optionally, update teacher's associated classes, if needed
-      if (teacher.classes && teacher.classes.length > 0) {
-        await prisma.classeProfesseur.deleteMany({
-          where: {
-            professeurId: id, // Delete existing teacher-class associations
-          },
-        });
-        const teacherClassRequest = teacher.classes.map((c: any) => ({
-          professeurId: id,
-          classeId: c,
-        }));
-
-        await prisma.classeProfesseur.createMany({
-          data: teacherClassRequest,
-        });
-      }
-
-      await prisma.appUser.update({
-        where: {
-          id,
-          schoolId,
-        },
-        data: request,
-      });
-    } catch (error) {
-      console.error("Error updating teacher:", error);
-      throw new Error("Failed to update teacher");
-    }
-  },
+            await prisma.appUser.update({
+                where: {
+                    id,
+                    schoolId,
+                },
+                data: request,
+            });
+        } catch (error) {
+            console.error("Error updating teacher:", error);
+            throw new Error("Failed to update teacher");
+        }
+    },
 };
