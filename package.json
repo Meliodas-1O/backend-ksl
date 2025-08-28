@@ -4,10 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-dev": "ts-node src/app/server.ts",
-    "dev": "nodemon src/app/server.ts",
-    "build": "tsc && npx prisma generate && cp -r ./src/generated ./dist",
-    "start": "node dist/app/server.js"
+    "dev": "prisma migrate dev && nodemon src/app/server.ts",
+    "seed-db": "ts-node prisma/seed.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
