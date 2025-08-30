@@ -1,7 +1,7 @@
+import { PrismaClient } from "@prisma/client";
 import { Admin } from "../../..//common/domain/entities/Admin";
 import { RoleEntity } from "../../..//common/domain/entities/RoleEntity";
 import { IAdminRepository } from "../../..//common/domain/repository/IAdminRepository";
-import { PrismaClient } from "../../../generated/prisma";
 import { School } from "../../../common/domain/entities/School";
 
 const prisma = new PrismaClient();

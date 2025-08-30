@@ -1,7 +1,7 @@
 import { execSync } from "child_process";
 import { readdirSync } from "fs";
 import { join } from "path";
-import { PrismaClient } from "../src/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 
 const dbPath = join(__dirname, "dev.db");
 const sqlDir = join(__dirname, "../src/common/infrastructure/scripts");
