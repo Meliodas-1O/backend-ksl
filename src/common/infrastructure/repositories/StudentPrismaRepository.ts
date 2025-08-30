@@ -1,6 +1,6 @@
 import { Student } from "../../../common/domain/entities/Student";
 import { IStudentRepository } from "../../../common/domain/repository/IStudentRepository";
-import { PrismaClient } from "../../../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { MapPrismaStudentToDomain } from "../models/PrismaStudent";
 
 const prisma = new PrismaClient();

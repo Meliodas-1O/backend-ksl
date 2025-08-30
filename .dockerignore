@@ -1,4 +1,7 @@
+.git
+dist
 node_modules
-npm-debug.log
+testdata
 Dockerfile
-.env
+LICENSE
+README.md

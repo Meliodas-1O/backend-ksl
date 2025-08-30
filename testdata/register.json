@@ -1,0 +1,9 @@
+{
+    "nom": "NullPointerException",
+    "prenom": "John",
+    "email": "john.npe@apache.org",
+    "password": "Th@tsWhyHe1sTheG0at,Th3G04t",
+    "roles": ["TEACHER", "PARENT", "ADMIN"],
+    "telephone": "+33 1 23 45 67 89",
+    "schoolId": "1"
+}

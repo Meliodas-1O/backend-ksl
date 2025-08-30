@@ -1,14 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
-}
-
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
 }
 
 model AppUser {
@@ -167,4 +163,5 @@ model Cours {
   schoolId    String
   School      School           @relation(fields: [schoolId], references: [id])
 }
+
 

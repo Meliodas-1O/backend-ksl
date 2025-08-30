@@ -1,6 +1,6 @@
 // Assuming your User type and Prisma client are defined like this:
 
-import { PrismaClient } from "../../../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { mapPrismaUserToDomain } from "../models/PrismaAppUser";
 import { IUserRepository } from "../../../common/domain/repository/IUserRepository";
 import { AppUser } from "../../../common/domain/entities/AppUser";
@@ -24,6 +24,7 @@ export const userPrismaRepository: IUserRepository = {
       const rolesRequest = [];
 
       for (const role of user.getRoles()) {
+        // @ts-ignore
         rolesRequest.push({
           role: { connect: { name: role } },
         });
@@ -32,6 +33,7 @@ export const userPrismaRepository: IUserRepository = {
       const childrenRequest = [];
       for (const student of user.getChildren()) {
         childrenRequest.push({
+          // @ts-ignore
           nom: student.nom,
           prenom: student.prenom,
           dateOfBirth: new Date(student.dateOfBirth),
@@ -87,10 +89,15 @@ export const userPrismaRepository: IUserRepository = {
     try {
       const rolesRequest = [];
       for (const role of user.getRoles()) {
+        // @ts-ignore
         rolesRequest.push({
           role: { connect: { name: role.toLocaleString() } },
         });
       }
+
+      const schoolRequest = {
+        create: [{ school: { connect: { name: user.getSchoolId() } } }],
+      };
 
       const updatedUser = await prisma.appUser.update({
         where: { id },
