@@ -29,11 +29,7 @@ import { UpdateStudentCommandHandler } from "../services/studentsvc/handler/Upda
 import schoolRouter from "./routes/SchoolRouter";
 import { GetStudentsByIdQuery } from "../services/studentsvc/handler/Read/ById/GetStudentsByIdQuery";
 import { GetStudentsByIdQueryHandler } from "../services/studentsvc/handler/Read/ById/GetStudentsByIdQueryHandler";
-import { CreateSchoolCommand } from "services/schoolsvc/handler/CreateSchool/CreateSchoolCommand";
 import { schoolPrismaRepository } from "../common/infrastructure/repositories/SchoolPrismaRepository";
-import { CreateSchoolCommandHandler } from "../services/schoolsvc/handler/CreateSchool/CreateSchoolCommandHandler";
-import { DeleteSchoolCommand } from "../services/schoolsvc/handler/DeleteSchool/DeleteSchoolCommand";
-import { DeleteSchoolCommandHandler } from "../services/schoolsvc/handler/DeleteSchool/DeleteSchoolCommandHandler";
 import { GetSchoolByIdQuery } from "../services/schoolsvc/handler/GetSchoolById/GetSchoolByIdQuery";
 import { GetSchoolByIdQueryHandler } from "../services/schoolsvc/handler/GetSchoolById/GetSchoolIdQueryHandler";
 import { GetAllSchoolsQuery } from "../services/schoolsvc/handler/GetSchools/GetAllSchoolsQuery";
@@ -138,6 +134,31 @@ import {
   UpdateSelfParentQuery,
 } from "../services/usersvc/handlers/Commands";
 import userRouter from "./routes/UserRouter";
+import { IAdminRepository } from "../common/domain/repository/IAdminRepository";
+import { adminPrismaRepository } from "../common/infrastructure/repositories/AdminPrismaRepository";
+import {
+  CreateAdminCommandHandler,
+  DeleteAdminCommandHandler,
+  AssignRoleToUserCommandHandler,
+  RemoveRoleFromUserCommandHandler,
+  GetAllRolesQueryHandler,
+  CreateRoleCommandHandler,
+  CreateSchoolCommandHandler,
+  DeleteSchoolCommandHandler,
+  CreateDisciplineCommandHandler,
+} from "../services/adminsvc/CommandHandler";
+import {
+  CreateAdminCommand,
+  DeleteAdminCommand,
+  AssignRoleToUserCommand,
+  RemoveRoleFromUserCommand,
+  GetAllRolesQuery,
+  CreateRoleCommand,
+  CreateSchoolCommand,
+  DeleteSchoolCommand,
+  CreateDisciplineCommand,
+} from "../services/adminsvc/Commands";
+import adminRouter from "./routes/AdminRouter";
 
 config();
 
@@ -150,6 +171,7 @@ const schoolRepository: ISchoolRepository = schoolPrismaRepository;
 const classRepository: IClasseRepository = classePrismaRepository;
 const coursRepository: ICoursRepository = coursPrismaRepository;
 const disciplineRepository: IDisciplineRepository = disciplinePrismaRepository;
+const adminRepository: IAdminRepository = adminPrismaRepository;
 
 // Add services
 const pwdHasher: IPasswordHasher = passwordHasher;
@@ -207,17 +229,6 @@ mediator.register<GetStudentsBySchoolQuery>(
 // ---------------------------------------------
 // Register School Handlers
 // ---------------------------------------------
-
-// Commands
-mediator.register<CreateSchoolCommand>(
-  "CreateSchoolCommand",
-  new CreateSchoolCommandHandler(schoolRepository)
-);
-
-mediator.register<DeleteSchoolCommand>(
-  "DeleteSchoolCommand",
-  new DeleteSchoolCommandHandler(schoolRepository)
-);
 
 // Queries
 mediator.register<GetSchoolByIdQuery>(
@@ -423,6 +434,49 @@ mediator.register<UpdateSelfParentQuery>(
   new UpdateSelfParentCommandHandler(userRepository)
 );
 
+// ---------------------------------------------
+// Register Admin action Command Handlers (Mutations)
+// ---------------------------------------------
+mediator.register<CreateSchoolCommand>(
+  CreateSchoolCommand.name,
+  new CreateSchoolCommandHandler(adminRepository)
+);
+
+mediator.register<DeleteSchoolCommand>(
+  DeleteSchoolCommand.name,
+  new DeleteSchoolCommandHandler(adminRepository)
+);
+
+mediator.register<CreateAdminCommand>(
+  CreateAdminCommand.name,
+  new CreateAdminCommandHandler(adminRepository)
+);
+mediator.register<DeleteAdminCommand>(
+  DeleteAdminCommand.name,
+  new DeleteAdminCommandHandler(adminRepository)
+);
+mediator.register<AssignRoleToUserCommand>(
+  AssignRoleToUserCommand.name,
+  new AssignRoleToUserCommandHandler(adminRepository)
+);
+mediator.register<RemoveRoleFromUserCommand>(
+  RemoveRoleFromUserCommand.name,
+  new RemoveRoleFromUserCommandHandler(adminRepository)
+);
+mediator.register<GetAllRolesQuery>(
+  GetAllRolesQuery.name,
+  new GetAllRolesQueryHandler(adminRepository)
+);
+
+mediator.register<CreateRoleCommand>(
+  CreateRoleCommand.name,
+  new CreateRoleCommandHandler(adminRepository)
+);
+
+mediator.register<CreateDisciplineCommand>(
+  CreateDisciplineCommand.name,
+  new CreateDisciplineCommandHandler(adminRepository)
+);
 // #endregion
 
 const app = express();
@@ -431,10 +485,11 @@ app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.use("/api/schools", schoolRouter);
-app.use("/api/students", studentRouter);
+app.use("/api/schools", studentRouter);
 app.use("/api/schools", classeRouter);
 app.use("/api/schools", disciplineRouter);
 app.use("/api/schools", userRouter);
+app.use("/api/admin-actions", adminRouter);
 
 // ✅ Simple hello route
 app.get("/", (req, res) => {

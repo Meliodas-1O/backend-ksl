@@ -1,10 +1,26 @@
 import { Router } from "express";
 import { StudentController } from "../controllers/StudentController";
+import { authenticateToken } from "../middlewares/AuthenticateToken";
 
 const studentRouter = Router();
-studentRouter.post("/", StudentController.createStudent);
-studentRouter.put("/:id", StudentController.updateStudentById);
-studentRouter.delete("/:id", StudentController.deleteStudentById);
-studentRouter.get("/:id", StudentController.getStudentById);
-studentRouter.get("/school/:schoolId/students", StudentController.getStudentsBySchool);
+studentRouter.post(
+  "/:schoolId/students",
+  authenticateToken,
+  StudentController.createStudent
+);
+studentRouter.put(
+  "/:schoolId/students/:id",
+  authenticateToken,
+  StudentController.updateStudentById
+);
+studentRouter.delete(
+  "/:schoolId/students/:id",
+  authenticateToken,
+  StudentController.deleteStudentById
+);
+studentRouter.get(
+  "/:schoolId/students/:id",
+  authenticateToken,
+  StudentController.getStudentById
+);
 export default studentRouter;

@@ -27,8 +27,18 @@ export const authenticateToken: RequestHandler = (
     return;
   }
 
+  const roles = ["ADMIN", "SURVEILLANT", "TEACHER", "PARENT"];
+
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET) as { role: string[] };
+    if (!decoded?.role || !decoded?.role.some((r) => roles.includes(r))) {
+      const error: ApiError = {
+        reason: "You are not connected.",
+        statusCode: StatusCode.UNAUTHORIZED,
+      };
+      res.status(StatusCode.UNAUTHORIZED).json(error);
+      return;
+    }
     req.user = decoded;
     next();
   } catch (err) {

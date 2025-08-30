@@ -8,7 +8,7 @@ export class School extends Entity {
     this.name = _name;
   }
 
-  public static createClasse(name: string): School {
+  public static createSchool(name: string): School {
     return new School(name);
   }
 

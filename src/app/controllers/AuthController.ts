@@ -14,7 +14,7 @@ import {
 import { LoginCommand } from "../../services/authentication/handler/login/LoginCommand";
 import { UserNotFoundError } from "../../common/application/dto/UserNotFoundError";
 import { LoginResponse } from "../../services/authentication/models/Login/LoginResponse";
-import { AppUser } from "generated/prisma/";
+import { AppUser } from "../../common/domain/entities/AppUser";
 import {
   ResetPasswordRequest,
   resetPasswordRequestValidator,
@@ -67,7 +67,9 @@ const register: RequestHandler = async (req, res) => {
       disciplineIds
     );
 
-    const result: AppUser = await mediator.send<RegisterCommand, AppUser>(command);
+    const result: AppUser = await mediator.send<RegisterCommand, AppUser>(
+      command
+    );
     res.status(StatusCode.CREATED).json(result);
   } catch (error: any) {
     console.error("Registration error:", error);
@@ -140,7 +142,12 @@ const resetPassword: RequestHandler = async (req, res) => {
       return;
     }
 
-    const command = new ResetPasswordCommand(email, oldPassword, newPassword, schoolId);
+    const command = new ResetPasswordCommand(
+      email,
+      oldPassword,
+      newPassword,
+      schoolId
+    );
     await mediator.send<ResetPasswordCommand, void>(command);
 
     res.status(StatusCode.SUCCESS).json({
@@ -165,14 +172,18 @@ const deleteUser: RequestHandler = async (req, res) => {
     const { userId } = req.params;
     const command = new DeleteUserCommand(userId);
     await mediator.send(command);
-    res.status(StatusCode.SUCCESS).json({ message: "Course deleted successfully." });
+    res
+      .status(StatusCode.SUCCESS)
+      .json({ message: "Course deleted successfully." });
   } catch (error: any) {
     console.error("Delete user error:", error);
     if (error instanceof UserNotFoundError) {
       res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
       return;
     }
-    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+    res
+      .status(StatusCode.INTERNAL_SERVER_ERROR)
+      .json({ reason: "Internal server error." });
   }
 };
 

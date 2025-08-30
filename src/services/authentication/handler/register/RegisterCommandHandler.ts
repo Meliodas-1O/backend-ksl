@@ -7,8 +7,13 @@ import { RegisterValidator } from "./RegisterValidator";
 import { ValidationError } from "../../../../common/application/dto/ValidationError";
 import { Role } from "../../../../common/application/dto/Role";
 
-export class RegisterCommandHandler implements ICommandHandler<RegisterCommand, AppUser> {
-  constructor(private userRepository: IUserRepository, private passwordHasher: IPasswordHasher) {}
+export class RegisterCommandHandler
+  implements ICommandHandler<RegisterCommand, AppUser>
+{
+  constructor(
+    private userRepository: IUserRepository,
+    private passwordHasher: IPasswordHasher
+  ) {}
 
   async execute(command: RegisterCommand): Promise<AppUser> {
     // validate command here or before sending to mediator
@@ -20,7 +25,7 @@ export class RegisterCommandHandler implements ICommandHandler<RegisterCommand, 
     // Check if user doesn't already exist
     const existingUser = await this.userRepository.findUserByEmailAndSchool(
       command.email,
-      command.schoolId
+      command.schoolName
     );
 
     if (!existingUser) {
@@ -33,7 +38,7 @@ export class RegisterCommandHandler implements ICommandHandler<RegisterCommand, 
         command.email,
         hashedPassword,
         command.roles,
-        command.schoolId,
+        command.schoolName,
         command.nom,
         command.prenom,
         command.telephone,
@@ -70,7 +75,7 @@ export class RegisterCommandHandler implements ICommandHandler<RegisterCommand, 
       command.email,
       existingUser.getPassword(),
       combinedRoles,
-      command.schoolId,
+      command.schoolName,
       command.nom,
       command.prenom,
       command.telephone,

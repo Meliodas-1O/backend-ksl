@@ -27,11 +27,14 @@ export const RegisterValidator = {
       errors.push("Password must be at least 6 characters.");
     }
 
-    if (!Array.isArray(command.roles) || !command.roles.every((r: Role) => this.isValidRole(r))) {
+    if (
+      !Array.isArray(command.roles) ||
+      !command.roles.every((r: Role) => this.isValidRole(r))
+    ) {
       errors.push("Invalid roles provided.");
     }
 
-    if (!command.schoolId || typeof command.schoolId !== "string") {
+    if (!command.schoolName || typeof command.schoolName !== "string") {
       errors.push("Invalid school ID.");
     }
 

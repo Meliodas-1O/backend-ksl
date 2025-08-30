@@ -3,4 +3,4 @@ node_modules
 prisma/dev.db
 generated
 /src/generated/prisma
-dist
+/dist

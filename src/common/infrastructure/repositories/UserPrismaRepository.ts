@@ -10,8 +10,17 @@ const prisma = new PrismaClient();
 export const userPrismaRepository: IUserRepository = {
   async create(user) {
     try {
-      const schoolName = user.getSchoolId();
+      const name = user.getSchoolId();
 
+      const school = await prisma.school.findUnique({
+        where: { name },
+      });
+
+      if (!school) {
+        throw new Error(`School with name ${name} not found`);
+      }
+
+      const schoolId = school.id;
       const rolesRequest = [];
 
       for (const role of user.getRoles()) {
@@ -29,7 +38,7 @@ export const userPrismaRepository: IUserRepository = {
           abscence: 0,
           retards: 0,
           moyenne: 0,
-          schoolId: schoolName,
+          schoolId: schoolId,
           classeId: student.classe,
         });
       }
@@ -39,7 +48,7 @@ export const userPrismaRepository: IUserRepository = {
       };
 
       const schoolRequest = {
-        connect: { id: user.getSchoolId() },
+        connect: { id: schoolId },
       };
       const request: any = {
         nom: user.getNom(),
@@ -83,10 +92,6 @@ export const userPrismaRepository: IUserRepository = {
         });
       }
 
-      const schoolRequest = {
-        create: [{ school: { connect: { name: user.getSchoolId() } } }],
-      };
-
       const updatedUser = await prisma.appUser.update({
         where: { id },
         data: {
@@ -128,7 +133,10 @@ export const userPrismaRepository: IUserRepository = {
     return appUser;
   },
 
-  async findUserByEmailAndSchool(email: string, schoolName: string): Promise<AppUser | null> {
+  async findUserByEmailAndSchool(
+    email: string,
+    schoolName: string
+  ): Promise<AppUser | null> {
     const appUser: any | null = await prisma.appUser.findFirst({
       where: {
         email,
@@ -141,14 +149,20 @@ export const userPrismaRepository: IUserRepository = {
     });
 
     if (!appUser) {
-      console.error(`No user found for email : ${email} and schoolName : ${schoolName}`);
+      console.error(
+        `No user found for email : ${email} and schoolName : ${schoolName}`
+      );
       return null;
     }
     const existingUser = mapPrismaUserToDomain(appUser);
     return existingUser;
   },
 
-  updateParent: async function (id: string, parent: any, schoolId: string): Promise<void> {
+  updateParent: async function (
+    id: string,
+    parent: any,
+    schoolId: string
+  ): Promise<void> {
     try {
       // Update the parent in the database using Prisma
       await prisma.appUser.update({
@@ -170,7 +184,11 @@ export const userPrismaRepository: IUserRepository = {
     }
   },
 
-  updateTeacher: async function (id: string, teacher: any, schoolId: string): Promise<void> {
+  updateTeacher: async function (
+    id: string,
+    teacher: any,
+    schoolId: string
+  ): Promise<void> {
     const request = {
       nom: teacher.nom,
       prenom: teacher.prenom,
