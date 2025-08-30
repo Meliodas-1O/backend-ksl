@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prisma-client": "prisma migrate dev",
-    "dev": "migrate dev && nodemon src/app/server.ts",
+    "prisma-client": "npx prisma migrate dev",
+    "dev": "nodemon src/app/server.ts",
     "seed-db": "ts-node prisma/seed.ts",
     "build": "tsc"
   },

@@ -32,8 +32,8 @@ export const userPrismaRepository: IUserRepository = {
 
       const childrenRequest = [];
       for (const student of user.getChildren()) {
+        // @ts-ignore
         childrenRequest.push({
-          // @ts-ignore
           nom: student.nom,
           prenom: student.prenom,
           dateOfBirth: new Date(student.dateOfBirth),
