@@ -6,11 +6,16 @@ import { superAdminAuthenticateToken } from "../middlewares/SuperAdminAuthentica
 import { authorizeRole } from "../middlewares/AuthenticateRole";
 const schoolRouter = Router();
 
+schoolRouter.put(
+  "/:schoolId",
+  authenticateToken,
+  authorizeRole(["ADMIN", "SURVEILLANT", "SUPER_ADMIN"]),
+  SchoolController.updateSchool
+);
 schoolRouter.get("/:schoolId", authenticateToken, SchoolController.getSchoolById);
 
 schoolRouter.get("/", superAdminAuthenticateToken, SchoolController.getAllSchools);
 
-// Combine allowed roles in a single array per route
 schoolRouter.get(
   "/:schoolId/students",
   authenticateToken,

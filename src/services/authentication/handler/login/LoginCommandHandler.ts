@@ -50,8 +50,10 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand, tokenR
       nom: existingUser.getNom(),
       prenom: existingUser.getPrenom(),
       schoolId: existingUser.getSchoolId(),
+      profession: existingUser.getProfession(),
+      biographie: existingUser.getBiographie(),
+      telephone: existingUser.getTelephone(),
     });
-    console.log("------------------------------------------------");
     const refreshToken: string = this.jwtService.sign(
       { userId: existingUser.id },
       { expiresIn: "6h" }

@@ -9,6 +9,7 @@ CREATE TABLE "AppUser" (
     "telephone" TEXT,
     "profession" TEXT,
     "biographie" TEXT,
+    "adresse" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "AppUser_schoolId_fkey" FOREIGN KEY ("schoolId") REFERENCES "School" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );

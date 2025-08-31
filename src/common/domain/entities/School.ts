@@ -2,6 +2,10 @@ import { Entity } from "../contracts/Entity";
 
 export class School extends Entity {
   private name: string;
+  public adresse: string = "-";
+  public email: string = "-";
+  public siteWeb: string = "-";
+  public telephone: string = "-";
 
   private constructor(_name: string) {
     super();

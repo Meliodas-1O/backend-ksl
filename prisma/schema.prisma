@@ -20,6 +20,7 @@ model AppUser {
   telephone   String?
   profession  String?
   biographie  String?
+  adresse     String?
   createdAt   DateTime     @default(now())
 
   @@unique([schoolId, email])
@@ -55,6 +56,10 @@ model UserRole {
 model School {
   id       String     @id @default(uuid())
   name     String     @unique
+  adresse   String?
+  telephone String?
+  email     String?
+  siteWeb   String?
 
   students Student[]
   classes  Classe[]

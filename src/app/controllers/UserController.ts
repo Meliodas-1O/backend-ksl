@@ -35,7 +35,6 @@ const updateParentFromAdmin: RequestHandler = async (req, res) => {
 const updateTeacherFromAdmin: RequestHandler = async (req, res) => {
   try {
     const { nom, prenom, email, telephone, classes } = req.body;
-    console.log("HOLA", req.body);
     const command = new UpdateTeacherFromAdminQuery(
       req.params.teacherId,
       nom,

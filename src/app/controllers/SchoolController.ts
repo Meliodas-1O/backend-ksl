@@ -18,6 +18,31 @@ import {
   GetParentByIdQuery,
   GetOneClasseByIdQuery,
 } from "../../services/schoolsvc/handler/SchoolQueries";
+import { SchoolUpdateRequest } from "../../services/schoolsvc/models/SchoolUpdateRequest";
+import { UpdateSchoolQuery } from "../../services/schoolsvc/handler/UpdateSchool/UpdateSchoolQuery";
+
+const updateSchool: RequestHandler = async (req, res) => {
+  try {
+    const { schoolId } = req.params;
+    const { name, email, telephone, adresse, siteWeb } = req.body;
+    const updateSchool: SchoolUpdateRequest = {
+      adresse,
+      email,
+      name,
+      siteWeb,
+      telephone,
+    };
+    const command = new UpdateSchoolQuery(schoolId, updateSchool);
+    const result = await mediator.send(command);
+    res.status(StatusCode.SUCCESS).json(result);
+  } catch (err) {
+    if (err instanceof NotFoundError) {
+      res.status(StatusCode.NOT_FOUND).json({ reason: err.message });
+      return;
+    }
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+  }
+};
 
 // ---------------------------------------------
 // Query Handlers (Reads)
@@ -35,9 +60,7 @@ const getSchoolById: RequestHandler = async (req, res) => {
       res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
       return;
     }
-    res
-      .status(StatusCode.INTERNAL_SERVER_ERROR)
-      .json({ reason: "Internal server error." });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
 
@@ -48,9 +71,7 @@ const getAllSchools: RequestHandler = async (req, res) => {
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {
     console.error("Get all schools error:", error);
-    res
-      .status(StatusCode.INTERNAL_SERVER_ERROR)
-      .json({ reason: "Internal server error." });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
 
@@ -74,9 +95,7 @@ const findTeachersBySchool: RequestHandler = async (req, res) => {
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {
     console.error("Find teachers error:", error);
-    res
-      .status(StatusCode.INTERNAL_SERVER_ERROR)
-      .json({ reason: "Internal server error." });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
 
@@ -89,9 +108,7 @@ const findParentsBySchool: RequestHandler = async (req, res) => {
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {
     console.error("Find parents error:", error);
-    res
-      .status(StatusCode.INTERNAL_SERVER_ERROR)
-      .json({ reason: "Internal server error." });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
 
@@ -103,9 +120,7 @@ const findAdminsBySchool: RequestHandler = async (req, res) => {
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {
     console.error("Find admins error:", error);
-    res
-      .status(StatusCode.INTERNAL_SERVER_ERROR)
-      .json({ reason: "Internal server error." });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
 
@@ -117,9 +132,7 @@ const findClassesBySchool: RequestHandler = async (req, res) => {
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {
     console.error("Find classes error:", error);
-    res
-      .status(StatusCode.INTERNAL_SERVER_ERROR)
-      .json({ reason: "Internal server error." });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
 
@@ -143,9 +156,7 @@ const getStudentById: RequestHandler = async (req, res) => {
       res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
       return;
     }
-    res
-      .status(StatusCode.INTERNAL_SERVER_ERROR)
-      .json({ reason: "Internal server error." });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
 
@@ -169,9 +180,7 @@ const getTeacherById: RequestHandler = async (req, res) => {
       res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
       return;
     }
-    res
-      .status(StatusCode.INTERNAL_SERVER_ERROR)
-      .json({ reason: "Internal server error." });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
 
@@ -195,9 +204,7 @@ const getParentById: RequestHandler = async (req, res) => {
       res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
       return;
     }
-    res
-      .status(StatusCode.INTERNAL_SERVER_ERROR)
-      .json({ reason: "Internal server error." });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
 
@@ -221,13 +228,12 @@ const getClasseById: RequestHandler = async (req, res) => {
       res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
       return;
     }
-    res
-      .status(StatusCode.INTERNAL_SERVER_ERROR)
-      .json({ reason: "Internal server error." });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
 
 export const SchoolController = {
+  updateSchool,
   getSchoolById,
   getAllSchools,
   findStudentsBySchool,

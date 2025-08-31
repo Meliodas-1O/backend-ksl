@@ -165,6 +165,8 @@ import cookieParser from "cookie-parser";
 import { RefreshTokenQuery } from "../services/authentication/handler/refresh/RefreshTokenQuery";
 import { RefreshTokenQueryHandler } from "../services/authentication/handler/refresh/RefreshTokenQueryHandler";
 import coursRouter from "./routes/CoursRouter";
+import { UpdateSchoolQuery } from "../services/schoolsvc/handler/UpdateSchool/UpdateSchoolQuery";
+import { UpdateSchoolQueryHandler } from "../services/schoolsvc/handler/UpdateSchool/UpdateSchoolQueryHandler";
 
 config();
 
@@ -240,7 +242,11 @@ mediator.register<GetStudentsBySchoolQuery>(
 // ---------------------------------------------
 // Register School Handlers
 // ---------------------------------------------
-
+// Commands
+mediator.register<UpdateSchoolQuery>(
+  UpdateSchoolQuery.name,
+  new UpdateSchoolQueryHandler(schoolRepository)
+);
 // Queries
 mediator.register<GetSchoolByIdQuery>(
   "GetSchoolByIdQuery",

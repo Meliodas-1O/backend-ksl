@@ -8,7 +8,7 @@ export class AppUser extends Entity {
   private password: string;
   private roles: Role[];
   private schoolId: string;
-
+  public adresse: string | null = null;
   private nom: string;
   private prenom: string;
   private telephone: string | null;

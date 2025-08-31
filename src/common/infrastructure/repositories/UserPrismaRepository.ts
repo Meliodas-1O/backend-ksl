@@ -190,7 +190,6 @@ export const userPrismaRepository: IUserRepository = {
       biographie: teacher.biographie ?? "",
     };
 
-    console.log("teachers ", id);
     try {
       // Optionally, update teacher's associated classes, if needed
       if (teacher.classes && teacher.classes.length > 0) {
