@@ -4,8 +4,8 @@ import jwt from "jsonwebtoken";
 const secret: string = "supersecretkey123!@#456";
 
 export const jwtService: IJwtService = {
-  sign(payload: object): string {
-    return jwt.sign(payload, secret, { expiresIn: "1h" });
+  sign(payload: object, expiresIn: any = { expiresIn: "1h" }): string {
+    return jwt.sign(payload, secret, expiresIn);
   },
 
   verify(token: string): any {

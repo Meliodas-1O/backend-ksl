@@ -4,7 +4,7 @@ import { StatusCode } from "../../../../common/application/dto/StatusCode";
 export interface LoginRequest {
   email: string;
   password: string;
-  schoolId: string;
+  schoolName: string;
 }
 
 export function loginRequestValidator(data: Partial<LoginRequest>): ApiError | null {
@@ -22,10 +22,10 @@ export function loginRequestValidator(data: Partial<LoginRequest>): ApiError | n
     };
   }
 
-  if (!data.schoolId || typeof data.schoolId !== "string") {
+  if (!data.schoolName || typeof data.schoolName !== "string") {
     return {
       statusCode: StatusCode.BAD_REQUEST,
-      reason: "SchoolId is required and must be a string.",
+      reason: "SchoolName is required and must be a string.",
     };
   }
 

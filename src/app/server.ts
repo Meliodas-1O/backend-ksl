@@ -55,6 +55,7 @@ import {
   GetParentsInClasseQuery,
   GetProfessorsInClasseQuery,
   GetStudentsInClasseQuery,
+  RevokeProfesseurToClasseCommand,
   UpdateClasseCommand,
 } from "../services/classesvc/handler/Commands";
 import { IClasseRepository } from "../common/domain/repository/IClasseRepository";
@@ -71,6 +72,7 @@ import {
   GetDisciplinesInClasseQueryHandler,
   AssignMatiereToClasseCommandHandler,
   AssignProfesseurToClasseCommandHandler,
+  RevokeProfesseurToClasseCommandHandler,
 } from "../services/classesvc/handler/CommandHandler";
 import { ICoursRepository } from "../common/domain/repository/ICoursRepository";
 import { coursPrismaRepository } from "../common/infrastructure/repositories/CoursPrismaRepository";
@@ -159,6 +161,10 @@ import {
   CreateDisciplineCommand,
 } from "../services/adminsvc/Commands";
 import adminRouter from "./routes/AdminRouter";
+import cookieParser from "cookie-parser";
+import { RefreshTokenQuery } from "../services/authentication/handler/refresh/RefreshTokenQuery";
+import { RefreshTokenQueryHandler } from "../services/authentication/handler/refresh/RefreshTokenQueryHandler";
+import coursRouter from "./routes/CoursRouter";
 
 config();
 
@@ -198,6 +204,11 @@ mediator.register<ResetPasswordCommand>(
 mediator.register<DeleteUserCommand>(
   "DeleteUserCommand",
   new DeleteUserCommandHandler(userRepository)
+);
+
+mediator.register<RefreshTokenQuery>(
+  RefreshTokenQuery.name,
+  new RefreshTokenQueryHandler(userRepository, jwtSvc)
 );
 
 // Create student handler
@@ -297,6 +308,11 @@ mediator.register<DeleteClasseCommand>(
 mediator.register<AssignProfesseurToClasseCommand>(
   AssignProfesseurToClasseCommand.name,
   new AssignProfesseurToClasseCommandHandler(classRepository)
+);
+
+mediator.register<RevokeProfesseurToClasseCommand>(
+  RevokeProfesseurToClasseCommand.name,
+  new RevokeProfesseurToClasseCommandHandler(classRepository)
 );
 
 mediator.register<AssignMatiereToClasseCommand>(
@@ -479,15 +495,37 @@ mediator.register<CreateDisciplineCommand>(
 );
 // #endregion
 
+const allowedOrigins = [
+  "https://seekids.net",
+  "https://client2.seekids.net",
+  "http://localhost:8080",
+  // add other known client origins here
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // Allow non-browser requests like Postman
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
 const app = express();
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api/schools", schoolRouter);
 app.use("/api/schools", studentRouter);
 app.use("/api/schools", classeRouter);
 app.use("/api/schools", disciplineRouter);
+app.use("/api/schools", coursRouter);
 app.use("/api/schools", userRouter);
 app.use("/api/admin-actions", adminRouter);
 
@@ -498,6 +536,4 @@ app.get("/", (req, res) => {
 
 const port = Number(process.env.PORT) || 3000;
 
-app.listen(port, "0.0.0.0", () =>
-  console.log(`🚀 Server running on port ${port}`)
-);
+app.listen(port, "0.0.0.0", () => console.log(`🚀 Server running on port ${port}`));

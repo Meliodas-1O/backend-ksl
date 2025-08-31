@@ -10,40 +10,47 @@ const classeRouter = Router();
 classeRouter.post(
   "/:schoolId/classes",
   authenticateToken,
-  authorizeRole("ADMIN"),
-  authorizeRole("SURVEILLANT"),
+  authorizeRole(["ADMIN", "SURVEILLANT", "SUPER_ADMIN"]),
   ClasseController.createClasse
 );
+
 // Update an existing classe by ID
 classeRouter.put(
   "/:schoolId/classes/:classeId",
   authenticateToken,
-  authorizeRole("ADMIN"),
-  authorizeRole("SURVEILLANT"),
+  authorizeRole(["ADMIN", "SURVEILLANT", "SUPER_ADMIN"]),
   ClasseController.updateClasse
 );
+
 // Delete a classe by ID
 classeRouter.delete(
   "/:schoolId/classes/:classeId",
   authenticateToken,
-  authorizeRole("ADMIN"),
-  authorizeRole("SURVEILLANT"),
+  authorizeRole(["ADMIN", "SURVEILLANT", "SUPER_ADMIN"]),
   ClasseController.deleteClasse
 );
+
 // Assign a professor to a classe
 classeRouter.put(
-  "/:schoolId/classes/:classeId/professors",
+  "/:schoolId/classes/:classeId/assignTeacher",
   authenticateToken,
-  authorizeRole("ADMIN"),
-  authorizeRole("SURVEILLANT"),
+  authorizeRole(["ADMIN", "SURVEILLANT", "SUPER_ADMIN"]),
   ClasseController.assignProfesseurToClasse
 );
+
+// Assign a professor to a classe
+classeRouter.put(
+  "/:schoolId/classes/:classeId/revokeTeacher",
+  authenticateToken,
+  authorizeRole(["ADMIN", "SURVEILLANT", "SUPER_ADMIN"]),
+  ClasseController.revokeProfesseurToClasse
+);
+
 // Assign a subject (matiere) to a classe
 classeRouter.put(
   "/:schoolId/classes/:classeId/matieres",
   authenticateToken,
-  authorizeRole("ADMIN"),
-  authorizeRole("SURVEILLANT"),
+  authorizeRole(["ADMIN", "SURVEILLANT", "SUPER_ADMIN"]),
   ClasseController.assignMatiereToClasse
 );
 
@@ -52,34 +59,34 @@ classeRouter.put(
 classeRouter.get(
   "/:schoolId/classes",
   authenticateToken,
-  authorizeRole("ADMIN"),
-  authorizeRole("SURVEILLANT"),
+  authorizeRole(["ADMIN", "SURVEILLANT", "SUPER_ADMIN"]),
   ClasseController.getAllClasses
 );
+
 // Get a specific classe by ID
-classeRouter.get(
-  "/:schoolId/classes/:classeId",
-  authenticateToken,
-  ClasseController.getClasseById
-);
+classeRouter.get("/:schoolId/classes/:classeId", authenticateToken, ClasseController.getClasseById);
+
 // Get all students for a specific classe
 classeRouter.get(
   "/:schoolId/classes/:classeId/students",
   authenticateToken,
   ClasseController.getStudentsInClasse
 );
+
 // Get all professors for a specific classe
 classeRouter.get(
   "/:schoolId/classes/:classeId/professors",
   authenticateToken,
   ClasseController.getProfessorsInClasse
 );
+
 // Get all parents of students in a specific classe
 classeRouter.get(
   "/:schoolId/classes/:classeId/parents",
   authenticateToken,
   ClasseController.getParentsInClasse
 );
+
 // Get all disciplines for a specific classe
 classeRouter.get(
   "/:schoolId/classes/:classeId/disciplines",

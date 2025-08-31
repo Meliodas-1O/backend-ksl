@@ -16,6 +16,7 @@ import {
   GetParentsInClasseQuery,
   GetProfessorsInClasseQuery,
   GetStudentsInClasseQuery,
+  RevokeProfesseurToClasseCommand,
   UpdateClasseCommand,
 } from "../../services/classesvc/handler/Commands";
 import { AppUser } from "../../common/domain/entities/AppUser";
@@ -92,6 +93,23 @@ const assignProfesseurToClasse: RequestHandler = async (req, res) => {
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {
     console.error("Assign professor to classe error:", error);
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+  }
+};
+
+const revokeProfesseurToClasse: RequestHandler = async (req, res) => {
+  try {
+    const { classeId } = req.params;
+    const { professeurId } = req.body;
+    const command = new RevokeProfesseurToClasseCommand(
+      classeId,
+      professeurId,
+      req.params.schoolId
+    );
+    await mediator.send(command);
+    res.status(StatusCode.SUCCESS).json("SUCCESSS");
+  } catch (error: any) {
+    console.error("Revoke professor to classe error:", error);
     res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
@@ -198,6 +216,7 @@ export const ClasseController = {
   deleteClasse,
   assignMatiereToClasse,
   assignProfesseurToClasse,
+  revokeProfesseurToClasse,
   getAllClasses,
   getClasseById,
   getStudentsInClasse,

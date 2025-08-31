@@ -78,6 +78,13 @@ export class AssignProfesseurToClasseCommand {
 }
 
 /**
+ * Command to revoke a Professor to a Classe.
+ */
+export class RevokeProfesseurToClasseCommand {
+  constructor(public classeId: string, public professeurId: string, public schoolId: string) {}
+}
+
+/**
  * Command to assign a Matiere (Subject) to a Classe.
  * This can also be used to create a new subject and link it.
  */

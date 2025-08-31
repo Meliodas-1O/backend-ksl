@@ -9,8 +9,9 @@ export class UpdateStudentCommandHandler implements ICommandHandler<UpdateStuden
 
   async execute(command: UpdateStudentCommand): Promise<Student> {
     const existingStudent = await this.repository.findStudentById(command.id);
+
     if (!existingStudent) {
-      throw new UserNotFoundError("Student not found");
+      throw new UserNotFoundError(`Student with ID : ${command.id}  not found`);
     }
     const commandStudent = command.student;
     const student = Student.updateStudent(

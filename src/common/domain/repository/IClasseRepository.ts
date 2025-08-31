@@ -59,6 +59,14 @@ export interface IClasseRepository extends IRepository<Classe> {
   assignProfesseur(classeId: string, professeurId: string, schoolId: string): Promise<Classe>;
 
   /**
+   * revoke a professor to a classe using the join table.
+   * @param classeId The ID of the classe.
+   * @param professeurId The ID of the professor.
+   * @returns A promise that resolves to the updated Classe.
+   */
+  revokeProfesseur(classeId: string, professeurId: string, schoolId: string): Promise<void>;
+
+  /**
    * Assigns a matiere (subject) to a classe.
    * @param classeId The ID of the classe.
    * @param matiereId The ID of the matiere.

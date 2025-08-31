@@ -4,11 +4,7 @@ import { authenticateToken } from "../middlewares/AuthenticateToken";
 
 const userRouter = Router();
 
-userRouter.put(
-  "/:schoolId/parents/:parentId",
-  authenticateToken,
-  UserController.updateSelfParent
-);
+userRouter.put("/:schoolId/parents/:parentId", authenticateToken, UserController.updateSelfParent);
 userRouter.put(
   "/:schoolId/admin-actions/parents/:parentId",
   authenticateToken,

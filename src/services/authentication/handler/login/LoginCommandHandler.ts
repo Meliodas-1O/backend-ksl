@@ -1,22 +1,23 @@
 import { ValidationError } from "../../../../common/application/dto/ValidationError";
 import { ICommandHandler } from "../../../../common/domain/contracts/ICommandHandler";
 import { IPasswordHasher } from "../../../../common/domain/contracts/IPasswordHasher";
-import { AppUser } from "../../../../common/domain/entities/AppUser";
 import { IUserRepository } from "../../../../common/domain/repository/IUserRepository";
 import { LoginCommand } from "./LoginCommand";
-import { Role } from "../../../../common/application/dto/Role";
 import { loginValidator } from "./LoginValidator";
-import { UserNotFoundError } from "../../../../common/application/dto/UserNotFoundError";
 import { IJwtService } from "../../../../common/domain/contracts/IJwtService";
 
-export class LoginCommandHandler implements ICommandHandler<LoginCommand, string> {
+interface tokenResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+export class LoginCommandHandler implements ICommandHandler<LoginCommand, tokenResponse> {
   constructor(
     private userRepository: IUserRepository,
     private passwordHasher: IPasswordHasher,
     private jwtService: IJwtService
   ) {}
 
-  async execute(command: LoginCommand): Promise<string> {
+  async execute(command: LoginCommand): Promise<tokenResponse> {
     // validate command here or before sending to mediator
     const errors = loginValidator.validateSafe(command);
     if (errors.length > 0) {
@@ -24,9 +25,9 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand, string
     }
 
     // Check if user exists are correct
-    const existingUser = await this.userRepository.findUserByEmailAndSchool(
+    const existingUser = await this.userRepository.findUserByEmailAndSchoolName(
       command.email,
-      command.schoolId
+      command.schoolName
     );
 
     if (!existingUser) {
@@ -42,7 +43,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand, string
       throw new ValidationError(["Wrong Email or Password"]);
     }
 
-    return this.jwtService.sign({
+    const accessToken: string = this.jwtService.sign({
       userId: existingUser.id,
       email: existingUser.getEmail(),
       role: existingUser.getRoles(),
@@ -50,5 +51,15 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand, string
       prenom: existingUser.getPrenom(),
       schoolId: existingUser.getSchoolId(),
     });
+    console.log("------------------------------------------------");
+    const refreshToken: string = this.jwtService.sign(
+      { userId: existingUser.id },
+      { expiresIn: "6h" }
+    );
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 }

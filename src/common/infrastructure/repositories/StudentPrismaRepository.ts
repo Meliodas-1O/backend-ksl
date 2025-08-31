@@ -11,10 +11,7 @@ export const studentPrismaRepository: IStudentRepository = {
       include: { parent: true, classe: true },
     });
   },
-  findStudentByClass: function (
-    classId: string,
-    schoolName: string
-  ): Promise<Student | null> {
+  findStudentByClass: function (classId: string, schoolName: string): Promise<Student | null> {
     throw new Error("Function not implemented.");
   },
   assignStudentToClass: function (
@@ -79,7 +76,16 @@ export const studentPrismaRepository: IStudentRepository = {
       console.log("req", request);
       const updated = await prisma.student.update({
         where: { id, schoolId: entity.schoolId },
-        include: { parent: true, classe: true },
+        include: {
+          parent: { select: { id: true, nom: true, prenom: true } },
+          classe: {
+            select: {
+              id: true,
+              nom: true,
+              niveau: true,
+            },
+          },
+        },
         data: request,
       });
       return updated;

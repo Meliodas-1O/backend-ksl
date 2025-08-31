@@ -14,6 +14,7 @@ import {
   GetDisciplinesInClasseQuery,
   AssignMatiereToClasseCommand,
   AssignProfesseurToClasseCommand,
+  RevokeProfesseurToClasseCommand,
 } from "./Commands";
 
 export class CreateClasseCommandHandler implements ICommandHandler<CreateClasseCommand, any> {
@@ -111,6 +112,19 @@ export class AssignProfesseurToClasseCommandHandler
 
   async execute(command: AssignProfesseurToClasseCommand): Promise<Classe> {
     return this.classeRepository.assignProfesseur(
+      command.classeId,
+      command.professeurId,
+      command.schoolId
+    );
+  }
+}
+export class RevokeProfesseurToClasseCommandHandler
+  implements ICommandHandler<RevokeProfesseurToClasseCommand, void>
+{
+  constructor(private classeRepository: IClasseRepository) {}
+
+  async execute(command: RevokeProfesseurToClasseCommand): Promise<void> {
+    return this.classeRepository.revokeProfesseur(
       command.classeId,
       command.professeurId,
       command.schoolId

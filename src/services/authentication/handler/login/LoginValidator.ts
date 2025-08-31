@@ -26,7 +26,7 @@ export const loginValidator = {
       errors.push("Password must be at least 6 characters.");
     }
 
-    if (!command.schoolId || typeof command.schoolId !== "string") {
+    if (!command.schoolName || typeof command.schoolName !== "string") {
       errors.push("Invalid school ID.");
     }
 

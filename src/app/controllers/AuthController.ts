@@ -22,6 +22,7 @@ import {
 import { ResetPasswordCommand } from "../../services/authentication/handler/resetPassword/ResetPasswordCommand";
 import { ApiError } from "../../common/application/dto/ApiError";
 import { DeleteUserCommand } from "../../services/authentication/handler/delete/DeleteUserCommand";
+import { RefreshTokenQuery } from "../../services/authentication/handler/refresh/RefreshTokenQuery";
 
 const register: RequestHandler = async (req, res) => {
   try {
@@ -29,7 +30,7 @@ const register: RequestHandler = async (req, res) => {
       email,
       password,
       roles,
-      schoolId,
+      schoolName,
       nom,
       prenom,
       telephone,
@@ -41,7 +42,7 @@ const register: RequestHandler = async (req, res) => {
       email,
       password,
       roles,
-      schoolId,
+      schoolName,
       nom,
       prenom,
       telephone,
@@ -60,16 +61,14 @@ const register: RequestHandler = async (req, res) => {
       roles,
       nom,
       prenom,
-      schoolId,
+      schoolName,
       telephone,
       profession,
       students,
       disciplineIds
     );
 
-    const result: AppUser = await mediator.send<RegisterCommand, AppUser>(
-      command
-    );
+    const result: AppUser = await mediator.send<RegisterCommand, AppUser>(command);
     res.status(StatusCode.CREATED).json(result);
   } catch (error: any) {
     console.error("Registration error:", error);
@@ -91,8 +90,8 @@ const register: RequestHandler = async (req, res) => {
 
 const login: RequestHandler = async (req, res) => {
   try {
-    const { email, password, schoolId } = req.body;
-    const bodyRequest: LoginRequest = { email, password, schoolId };
+    const { email, password, schoolName } = req.body;
+    const bodyRequest: LoginRequest = { email, password, schoolName: schoolName };
 
     const error = loginRequestValidator(bodyRequest);
     if (error) {
@@ -100,13 +99,28 @@ const login: RequestHandler = async (req, res) => {
       return;
     }
 
-    const command = new LoginCommand(email, password, schoolId);
-    const result: string = await mediator.send<LoginCommand, string>(command);
+    const command = new LoginCommand(email, password, schoolName);
+    const result: {
+      accessToken: string;
+      refreshToken: string;
+    } = await mediator.send<
+      LoginCommand,
+      {
+        accessToken: string;
+        refreshToken: string;
+      }
+    >(command);
     const loginResponse: LoginResponse = {
-      token: result,
+      token: result.accessToken,
       email: command.email,
-      schoolId: command.schoolId,
+      schoolId: command.schoolName,
     };
+    res.cookie("refreshToken", result.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     res.status(StatusCode.SUCCESS).json(loginResponse);
   } catch (error: any) {
     console.error("Login error:", error);
@@ -128,9 +142,9 @@ const login: RequestHandler = async (req, res) => {
 
 const resetPassword: RequestHandler = async (req, res) => {
   try {
-    const { schoolId, newPassword, oldPassword, email } = req.body;
+    const { schoolName, newPassword, oldPassword, email } = req.body;
     const bodyRequest: ResetPasswordRequest = {
-      schoolId,
+      schoolName,
       newPassword,
       oldPassword,
       email,
@@ -142,12 +156,7 @@ const resetPassword: RequestHandler = async (req, res) => {
       return;
     }
 
-    const command = new ResetPasswordCommand(
-      email,
-      oldPassword,
-      newPassword,
-      schoolId
-    );
+    const command = new ResetPasswordCommand(email, oldPassword, newPassword, schoolName);
     await mediator.send<ResetPasswordCommand, void>(command);
 
     res.status(StatusCode.SUCCESS).json({
@@ -172,19 +181,37 @@ const deleteUser: RequestHandler = async (req, res) => {
     const { userId } = req.params;
     const command = new DeleteUserCommand(userId);
     await mediator.send(command);
-    res
-      .status(StatusCode.SUCCESS)
-      .json({ message: "Course deleted successfully." });
+    res.status(StatusCode.SUCCESS).json({ message: "Course deleted successfully." });
   } catch (error: any) {
     console.error("Delete user error:", error);
     if (error instanceof UserNotFoundError) {
       res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
       return;
     }
-    res
-      .status(StatusCode.INTERNAL_SERVER_ERROR)
-      .json({ reason: "Internal server error." });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
 
-export const AuthController = { register, login, resetPassword, deleteUser };
+interface RequestWithCookies extends Request {
+  cookies: { [key: string]: string };
+}
+
+const refreshToken: RequestHandler = async (req: any, res) => {
+  const token = req.cookies?.refreshToken;
+
+  if (!token) {
+    res.status(StatusCode.UNAUTHORIZED).json({ message: "Refresh token not found" });
+    return;
+  }
+  try {
+    // Send mediator query
+    const command = new RefreshTokenQuery(token);
+    const accessToken = await mediator.send(command);
+    res.json({ accessToken });
+    return;
+  } catch (err) {
+    res.status(403).json({ message: "Invalid or expired refresh token" });
+  }
+};
+
+export const AuthController = { register, login, resetPassword, deleteUser, refreshToken };

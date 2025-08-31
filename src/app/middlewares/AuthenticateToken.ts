@@ -27,7 +27,7 @@ export const authenticateToken: RequestHandler = (
     return;
   }
 
-  const roles = ["ADMIN", "SURVEILLANT", "TEACHER", "PARENT"];
+  const roles = ["ADMIN", "SURVEILLANT", "TEACHER", "PARENT", "SUPER_ADMIN"];
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { role: string[] };
@@ -44,8 +44,8 @@ export const authenticateToken: RequestHandler = (
   } catch (err) {
     const error: ApiError = {
       reason: "Invalid or expired token",
-      statusCode: StatusCode.FORBIDDEN,
+      statusCode: StatusCode.UNAUTHORIZED,
     };
-    res.status(StatusCode.FORBIDDEN).json(error);
+    res.status(StatusCode.UNAUTHORIZED).json(error);
   }
 };

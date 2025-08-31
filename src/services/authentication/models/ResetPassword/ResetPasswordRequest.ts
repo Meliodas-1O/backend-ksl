@@ -2,7 +2,7 @@ import { ApiError } from "../../../../common/application/dto/ApiError";
 import { StatusCode } from "../../../../common/application/dto/StatusCode";
 
 export interface ResetPasswordRequest {
-  schoolId: string;
+  schoolName: string;
   newPassword: string;
   oldPassword: string;
   email: string;
@@ -31,7 +31,7 @@ export function resetPasswordRequestValidator(
     };
   }
 
-  if (!data.schoolId || typeof data.schoolId !== "string") {
+  if (!data.schoolName || typeof data.schoolName !== "string") {
     return {
       statusCode: StatusCode.BAD_REQUEST,
       reason: "School ID is required and must be a string.",
