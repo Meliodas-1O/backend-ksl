@@ -23,6 +23,11 @@ import { ResetPasswordCommand } from "../../services/authentication/handler/rese
 import { ApiError } from "../../common/application/dto/ApiError";
 import { DeleteUserCommand } from "../../services/authentication/handler/delete/DeleteUserCommand";
 import { RefreshTokenQuery } from "../../services/authentication/handler/refresh/RefreshTokenQuery";
+import {
+  GetParentByIdQuery,
+  GetTeacherByIdQuery,
+} from "../../services/schoolsvc/handler/SchoolQueries";
+import { NotFoundError } from "../../common/application/dto/NotFoundError";
 
 const register: RequestHandler = async (req, res) => {
   try {
@@ -30,7 +35,7 @@ const register: RequestHandler = async (req, res) => {
       email,
       password,
       roles,
-      schoolName,
+      schoolId,
       nom,
       prenom,
       telephone,
@@ -42,7 +47,7 @@ const register: RequestHandler = async (req, res) => {
       email,
       password,
       roles,
-      schoolName,
+      schoolId,
       nom,
       prenom,
       telephone,
@@ -61,7 +66,7 @@ const register: RequestHandler = async (req, res) => {
       roles,
       nom,
       prenom,
-      schoolName,
+      schoolId,
       telephone,
       profession,
       students,
@@ -181,7 +186,7 @@ const deleteUser: RequestHandler = async (req, res) => {
     const { userId } = req.params;
     const command = new DeleteUserCommand(userId);
     await mediator.send(command);
-    res.status(StatusCode.SUCCESS).json({ message: "Course deleted successfully." });
+    res.status(StatusCode.SUCCESS).json({ message: "User deleted successfully." });
   } catch (error: any) {
     console.error("Delete user error:", error);
     if (error instanceof UserNotFoundError) {
@@ -191,10 +196,6 @@ const deleteUser: RequestHandler = async (req, res) => {
     res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
   }
 };
-
-interface RequestWithCookies extends Request {
-  cookies: { [key: string]: string };
-}
 
 const refreshToken: RequestHandler = async (req: any, res) => {
   const token = req.cookies?.refreshToken;
@@ -214,4 +215,57 @@ const refreshToken: RequestHandler = async (req: any, res) => {
   }
 };
 
-export const AuthController = { register, login, resetPassword, deleteUser, refreshToken };
+const getPersonalInfo: RequestHandler = async (req: any, res) => {
+  const roleParam = req.params.role;
+  const schoolId = req.params.schoolId;
+  // Normalize roles to an array
+  const userRoles: string[] = Array.isArray(req.user?.role)
+    ? req.user.role
+    : req.user?.role
+    ? [req.user.role]
+    : [];
+
+  // Check for role access
+  if (!userRoles.includes(roleParam)) {
+    res.status(403).json({ message: "Rôle invalide" });
+    return;
+  }
+
+  // Handle specific roles
+  switch (roleParam) {
+    case "TEACHER":
+      const teacherQuery = new GetTeacherByIdQuery(req.user.userId, schoolId);
+      const teacherResult = await mediator.send(teacherQuery);
+
+      if (!teacherResult) {
+        res.status(404).json(`Teacher with ID ${req.user.userId} not found.`);
+      }
+
+      res.status(StatusCode.SUCCESS).json(teacherResult);
+      return;
+
+    case "PARENT":
+      const query = new GetParentByIdQuery(req.user.userId, schoolId);
+      const result = await mediator.send(query);
+
+      if (!result) {
+        throw new NotFoundError(`Parent with ID ${req.user.userId} not found.`);
+      }
+
+      res.status(StatusCode.SUCCESS).json(result);
+      return;
+
+    default:
+      res.status(400).json({ message: "Rôle non reconnu" });
+      return;
+  }
+};
+
+export const AuthController = {
+  register,
+  login,
+  resetPassword,
+  deleteUser,
+  refreshToken,
+  getPersonalInfo,
+};

@@ -18,9 +18,9 @@ export class RegisterCommandHandler implements ICommandHandler<RegisterCommand, 
     }
 
     // Check if user doesn't already exist
-    const existingUser = await this.userRepository.findUserByEmailAndSchoolName(
+    const existingUser = await this.userRepository.findUserByEmailAndSchoolId(
       command.email,
-      command.schoolName
+      command.schoolId
     );
 
     if (!existingUser) {
@@ -33,7 +33,7 @@ export class RegisterCommandHandler implements ICommandHandler<RegisterCommand, 
         command.email,
         hashedPassword,
         command.roles,
-        command.schoolName,
+        command.schoolId,
         command.nom,
         command.prenom,
         command.telephone,
@@ -70,7 +70,7 @@ export class RegisterCommandHandler implements ICommandHandler<RegisterCommand, 
       command.email,
       existingUser.getPassword(),
       combinedRoles,
-      command.schoolName,
+      command.schoolId,
       command.nom,
       command.prenom,
       command.telephone,

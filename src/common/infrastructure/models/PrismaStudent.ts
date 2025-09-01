@@ -1,5 +1,3 @@
-import { CreateStudentResponse } from "../../../services/studentsvc/models/Create/CreateStudentResponse";
-
 export interface PrismaStudent {
   id: string;
   schoolId: string | null;
@@ -23,7 +21,6 @@ export interface PrismaStudent {
 }
 
 export function MapPrismaStudentToDomain(prismaStudent: any): any {
-  console.log("je suis prismaStudent", prismaStudent);
   const studentDto: any = {
     id: prismaStudent.id,
     schoolId: prismaStudent.schoolId,

@@ -13,10 +13,10 @@ model AppUser {
   password    String
 
   schoolId    String?
-  School      School?      @relation(fields: [schoolId], references: [id])
+  School      School?      @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
-  nom         String?      // last name
-  prenom      String?      // first name
+  nom         String?
+  prenom      String?
   telephone   String?
   profession  String?
   biographie  String?
@@ -27,18 +27,14 @@ model AppUser {
 
   userRoles   UserRole[]
   children    Student[]    @relation("ParentChildren")
-  classes     ClasseProfesseur[] // Classes si l'utilisateur est un professeur
-  
-  // Relation inverse pour les cours
+  classes     ClasseProfesseur[]
   cours       Cours[]      @relation("ProfesseurCours")
   disciplines Discipline[] @relation("TeacherDisciplines")
-
 }
 
-
 model Role {
-  id        String      @id @default(uuid())
-  name      String      @unique
+  id        String    @id @default(uuid())
+  name      String    @unique
 
   userRoles UserRole[]
 }
@@ -47,24 +43,24 @@ model UserRole {
   userId String
   roleId String
 
-  user AppUser @relation(fields: [userId], references: [id])
-  role Role    @relation(fields: [roleId], references: [id])
+  user AppUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role    @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@id([userId, roleId])
 }
 
 model School {
-  id       String     @id @default(uuid())
-  name     String     @unique
+  id        String     @id @default(uuid())
+  name      String     @unique
   adresse   String?
   telephone String?
   email     String?
   siteWeb   String?
 
-  students Student[]
-  classes  Classe[]
-  users    AppUser[]
-  cours   Cours[]
+  students  Student[]
+  classes   Classe[]
+  users     AppUser[]
+  cours     Cours[]
 }
 
 model Student {
@@ -78,95 +74,88 @@ model Student {
   moyenne      Float
 
   schoolId     String?
-  School       School?    @relation(fields: [schoolId], references: [id])
+  School       School?    @relation(fields: [schoolId], references: [id], onDelete: SetNull)
 
   parentId     String?
-  parent       AppUser?   @relation("ParentChildren", fields: [parentId], references: [id])
+  parent       AppUser?   @relation("ParentChildren", fields: [parentId], references: [id], onDelete: SetNull)
 
   classeId     String
-  classe       Classe     @relation(fields: [classeId], references: [id])
+  classe       Classe     @relation(fields: [classeId], references: [id], onDelete: Cascade)
 
-  notes        Note[]     // Notes de l’élève
+  notes        Note[]
 }
 
 model Classe {
   id          String            @id @default(uuid())
   createdAt   DateTime          @default(now())
-  niveau      String            // Exemple : "6e", "Terminale"
-  nom         String            // Exemple : "A", "B", "C"
+  niveau      String
+  nom         String
 
   schoolId    String?
-  School      School?           @relation(fields: [schoolId], references: [id])
+  School      School?           @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
-  students    Student[]         // Élèves de la classe
-  professeurs ClasseProfesseur[] 
-  notes       Note[]            // Notes données dans cette classe
-  
-  cours       Cours[]           // Relation inverse pour les cours associés à la classe
+  students    Student[]
+  professeurs ClasseProfesseur[]
+  notes       Note[]
+  cours       Cours[]
 }
 
 model ClasseProfesseur {
   classeId      String
   professeurId  String
 
-  classe        Classe   @relation(fields: [classeId], references: [id])
-  professeur    AppUser  @relation(fields: [professeurId], references: [id])
+  classe        Classe   @relation(fields: [classeId], references: [id], onDelete: Cascade)
+  professeur    AppUser  @relation(fields: [professeurId], references: [id], onDelete: Cascade)
 
   @@id([classeId, professeurId])
 }
 
 model Discipline {
-  id           String    @id @default(uuid())
-  name         String    @unique
+  id         String    @id @default(uuid())
+  name       String    @unique
 
-  // Relations inverses
-  cours        Cours[]   @relation("DisciplineCours")
-  notes        Note[]    @relation("DisciplineNotes")
-  teachers AppUser[] @relation("TeacherDisciplines")
+  cours      Cours[]   @relation("DisciplineCours")
+  notes      Note[]    @relation("DisciplineNotes")
+  teachers   AppUser[] @relation("TeacherDisciplines")
 }
-
 
 model Note {
   id            String     @id @default(uuid())
   createdAt     DateTime   @default(now())
-  
-  classeId      String
-  classe        Classe     @relation(fields: [classeId], references: [id])
 
-  type          String     // Type de la note (ex : "DS", "Examen", etc.)
-  devoir        Boolean    // Est-ce un devoir ?
-  note          Float      // La note elle-même
-  date          DateTime   // La date de la note
-  appreciation  String?    // Appréciation de la note
-  coefficient   Float      // Coefficient de la note
-  
+  classeId      String
+  classe        Classe     @relation(fields: [classeId], references: [id], onDelete: Cascade)
+
+  type          String
+  devoir        Boolean
+  note          Float
+  date          DateTime
+  appreciation  String?
+  coefficient   Float
+
   disciplineId  String
-  discipline    Discipline @relation("DisciplineNotes", fields: [disciplineId], references: [id])
+  discipline    Discipline @relation("DisciplineNotes", fields: [disciplineId], references: [id], onDelete: Cascade)
 
   studentId     String
-  student       Student    @relation(fields: [studentId], references: [id])
-
+  student       Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
-
 
 model Cours {
-  id          String    @id @default(uuid())
-  createdAt   DateTime  @default(now())
-  
-  discipline  Discipline @relation("DisciplineCours", fields: [disciplineId], references: [id])
-  disciplineId String
-  
-  jour        String    // Jour du cours (ex : "Lundi", "Mardi")
-  heure       String    // Heure du cours (ex : "08:00", "14:00")
+  id            String     @id @default(uuid())
+  createdAt     DateTime   @default(now())
 
-  professeur  AppUser   @relation("ProfesseurCours", fields: [professeurId], references: [id])
-  professeurId String
-  
-  classe      Classe    @relation(fields: [classeId], references: [id])
-  classeId    String
+  disciplineId  String
+  discipline    Discipline @relation("DisciplineCours", fields: [disciplineId], references: [id], onDelete: Cascade)
 
-  schoolId    String
-  School      School           @relation(fields: [schoolId], references: [id])
+  jour          String
+  heure         String
+
+  professeurId  String
+  professeur    AppUser    @relation("ProfesseurCours", fields: [professeurId], references: [id], onDelete: Cascade)
+
+  classeId      String
+  classe        Classe     @relation(fields: [classeId], references: [id], onDelete: Cascade)
+
+  schoolId      String
+  School        School     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
-
-

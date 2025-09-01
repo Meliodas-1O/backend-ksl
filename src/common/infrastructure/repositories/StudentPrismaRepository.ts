@@ -45,7 +45,6 @@ export const studentPrismaRepository: IStudentRepository = {
     }
 
     try {
-      console.log("Data", data);
       const student = await prisma.student.create({
         data,
         include: { parent: true, classe: true },

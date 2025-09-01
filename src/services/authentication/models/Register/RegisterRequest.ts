@@ -9,7 +9,7 @@ export interface RegisterRequest {
   roles: Role[];
   nom: string;
   prenom: string;
-  schoolName: string;
+  schoolId: string;
   telephone?: string;
   profession?: string;
   students?: StudentDtoCreation[];
@@ -46,7 +46,7 @@ export function registerRequestValidator(data: Partial<RegisterRequest>): ApiErr
     };
   }
 
-  if (!data.schoolName || typeof data.schoolName !== "string") {
+  if (!data.schoolId || typeof data.schoolId !== "string") {
     return {
       statusCode: StatusCode.BAD_REQUEST,
       reason: " 'schoolId' field is required and must be a string.",

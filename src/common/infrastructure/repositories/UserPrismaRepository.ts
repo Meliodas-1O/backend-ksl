@@ -10,29 +10,18 @@ const prisma = new PrismaClient();
 export const userPrismaRepository: IUserRepository = {
   async create(user) {
     try {
-      const name = user.getSchoolId();
-
-      const school = await prisma.school.findUnique({
-        where: { name },
-      });
-
-      if (!school) {
-        throw new Error(`School with name ${name} not found`);
-      }
-
-      const schoolId = school.id;
-      const rolesRequest = [];
+      const schoolId = user.getSchoolId();
+      const rolesRequest: any[] = [];
 
       for (const role of user.getRoles()) {
-        // @ts-ignore
         rolesRequest.push({
           role: { connect: { name: role } },
         });
       }
 
-      const childrenRequest = [];
+      const childrenRequest: any[] = [];
+
       for (const student of user.getChildren()) {
-        // @ts-ignore
         childrenRequest.push({
           nom: student.nom,
           prenom: student.prenom,
@@ -64,7 +53,6 @@ export const userPrismaRepository: IUserRepository = {
         profession: user.getProfession() ?? "",
         disciplines: disciplineRequest,
       };
-
       const createdUser: any = await prisma.appUser.create({
         data: request,
         include: {
@@ -232,6 +220,29 @@ export const userPrismaRepository: IUserRepository = {
       },
     });
     const existingUser: AppUser = mapPrismaUserToDomain(appUser);
+    return existingUser;
+  },
+  findUserByEmailAndSchoolId: async function (
+    email: string,
+    schoolId: string
+  ): Promise<AppUser | null> {
+    const appUser: any | null = await prisma.appUser.findFirst({
+      where: {
+        email,
+        schoolId,
+      },
+      include: {
+        userRoles: {
+          include: { role: true },
+        },
+      },
+    });
+
+    if (!appUser) {
+      console.error(`No user found for email : ${email} and schoolId : ${schoolId}`);
+      return null;
+    }
+    const existingUser = mapPrismaUserToDomain(appUser);
     return existingUser;
   },
 };

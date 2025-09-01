@@ -8,7 +8,7 @@ export class RegisterCommand {
     public readonly roles: Role[],
     public nom: string,
     public prenom: string,
-    public readonly schoolName: string,
+    public readonly schoolId: string,
     public telephone: string | null,
     public profession: string | null,
     public students: StudentDtoCreation[],
