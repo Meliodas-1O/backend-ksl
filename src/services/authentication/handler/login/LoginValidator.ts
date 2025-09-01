@@ -19,7 +19,7 @@ export const loginValidator = {
     const errors: string[] = [];
 
     if (!this.isValidEmail(command.email)) {
-      errors.push("Invalid email format.");
+      // errors.push("Invalid email format.");
     }
 
     if (!this.isValidPassword(command.password)) {

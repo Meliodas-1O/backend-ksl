@@ -25,13 +25,20 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand, tokenR
     }
 
     // Check if user exists are correct
-    const existingUser = await this.userRepository.findUserByEmailAndSchoolName(
+    let existingUser = await this.userRepository.findUserByEmailAndSchoolName(
       command.email,
       command.schoolName
     );
 
     if (!existingUser) {
-      throw new ValidationError(["Wrong Email or Password"]);
+      existingUser = await this.userRepository.findUserByPhoneNumberAndSchoolName(
+        command.email,
+        command.schoolName
+      );
+    }
+
+    if (!existingUser) {
+      throw new ValidationError(["Wrong Email/Number or Password"]);
     }
 
     const isValidEmail: boolean = await this.passwordHasher.compare(
@@ -56,7 +63,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand, tokenR
     });
     const refreshToken: string = this.jwtService.sign(
       { userId: existingUser.id },
-      { expiresIn: "6h" }
+      { expiresIn: "1h" }
     );
 
     return {

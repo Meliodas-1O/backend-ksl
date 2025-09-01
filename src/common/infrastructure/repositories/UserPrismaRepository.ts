@@ -245,4 +245,37 @@ export const userPrismaRepository: IUserRepository = {
     const existingUser = mapPrismaUserToDomain(appUser);
     return existingUser;
   },
+  findUserByPhoneNumberAndSchoolName: async function (
+    phone: string,
+    schoolName: string
+  ): Promise<AppUser | null> {
+    const school = await prisma.school.findUnique({
+      where: { name: schoolName },
+    });
+
+    if (!school) {
+      console.error(`School with name ${schoolName} not found`);
+      return null;
+    }
+
+    const schoolId = school.id;
+    const appUser: any | null = await prisma.appUser.findFirst({
+      where: {
+        telephone: phone,
+        schoolId,
+      },
+      include: {
+        userRoles: {
+          include: { role: true },
+        },
+      },
+    });
+
+    if (!appUser) {
+      console.error(`No user found for phone : ${phone} and schoolName : ${schoolName}`);
+      return null;
+    }
+    const existingUser = mapPrismaUserToDomain(appUser);
+    return existingUser;
+  },
 };
