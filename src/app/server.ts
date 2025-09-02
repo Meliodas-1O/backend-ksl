@@ -503,7 +503,7 @@ mediator.register<CreateDisciplineCommand>(
 
 const allowedOrigins = [
   "https://seekids.net",
-  "https://client2.seekids.net",
+  "https://test.seekids.net",
   "http://localhost:8080",
   // add other known client origins here
 ];
