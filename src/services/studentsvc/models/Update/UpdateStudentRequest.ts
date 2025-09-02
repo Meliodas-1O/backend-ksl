@@ -32,8 +32,6 @@ export function validateStudentData(data: any): ApiError | null {
   // Validate dateOfBirth
   const dob = new Date(data.dateOfBirth);
   const now = new Date();
-  const minBirthDate = new Date();
-  minBirthDate.setFullYear(now.getFullYear() - 3); // Person must be at least 3 years old
 
   if (isNaN(dob.getTime())) {
     // Check if date is valid
@@ -47,13 +45,6 @@ export function validateStudentData(data: any): ApiError | null {
     return {
       statusCode: StatusCode.BAD_REQUEST,
       reason: "'dateOfBirth' cannot be in the future.",
-    };
-  }
-  if (dob > minBirthDate) {
-    // Enforce minimum age (e.g., 3 years old)
-    return {
-      statusCode: StatusCode.BAD_REQUEST,
-      reason: "'dateOfBirth' indicates the person is too young. Must be at least 3 years old.",
     };
   }
 

@@ -38,7 +38,7 @@ classeRouter.put(
   ClasseController.assignProfesseurToClasse
 );
 
-// Assign a professor to a classe
+// Revoke a professor to a classe
 classeRouter.put(
   "/:schoolId/classes/:classeId/revokeTeacher",
   authenticateToken,

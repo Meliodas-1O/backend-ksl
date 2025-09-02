@@ -38,7 +38,6 @@ const updateStudentById: RequestHandler = async (req, res) => {
     }
 
     const command = new UpdateStudentCommand(id, data);
-    console.log("comm", command);
     command.student.classeId = data.classeId ?? null;
     command.student.parentId = data.parentId ?? null;
     const updated = await mediator.send(command);
