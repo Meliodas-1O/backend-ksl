@@ -41,8 +41,8 @@ export class UpdateSelfParentQuery {
     public prenom: string,
     public email: string,
     public telephone: string,
-    public adresse: string,
     public profession: string,
+    public adresse: string,
     public schoolId: string
   ) {}
 }

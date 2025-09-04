@@ -269,6 +269,11 @@ export const coursPrismaRepository: ICoursRepository = {
             id: true,
             nom: true,
             niveau: true,
+            _count: {
+              select: {
+                students: true,
+              },
+            },
           },
         },
       },
@@ -285,7 +290,10 @@ export const coursPrismaRepository: ICoursRepository = {
         course.id,
         course.discipline,
         course.professeur,
-        course.classe
+        {
+          ...course.classe,
+          effectif: course.classe._count.students,
+        }
       )
     );
   },

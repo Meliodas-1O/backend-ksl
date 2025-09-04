@@ -150,6 +150,7 @@ export const userPrismaRepository: IUserRepository = {
   updateParent: async function (id: string, parent: any, schoolId: string): Promise<void> {
     try {
       // Update the parent in the database using Prisma
+
       await prisma.appUser.update({
         where: {
           id, // The parent's unique ID

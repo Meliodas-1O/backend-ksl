@@ -53,7 +53,6 @@ export const classePrismaRepository: IClasseRepository = {
     const classeWithProfessors = await prisma.classeProfesseur.findMany({
       where: { classeId },
     });
-    console.log("classW", classeWithProfessors);
     const professeurs = [];
     for (const profClass of classeWithProfessors) {
       const prof = await prisma.appUser.findFirst({
@@ -133,7 +132,6 @@ export const classePrismaRepository: IClasseRepository = {
       },
     });
     if (existingRelation) {
-      console.log("exx", existingRelation);
       return updatedClasse;
     }
 

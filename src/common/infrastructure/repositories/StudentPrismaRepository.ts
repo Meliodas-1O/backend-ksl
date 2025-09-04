@@ -72,7 +72,6 @@ export const studentPrismaRepository: IStudentRepository = {
       if (entity.classe != "") {
         request.classeId = entity.classe;
       }
-      console.log("req", request);
       const updated = await prisma.student.update({
         where: { id, schoolId: entity.schoolId },
         include: {

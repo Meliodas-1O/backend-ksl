@@ -9,25 +9,13 @@ const coursRouter = Router();
 // ---------------------------------------------
 
 // Create a new course
-coursRouter.post(
-  "/:schoolId/cours",
-  authenticateToken,
-  CoursController.createCours
-);
+coursRouter.post("/:schoolId/cours", authenticateToken, CoursController.createCours);
 
 // Update a course by ID
-coursRouter.put(
-  "/:schoolId/cours/:coursId",
-  authenticateToken,
-  CoursController.updateCours
-);
+coursRouter.put("/:schoolId/cours/:coursId", authenticateToken, CoursController.updateCours);
 
 // Delete a course by ID
-coursRouter.delete(
-  "/:schoolId/cours/:coursId",
-  authenticateToken,
-  CoursController.deleteCours
-);
+coursRouter.delete("/:schoolId/cours/:coursId", authenticateToken, CoursController.deleteCours);
 
 // Assign a professor to a course
 coursRouter.post(
@@ -48,18 +36,10 @@ coursRouter.post(
 // ---------------------------------------------
 
 // Get all courses in a school
-coursRouter.get(
-  "/:schoolId/cours",
-  authenticateToken,
-  CoursController.getAllCours
-);
+coursRouter.get("/:schoolId/cours", authenticateToken, CoursController.getAllCours);
 
 // Get a course by its ID
-coursRouter.get(
-  "/:schoolId/cours/:coursId",
-  authenticateToken,
-  CoursController.getCoursById
-);
+coursRouter.get("/:schoolId/cours/:coursId", authenticateToken, CoursController.getCoursById);
 
 // Get courses by professor
 coursRouter.get(
@@ -76,11 +56,7 @@ coursRouter.get(
 );
 
 // Get courses by day (e.g., Monday, Tuesday)
-coursRouter.get(
-  "/:schoolId/cours/day/:day",
-  authenticateToken,
-  CoursController.getCoursByDay
-);
+coursRouter.get("/:schoolId/cours/day/:day", authenticateToken, CoursController.getCoursByDay);
 
 // Get courses by day and hour (e.g., Monday, 10 AM)
 coursRouter.get(

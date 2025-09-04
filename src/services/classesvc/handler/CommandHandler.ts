@@ -21,9 +21,6 @@ export class CreateClasseCommandHandler implements ICommandHandler<CreateClasseC
   constructor(private classeRepository: IClasseRepository) {}
 
   async execute(command: CreateClasseCommand): Promise<any> {
-    console.log("schoolId", command.schoolId);
-    console.log("nom", command.nom);
-    console.log("niveau", command.niveau);
     const classe = Classe.createClasse(command.niveau, command.nom, command.schoolId);
     return this.classeRepository.create(classe);
   }
