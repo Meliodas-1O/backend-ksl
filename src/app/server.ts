@@ -168,6 +168,25 @@ import coursRouter from "./routes/CoursRouter";
 import { UpdateSchoolQuery } from "../services/schoolsvc/handler/UpdateSchool/UpdateSchoolQuery";
 import { UpdateSchoolQueryHandler } from "../services/schoolsvc/handler/UpdateSchool/UpdateSchoolQueryHandler";
 import studentAttendanceRouter from "./routes/StudentAttendanceRouter";
+import { studentAttendancePrismaRepository } from "../common/infrastructure/repositories/StudentAttendancePrismaRepository";
+import {
+  CreateStudentAttendanceCommandHandler,
+  UpdateStudentAttendanceCommandHandler,
+  DeleteStudentAttendanceCommandHandler,
+  FindStudentAttendanceByIdQueryHandler,
+  FindStudentAttendanceByStudentIdQueryHandler,
+  FindStudentAttendanceByDisciplineIdQueryHandler,
+  FindStudentAttendanceByTypeQueryHandler,
+} from "../services/studentsvc/handler/Attendances/StudentAttendanceCommandHandlers";
+import {
+  CreateStudentAttendanceCommand,
+  UpdateStudentAttendanceCommand,
+  DeleteStudentAttendanceCommand,
+  FindStudentAttendanceByIdQuery,
+  FindStudentAttendanceByStudentIdQuery,
+  FindStudentAttendanceByDisciplineIdQuery,
+  FindStudentAttendanceByTypeQuery,
+} from "../services/studentsvc/handler/Attendances/StudentAttendanceCommandsAndQueries";
 
 config();
 
@@ -181,6 +200,7 @@ const classRepository: IClasseRepository = classePrismaRepository;
 const coursRepository: ICoursRepository = coursPrismaRepository;
 const disciplineRepository: IDisciplineRepository = disciplinePrismaRepository;
 const adminRepository: IAdminRepository = adminPrismaRepository;
+const studentAttendanceRepository = studentAttendancePrismaRepository;
 
 // Add services
 const pwdHasher: IPasswordHasher = passwordHasher;
@@ -500,6 +520,51 @@ mediator.register<CreateDisciplineCommand>(
   CreateDisciplineCommand.name,
   new CreateDisciplineCommandHandler(adminRepository)
 );
+
+// ---------------------------------------------
+// Register StudentAttendance Command Handlers
+// ---------------------------------------------
+mediator.register<CreateStudentAttendanceCommand>(
+  CreateStudentAttendanceCommand.name,
+  new CreateStudentAttendanceCommandHandler(
+    studentAttendanceRepository,
+    studentRepository
+  )
+);
+mediator.register<UpdateStudentAttendanceCommand>(
+  UpdateStudentAttendanceCommand.name,
+  new UpdateStudentAttendanceCommandHandler(
+    studentAttendanceRepository,
+    studentRepository
+  )
+);
+mediator.register<DeleteStudentAttendanceCommand>(
+  DeleteStudentAttendanceCommand.name,
+  new DeleteStudentAttendanceCommandHandler(studentAttendanceRepository)
+);
+
+// ---------------------------------------------
+// Register StudentAttendance Query Handlers
+// ---------------------------------------------
+mediator.register<FindStudentAttendanceByIdQuery>(
+  FindStudentAttendanceByIdQuery.name,
+  new FindStudentAttendanceByIdQueryHandler(studentAttendanceRepository)
+);
+mediator.register<FindStudentAttendanceByStudentIdQuery>(
+  FindStudentAttendanceByStudentIdQuery.name,
+  new FindStudentAttendanceByStudentIdQueryHandler(studentAttendanceRepository)
+);
+mediator.register<FindStudentAttendanceByDisciplineIdQuery>(
+  FindStudentAttendanceByDisciplineIdQuery.name,
+  new FindStudentAttendanceByDisciplineIdQueryHandler(
+    studentAttendanceRepository
+  )
+);
+mediator.register<FindStudentAttendanceByTypeQuery>(
+  FindStudentAttendanceByTypeQuery.name,
+  new FindStudentAttendanceByTypeQueryHandler(studentAttendanceRepository)
+);
+
 // #endregion
 
 const allowedOrigins = [
