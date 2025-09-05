@@ -146,7 +146,10 @@ export const schoolPrismaRepository: ISchoolRepository = {
   },
 
   // Specific methods to get one parent, teacher, classe, admin
-  async findStudentById(studentId: string, schoolId: string): Promise<any | null> {
+  async findStudentById(
+    studentId: string,
+    schoolId: string
+  ): Promise<any | null> {
     return prisma.student.findFirst({
       where: {
         id: studentId,
@@ -165,7 +168,10 @@ export const schoolPrismaRepository: ISchoolRepository = {
     });
   },
 
-  async findTeacherById(teacherId: string, schoolId: string): Promise<any | null> {
+  async findTeacherById(
+    teacherId: string,
+    schoolId: string
+  ): Promise<any | null> {
     const teacher = await prisma.appUser.findFirst({
       where: {
         id: teacherId,
@@ -212,7 +218,10 @@ export const schoolPrismaRepository: ISchoolRepository = {
     };
   },
 
-  async findParentById(parentId: string, schoolId: string): Promise<any | null> {
+  async findParentById(
+    parentId: string,
+    schoolId: string
+  ): Promise<any | null> {
     return prisma.appUser.findFirst({
       where: {
         id: parentId,
@@ -236,13 +245,18 @@ export const schoolPrismaRepository: ISchoolRepository = {
         children: {
           include: {
             classe: true,
+            attendances: true,
+            notes: true,
           },
         },
       },
     });
   },
 
-  async findClasseById(classeId: string, schoolId: string): Promise<any | null> {
+  async findClasseById(
+    classeId: string,
+    schoolId: string
+  ): Promise<any | null> {
     return prisma.classe.findFirst({
       where: {
         id: classeId,

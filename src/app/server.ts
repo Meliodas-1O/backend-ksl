@@ -167,6 +167,7 @@ import { RefreshTokenQueryHandler } from "../services/authentication/handler/ref
 import coursRouter from "./routes/CoursRouter";
 import { UpdateSchoolQuery } from "../services/schoolsvc/handler/UpdateSchool/UpdateSchoolQuery";
 import { UpdateSchoolQueryHandler } from "../services/schoolsvc/handler/UpdateSchool/UpdateSchoolQueryHandler";
+import studentAttendanceRouter from "./routes/StudentAttendanceRouter";
 
 config();
 
@@ -533,6 +534,7 @@ app.use("/api/schools", classeRouter);
 app.use("/api/schools", disciplineRouter);
 app.use("/api/schools", coursRouter);
 app.use("/api/schools", userRouter);
+app.use("/api/schools", studentAttendanceRouter);
 app.use("/api/admin-actions", adminRouter);
 
 // ✅ Simple hello route
@@ -542,4 +544,6 @@ app.get("/", (req, res) => {
 
 const port = Number(process.env.PORT) || 3000;
 
-app.listen(port, "0.0.0.0", () => console.log(`🚀 Server running on port ${port}`));
+app.listen(port, "0.0.0.0", () =>
+  console.log(`🚀 Server running on port ${port}`)
+);

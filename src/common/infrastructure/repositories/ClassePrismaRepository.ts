@@ -20,7 +20,10 @@ export const classePrismaRepository: IClasseRepository = {
    * @param classeId The ID of the classe to find.
    * @returns A promise that resolves to the Classe, or null if not found.
    */
-  findById: async function (classeId: string, schoolId: string): Promise<Classe | null> {
+  findById: async function (
+    classeId: string,
+    schoolId: string
+  ): Promise<Classe | null> {
     const classe = await prisma.classe.findUnique({
       where: { id: classeId, schoolId },
     });
@@ -33,7 +36,10 @@ export const classePrismaRepository: IClasseRepository = {
    * @param classeId The ID of the classe.
    * @returns A promise that resolves to an array of Students.
    */
-  findStudentsByClasse: async function (classeId: string, schoolId: string): Promise<any[]> {
+  findStudentsByClasse: async function (
+    classeId: string,
+    schoolId: string
+  ): Promise<any[]> {
     const classeWithStudents = await prisma.classe.findUnique({
       where: { id: classeId, schoolId },
       include: {
@@ -49,7 +55,10 @@ export const classePrismaRepository: IClasseRepository = {
    * @param classeId The ID of the classe.
    * @returns A promise that resolves to an array of AppUser (professors).
    */
-  findProfessorsByClasse: async function (classeId: string, schoolId: string): Promise<any[]> {
+  findProfessorsByClasse: async function (
+    classeId: string,
+    schoolId: string
+  ): Promise<any[]> {
     const classeWithProfessors = await prisma.classeProfesseur.findMany({
       where: { classeId },
     });
@@ -73,7 +82,10 @@ export const classePrismaRepository: IClasseRepository = {
    * @param classeId The ID of the classe.
    * @returns A promise that resolves to an array of AppUser (parents).
    */
-  findParentsByClasse: async function (classeId: string, schoolId: string): Promise<any[]> {
+  findParentsByClasse: async function (
+    classeId: string,
+    schoolId: string
+  ): Promise<any[]> {
     const parents = await prisma.appUser.findMany({
       where: {
         schoolId,
@@ -95,7 +107,10 @@ export const classePrismaRepository: IClasseRepository = {
    * @param classeId The ID of the classe.
    * @returns A promise that resolves to an array of Discipline.
    */
-  findDisciplinesByClasse: async function (classeId: string, schoolId: string): Promise<any[]> {
+  findDisciplinesByClasse: async function (
+    classeId: string,
+    schoolId: string
+  ): Promise<any[]> {
     const classe = await prisma.classe.findUnique({
       where: { id: classeId, schoolId },
       include: {
@@ -112,15 +127,22 @@ export const classePrismaRepository: IClasseRepository = {
     }
 
     // Flatten the array of disciplines from all subjects
-    const allDisciplines = classe.cours.flatMap((matiere) => matiere.discipline);
+    const allDisciplines = classe.cours.flatMap(
+      (matiere) => matiere.discipline
+    );
 
     // Filter for unique disciplines using a Set to avoid duplicates
-    const uniqueDisciplines = Array.from(new Map(allDisciplines.map((d) => [d.id, d])).values());
+    const uniqueDisciplines = Array.from(
+      new Map(allDisciplines.map((d) => [d.id, d])).values()
+    );
 
     return uniqueDisciplines;
   },
 
-  assignProfesseur: async function (classeId: string, professeurId: string): Promise<any> {
+  assignProfesseur: async function (
+    classeId: string,
+    professeurId: string
+  ): Promise<any> {
     // This creates a record in the ClasseProfesseur join table
     const updatedClasse = await prisma.classe.findUnique({
       where: { id: classeId },
@@ -200,7 +222,10 @@ export const classePrismaRepository: IClasseRepository = {
    * @param updateData The data to update (nom and/or niveau).
    * @returns A promise that resolves to the updated Classe, or null if not found.
    */
-  update: async function (classeId: string, updateData: Classe): Promise<any | null> {
+  update: async function (
+    classeId: string,
+    updateData: Classe
+  ): Promise<any | null> {
     try {
       const updatedClasse = await prisma.classe.update({
         where: { id: classeId },

@@ -83,6 +83,18 @@ model Student {
   classe       Classe     @relation(fields: [classeId], references: [id], onDelete: Cascade)
 
   notes        Note[]
+  attendances   StudentAttendance[]
+}
+
+model StudentAttendance {
+  id           String    @id @default(uuid())
+  studentId    String
+  disciplineId String
+  type         String
+  date         DateTime
+
+  student    Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  discipline Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
 }
 
 model Classe {
@@ -117,6 +129,7 @@ model Discipline {
   cours      Cours[]   @relation("DisciplineCours")
   notes      Note[]    @relation("DisciplineNotes")
   teachers   AppUser[] @relation("TeacherDisciplines")
+  attendances StudentAttendance[]
 }
 
 model Note {
@@ -159,3 +172,4 @@ model Cours {
   schoolId      String
   School        School     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
+
