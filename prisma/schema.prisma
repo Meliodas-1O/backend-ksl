@@ -30,6 +30,7 @@ model AppUser {
   classes     ClasseProfesseur[]
   cours       Cours[]      @relation("ProfesseurCours")
   disciplines Discipline[] @relation("TeacherDisciplines")
+  notes       Note[]      @relation("ProfesseurNote")
 }
 
 model Role {
@@ -61,6 +62,7 @@ model School {
   classes   Classe[]
   users     AppUser[]
   cours     Cours[]
+  notes     Note[]
 }
 
 model Student {
@@ -151,6 +153,12 @@ model Note {
 
   studentId     String
   student       Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  professeurId  String
+  professeur    AppUser    @relation("ProfesseurNote", fields: [professeurId], references: [id], onDelete: Cascade)
+
+  schoolId      String
+  School        School     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model Cours {

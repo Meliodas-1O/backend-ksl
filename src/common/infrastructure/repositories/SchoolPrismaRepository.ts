@@ -241,7 +241,15 @@ export const schoolPrismaRepository: ISchoolRepository = {
                 discipline: true,
               },
             },
-            notes: true,
+            notes: {
+              include: {
+                discipline: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
           },
         },
       },

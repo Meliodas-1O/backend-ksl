@@ -187,6 +187,32 @@ import {
   FindStudentAttendanceByDisciplineIdQuery,
   FindStudentAttendanceByTypeQuery,
 } from "../services/studentsvc/handler/Attendances/StudentAttendanceCommandsAndQueries";
+import {
+  CreateNoteCommandHandler,
+  UpdateNoteCommandHandler,
+  DeleteNoteCommandHandler,
+  FindNoteByIdQueryHandler,
+  FindNotesByStudentIdQueryHandler,
+  FindNotesByClasseIdQueryHandler,
+  FindNotesByDisciplineIdQueryHandler,
+  FindNotesByTeacherIdQueryHandler,
+  FindNotesBySchoolIdQueryHandler,
+} from "../services/notesvc/NoteCommandHandler";
+import {
+  CreateNoteCommand,
+  UpdateNoteCommand,
+  DeleteNoteCommand,
+  FindNoteByIdQuery,
+  FindNotesByStudentIdQuery,
+  FindNotesByClasseIdQuery,
+  FindNotesByDisciplineIdQuery,
+  FindNotesByTeacherIdQuery,
+  FindNotesBySchoolIdQuery,
+} from "../services/notesvc/NoteCommands";
+import { IStudentAttendanceRepository } from "../common/domain/repository/IStudentAttendanceRepository";
+import { INoteRepository } from "../common/domain/repository/INoteRepository";
+import { NotePrismaRepository } from "../common/infrastructure/repositories/NotePrismaRepository";
+import noteRouter from "./routes/NoteRouter";
 
 config();
 
@@ -200,8 +226,8 @@ const classRepository: IClasseRepository = classePrismaRepository;
 const coursRepository: ICoursRepository = coursPrismaRepository;
 const disciplineRepository: IDisciplineRepository = disciplinePrismaRepository;
 const adminRepository: IAdminRepository = adminPrismaRepository;
-const studentAttendanceRepository = studentAttendancePrismaRepository;
-
+const studentAttendanceRepository: IStudentAttendanceRepository = studentAttendancePrismaRepository;
+const noteRepository: INoteRepository = NotePrismaRepository;
 // Add services
 const pwdHasher: IPasswordHasher = passwordHasher;
 const jwtSvc: IJwtService = jwtService;
@@ -526,17 +552,11 @@ mediator.register<CreateDisciplineCommand>(
 // ---------------------------------------------
 mediator.register<CreateStudentAttendanceCommand>(
   CreateStudentAttendanceCommand.name,
-  new CreateStudentAttendanceCommandHandler(
-    studentAttendanceRepository,
-    studentRepository
-  )
+  new CreateStudentAttendanceCommandHandler(studentAttendanceRepository, studentRepository)
 );
 mediator.register<UpdateStudentAttendanceCommand>(
   UpdateStudentAttendanceCommand.name,
-  new UpdateStudentAttendanceCommandHandler(
-    studentAttendanceRepository,
-    studentRepository
-  )
+  new UpdateStudentAttendanceCommandHandler(studentAttendanceRepository, studentRepository)
 );
 mediator.register<DeleteStudentAttendanceCommand>(
   DeleteStudentAttendanceCommand.name,
@@ -556,13 +576,72 @@ mediator.register<FindStudentAttendanceByStudentIdQuery>(
 );
 mediator.register<FindStudentAttendanceByDisciplineIdQuery>(
   FindStudentAttendanceByDisciplineIdQuery.name,
-  new FindStudentAttendanceByDisciplineIdQueryHandler(
-    studentAttendanceRepository
-  )
+  new FindStudentAttendanceByDisciplineIdQueryHandler(studentAttendanceRepository)
 );
 mediator.register<FindStudentAttendanceByTypeQuery>(
   FindStudentAttendanceByTypeQuery.name,
   new FindStudentAttendanceByTypeQueryHandler(studentAttendanceRepository)
+);
+
+// ---------------------------------------------
+// Register Note Command Handlers (Mutations)
+// ---------------------------------------------
+mediator.register<CreateNoteCommand>(
+  CreateNoteCommand.name,
+  new CreateNoteCommandHandler(
+    noteRepository,
+    studentRepository,
+    disciplineRepository,
+    classRepository
+  )
+);
+
+mediator.register<UpdateNoteCommand>(
+  UpdateNoteCommand.name,
+  new UpdateNoteCommandHandler(
+    noteRepository,
+    studentRepository,
+    disciplineRepository,
+    classRepository
+  )
+);
+
+mediator.register<DeleteNoteCommand>(
+  DeleteNoteCommand.name,
+  new DeleteNoteCommandHandler(noteRepository)
+);
+
+// ---------------------------------------------
+// Register Note Query Handlers (Queries)
+// ---------------------------------------------
+mediator.register<FindNoteByIdQuery>(
+  FindNoteByIdQuery.name,
+  new FindNoteByIdQueryHandler(noteRepository)
+);
+
+mediator.register<FindNotesByStudentIdQuery>(
+  FindNotesByStudentIdQuery.name,
+  new FindNotesByStudentIdQueryHandler(noteRepository)
+);
+
+mediator.register<FindNotesByClasseIdQuery>(
+  FindNotesByClasseIdQuery.name,
+  new FindNotesByClasseIdQueryHandler(noteRepository)
+);
+
+mediator.register<FindNotesByDisciplineIdQuery>(
+  FindNotesByDisciplineIdQuery.name,
+  new FindNotesByDisciplineIdQueryHandler(noteRepository)
+);
+
+mediator.register<FindNotesByTeacherIdQuery>(
+  FindNotesByTeacherIdQuery.name,
+  new FindNotesByTeacherIdQueryHandler(noteRepository)
+);
+
+mediator.register<FindNotesBySchoolIdQuery>(
+  FindNotesBySchoolIdQuery.name,
+  new FindNotesBySchoolIdQueryHandler(noteRepository)
 );
 
 // #endregion
@@ -600,6 +679,7 @@ app.use("/api/schools", disciplineRouter);
 app.use("/api/schools", coursRouter);
 app.use("/api/schools", userRouter);
 app.use("/api/schools", studentAttendanceRouter);
+app.use("/api/schools", noteRouter);
 app.use("/api/admin-actions", adminRouter);
 
 // ✅ Simple hello route
@@ -609,6 +689,4 @@ app.get("/", (req, res) => {
 
 const port = Number(process.env.PORT) || 3000;
 
-app.listen(port, "0.0.0.0", () =>
-  console.log(`🚀 Server running on port ${port}`)
-);
+app.listen(port, "0.0.0.0", () => console.log(`🚀 Server running on port ${port}`));
