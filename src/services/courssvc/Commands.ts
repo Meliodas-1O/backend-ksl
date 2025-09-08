@@ -97,3 +97,11 @@ export class GetAllDisciplinesQuery {
 export class GetDisciplineByIdQuery {
   constructor(public schoolId: string, public id: string) {}
 }
+
+export class AssignDisciplinesToTeacherCommand {
+  constructor(public readonly teacherId: string, public readonly disciplineIds: string[]) {}
+}
+
+export class RevokeDisciplinesFromTeacherCommand {
+  constructor(public readonly teacherId: string, public readonly disciplineIds: string[]) {}
+}

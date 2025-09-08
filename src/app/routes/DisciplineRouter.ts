@@ -15,4 +15,16 @@ disciplineRouter.get(
   DisciplineController.getDisciplineById
 );
 
+disciplineRouter.put(
+  "/:schoolId/assign-disciplines",
+  authenticateToken,
+  DisciplineController.assignDisciplinesToTeacher
+);
+
+disciplineRouter.put(
+  "/:schoolId/revoke-disciplines",
+  authenticateToken,
+  DisciplineController.revokeDisciplinesToTeacher
+);
+
 export default disciplineRouter;

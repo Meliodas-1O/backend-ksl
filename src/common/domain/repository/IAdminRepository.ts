@@ -14,4 +14,5 @@ export interface IAdminRepository {
   removeRoleFromUser(userId: string, roleId: string): Promise<any>;
   findSchoolWithName(name: string): Promise<any | null>;
   createDiscipline(name: string): Promise<any>;
+  findAllisciplines(): Promise<any>;
 }

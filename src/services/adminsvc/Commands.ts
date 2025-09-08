@@ -63,3 +63,7 @@ export class GetAllRolesQuery {}
 export class CreateDisciplineCommand {
   constructor(public name: string) {}
 }
+
+export class GetDisciplinesQuery {
+  constructor() {}
+}

@@ -20,6 +20,8 @@ import {
   GetCoursByWeekQuery,
   GetAllDisciplinesQuery,
   GetDisciplineByIdQuery,
+  AssignDisciplinesToTeacherCommand,
+  RevokeDisciplinesFromTeacherCommand,
 } from "./Commands";
 import { Cours } from "../../common/domain/entities/Cours";
 import { IDisciplineRepository } from "../../common/domain/repository/IDisciplineRepository";
@@ -214,5 +216,29 @@ export class GetDisciplineByIdQueryHandler implements IQueryHandler<GetDisciplin
 
   async execute(query: GetDisciplineByIdQuery): Promise<any> {
     return this.disciplineRepository.findDisciplineById(query.id, query.schoolId);
+  }
+}
+
+export class AssignDisciplinesToTeacherCommandHandler
+  implements ICommandHandler<AssignDisciplinesToTeacherCommand>
+{
+  constructor(private readonly appUserRepository: IDisciplineRepository) {}
+
+  async execute(command: AssignDisciplinesToTeacherCommand): Promise<any> {
+    const { teacherId, disciplineIds } = command;
+
+    return this.appUserRepository.assignDisciplineToTeacher(teacherId, disciplineIds);
+  }
+}
+
+export class RevokeDisciplinesFromTeacherCommandHandler
+  implements ICommandHandler<RevokeDisciplinesFromTeacherCommand>
+{
+  constructor(private readonly appUserRepository: IDisciplineRepository) {}
+
+  async execute(command: RevokeDisciplinesFromTeacherCommand): Promise<any> {
+    const { teacherId, disciplineIds } = command;
+
+    return this.appUserRepository.revokeDisciplineToTeacher(teacherId, disciplineIds);
   }
 }

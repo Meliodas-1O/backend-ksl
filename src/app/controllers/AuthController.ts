@@ -43,9 +43,11 @@ const register: RequestHandler = async (req, res) => {
       students,
       disciplineIds,
     } = req.body;
+    const trimmedEmail = email?.trim();
+    const trimmedPassword = password?.trim();
     const bodyRequest: RegisterRequest = {
-      email,
-      password,
+      email: trimmedEmail,
+      password: trimmedPassword,
       roles,
       schoolId,
       nom,
@@ -60,9 +62,10 @@ const register: RequestHandler = async (req, res) => {
       res.status(error.statusCode).json(error);
       return;
     }
+
     const command = new RegisterCommand(
-      email,
-      password,
+      trimmedEmail,
+      trimmedPassword,
       roles,
       nom,
       prenom,
@@ -96,7 +99,13 @@ const register: RequestHandler = async (req, res) => {
 const login: RequestHandler = async (req, res) => {
   try {
     const { email, password, schoolName } = req.body;
-    const bodyRequest: LoginRequest = { email, password, schoolName: schoolName };
+    const trimmedEmail = email?.trim();
+    const trimmedPassword = password?.trim();
+    const bodyRequest: LoginRequest = {
+      email: trimmedEmail,
+      password: trimmedPassword,
+      schoolName: schoolName,
+    };
 
     const error = loginRequestValidator(bodyRequest);
     if (error) {
@@ -148,11 +157,14 @@ const login: RequestHandler = async (req, res) => {
 const resetPassword: RequestHandler = async (req, res) => {
   try {
     const { schoolName, newPassword, oldPassword, email } = req.body;
+    const trimmedEmail = email?.trim();
+    const trimmedPassword = newPassword?.trim();
+
     const bodyRequest: ResetPasswordRequest = {
       schoolName,
-      newPassword,
+      newPassword: trimmedPassword,
       oldPassword,
-      email,
+      email: trimmedEmail,
     };
 
     const error = resetPasswordRequestValidator(bodyRequest);
@@ -161,7 +173,12 @@ const resetPassword: RequestHandler = async (req, res) => {
       return;
     }
 
-    const command = new ResetPasswordCommand(email, oldPassword, newPassword, schoolName);
+    const command = new ResetPasswordCommand(
+      trimmedEmail,
+      oldPassword,
+      trimmedPassword,
+      schoolName
+    );
     await mediator.send<ResetPasswordCommand, void>(command);
 
     res.status(StatusCode.SUCCESS).json({

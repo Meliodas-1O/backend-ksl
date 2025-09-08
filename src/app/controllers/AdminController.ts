@@ -12,6 +12,7 @@ import {
   AssignRoleToUserCommand,
   RemoveRoleFromUserCommand,
   CreateDisciplineCommand,
+  GetDisciplinesQuery,
 } from "../../services/adminsvc/Commands";
 
 const createRole: RequestHandler = async (req, res) => {
@@ -78,18 +79,11 @@ const createAdmin: RequestHandler = async (req, res) => {
     const { firstName, lastName, email, password, schoolId } = req.body;
     if (!firstName || !lastName || !email || !password || !schoolId) {
       res.status(400).json({
-        message:
-          "All fields are required : firstName, lastName, email, password, schoolId",
+        message: "All fields are required : firstName, lastName, email, password, schoolId",
       });
       return;
     }
-    const command = new CreateAdminCommand(
-      firstName,
-      lastName,
-      email,
-      password,
-      schoolId
-    );
+    const command = new CreateAdminCommand(firstName, lastName, email, password, schoolId);
     const result = await mediator.send<CreateAdminCommand, any>(command);
     res.status(201).json(result);
   } catch (error: any) {
@@ -162,6 +156,17 @@ const createDiscipline: RequestHandler = async (req, res) => {
   }
 };
 
+const getDisciplines: RequestHandler = async (req, res) => {
+  try {
+    const command = new GetDisciplinesQuery();
+    const result = await mediator.send<GetDisciplinesQuery, any>(command);
+    res.status(201).json(result);
+  } catch (error: any) {
+    console.error("Create Discipline error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const AdminController = {
   createRole,
   getAllRoles,
@@ -172,4 +177,5 @@ export const AdminController = {
   assignRoleToUser,
   removeRoleFromUser,
   createDiscipline,
+  getDisciplines,
 };

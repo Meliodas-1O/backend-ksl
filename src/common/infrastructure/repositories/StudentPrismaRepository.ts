@@ -11,12 +11,14 @@ export const studentPrismaRepository: IStudentRepository = {
       include: { parent: true, classe: true },
     });
   },
-  findStudentByClass: function (
-    classId: string,
-    schoolName: string
-  ): Promise<Student | null> {
-    throw new Error("Function not implemented.");
+
+  findStudentByClass: async function (classeId: string, schoolId: string): Promise<any[]> {
+    return prisma.student.findMany({
+      where: { schoolId, classeId },
+      include: { parent: true, classe: true },
+    });
   },
+
   assignStudentToClass: function (
     student: Student,
     classId: string,

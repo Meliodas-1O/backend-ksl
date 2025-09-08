@@ -1,4 +1,9 @@
-import { GetAllDisciplinesQuery, GetDisciplineByIdQuery } from "../../services/courssvc/Commands";
+import {
+  AssignDisciplinesToTeacherCommand,
+  GetAllDisciplinesQuery,
+  GetDisciplineByIdQuery,
+  RevokeDisciplinesFromTeacherCommand,
+} from "../../services/courssvc/Commands";
 import { StatusCode } from "../../common/application/dto/StatusCode";
 import { mediator } from "../../common/mediator/Mediator";
 import { RequestHandler } from "express";
@@ -25,7 +30,33 @@ const getDisciplineById: RequestHandler = async (req, res) => {
   }
 };
 
+const assignDisciplinesToTeacher: RequestHandler = async (req, res) => {
+  try {
+    console.log("HOLQ");
+    const { teacherId, disciplineIds } = req.body;
+    const command = new AssignDisciplinesToTeacherCommand(teacherId, disciplineIds);
+    const result = await mediator.send(command);
+    res.status(StatusCode.SUCCESS).json(result);
+  } catch (error: any) {
+    console.error("Assign disciplines error:", error);
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+  }
+};
+const revokeDisciplinesToTeacher: RequestHandler = async (req, res) => {
+  try {
+    const { teacherId, disciplineIds } = req.body;
+    const command = new RevokeDisciplinesFromTeacherCommand(teacherId, disciplineIds);
+    const result = await mediator.send(command);
+    res.status(StatusCode.SUCCESS).json(result);
+  } catch (error: any) {
+    console.error("Revoke disciplines error:", error);
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+  }
+};
+
 export const DisciplineController = {
   getAllDisciplines,
   getDisciplineById,
+  assignDisciplinesToTeacher,
+  revokeDisciplinesToTeacher,
 };

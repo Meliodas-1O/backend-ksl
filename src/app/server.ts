@@ -77,6 +77,7 @@ import {
 import { ICoursRepository } from "../common/domain/repository/ICoursRepository";
 import { coursPrismaRepository } from "../common/infrastructure/repositories/CoursPrismaRepository";
 import {
+  AssignDisciplinesToTeacherCommandHandler,
   AssignMatiereToCoursCommandHandler,
   AssignProfesseurToCoursCommandHandler,
   CreateCoursCommandHandler,
@@ -89,9 +90,11 @@ import {
   GetCoursByProfesseurQueryHandler,
   GetCoursByWeekQueryHandler,
   GetDisciplineByIdQueryHandler,
+  RevokeDisciplinesFromTeacherCommandHandler,
   UpdateCoursCommandHandler,
 } from "../services/courssvc/CommandHandler";
 import {
+  AssignDisciplinesToTeacherCommand,
   AssignMatiereToCoursCommand,
   AssignProfesseurToCoursCommand,
   CreateCoursCommand,
@@ -104,6 +107,7 @@ import {
   GetCoursByProfesseurQuery,
   GetCoursByWeekQuery,
   GetDisciplineByIdQuery,
+  RevokeDisciplinesFromTeacherCommand,
   UpdateCoursCommand,
 } from "../services/courssvc/Commands";
 import { DeleteUserCommand } from "../services/authentication/handler/delete/DeleteUserCommand";
@@ -148,6 +152,7 @@ import {
   CreateSchoolCommandHandler,
   DeleteSchoolCommandHandler,
   CreateDisciplineCommandHandler,
+  GetDisciplinesQueryHandler,
 } from "../services/adminsvc/CommandHandler";
 import {
   CreateAdminCommand,
@@ -159,6 +164,7 @@ import {
   CreateSchoolCommand,
   DeleteSchoolCommand,
   CreateDisciplineCommand,
+  GetDisciplinesQuery,
 } from "../services/adminsvc/Commands";
 import adminRouter from "./routes/AdminRouter";
 import cookieParser from "cookie-parser";
@@ -213,6 +219,19 @@ import { IStudentAttendanceRepository } from "../common/domain/repository/IStude
 import { INoteRepository } from "../common/domain/repository/INoteRepository";
 import { NotePrismaRepository } from "../common/infrastructure/repositories/NotePrismaRepository";
 import noteRouter from "./routes/NoteRouter";
+import {
+  FindClasseAverageQuery,
+  FindDisciplineAverageQuery,
+  FindSchoolAverageQuery,
+  FindStudentAverageQuery,
+} from "../services/notesvc/AverageNoteCommand";
+import {
+  FindClasseAverageQueryHandler,
+  FindDisciplineAverageQueryHandler,
+  FindSchoolAverageQueryHandler,
+  FindStudentAverageQueryHandler,
+} from "../services/notesvc/AverageNoteCommandHandler";
+import noteAverageRouter from "./routes/AverageNoteRouter";
 
 config();
 
@@ -478,7 +497,15 @@ mediator.register<GetDisciplineByIdQuery>(
   GetDisciplineByIdQuery.name,
   new GetDisciplineByIdQueryHandler(disciplineRepository)
 );
+mediator.register<AssignDisciplinesToTeacherCommand>(
+  AssignDisciplinesToTeacherCommand.name,
+  new AssignDisciplinesToTeacherCommandHandler(disciplineRepository)
+);
 
+mediator.register<RevokeDisciplinesFromTeacherCommand>(
+  RevokeDisciplinesFromTeacherCommand.name,
+  new RevokeDisciplinesFromTeacherCommandHandler(disciplineRepository)
+);
 // Register UpdateParentFromAdminCommandHandler
 mediator.register<UpdateParentFromAdminQuery>(
   UpdateParentFromAdminQuery.name,
@@ -545,6 +572,11 @@ mediator.register<CreateRoleCommand>(
 mediator.register<CreateDisciplineCommand>(
   CreateDisciplineCommand.name,
   new CreateDisciplineCommandHandler(adminRepository)
+);
+
+mediator.register<GetDisciplinesQuery>(
+  GetDisciplinesQuery.name,
+  new GetDisciplinesQueryHandler(adminRepository)
 );
 
 // ---------------------------------------------
@@ -644,6 +676,41 @@ mediator.register<FindNotesBySchoolIdQuery>(
   new FindNotesBySchoolIdQueryHandler(noteRepository)
 );
 
+// ---------------------------------------------
+// Register Note Average Query Handlers
+// ---------------------------------------------
+
+mediator.register<FindDisciplineAverageQuery>(
+  FindDisciplineAverageQuery.name,
+  new FindDisciplineAverageQueryHandler(noteRepository)
+);
+
+mediator.register<FindClasseAverageQuery>(
+  FindClasseAverageQuery.name,
+  new FindClasseAverageQueryHandler(
+    noteRepository,
+    studentRepository,
+    classRepository,
+    disciplineRepository,
+    studentAttendanceRepository
+  )
+);
+
+mediator.register<FindStudentAverageQuery>(
+  FindStudentAverageQuery.name,
+  new FindStudentAverageQueryHandler(noteRepository)
+);
+
+mediator.register<FindSchoolAverageQuery>(
+  FindSchoolAverageQuery.name,
+  new FindSchoolAverageQueryHandler(
+    noteRepository,
+    schoolRepository,
+    studentRepository,
+    disciplineRepository
+  )
+);
+
 // #endregion
 
 const allowedOrigins = [
@@ -680,6 +747,7 @@ app.use("/api/schools", coursRouter);
 app.use("/api/schools", userRouter);
 app.use("/api/schools", studentAttendanceRouter);
 app.use("/api/schools", noteRouter);
+app.use("/api/schools", noteAverageRouter);
 app.use("/api/admin-actions", adminRouter);
 
 // ✅ Simple hello route

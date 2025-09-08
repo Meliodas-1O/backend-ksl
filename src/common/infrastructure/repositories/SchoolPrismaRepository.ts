@@ -63,7 +63,17 @@ export const schoolPrismaRepository: ISchoolRepository = {
         email: true,
         schoolId: true,
         telephone: true,
-        classes: true,
+        classes: {
+          select: {
+            classe: {
+              select: {
+                id: true,
+                nom: true,
+                niveau: true,
+              },
+            },
+          },
+        },
         disciplines: true,
       },
       where: {
