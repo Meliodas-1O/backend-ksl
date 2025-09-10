@@ -100,22 +100,31 @@ function calculerMoyenneFinale(notes: Note[]): number | null {
     const compos = notesMatiere.filter((n) => !n.devoir);
 
     const moyenneDevoirs =
-      devoirs.length > 0 ? devoirs.reduce((sum, n) => sum + n.note, 0) / devoirs.length : 0;
+      devoirs.length > 0
+        ? devoirs.reduce((sum, n) => sum + n.note, 0) / devoirs.length
+        : 0;
 
     const moyenneCompos =
-      compos.length > 0 ? compos.reduce((sum, n) => sum + n.note, 0) / compos.length : 0;
+      compos.length > 0
+        ? compos.reduce((sum, n) => sum + n.note, 0) / compos.length
+        : 0;
 
     let coefMatiere: number;
     if (compos.length > 0) {
-      coefMatiere = compos.reduce((sum, n) => sum + n.coefficient, 0) / compos.length;
+      coefMatiere =
+        compos.reduce((sum, n) => sum + n.coefficient, 0) / compos.length;
     } else if (devoirs.length > 0) {
-      coefMatiere = devoirs.reduce((sum, n) => sum + n.coefficient, 0) / devoirs.length;
+      coefMatiere =
+        devoirs.reduce((sum, n) => sum + n.coefficient, 0) / devoirs.length;
     } else {
       coefMatiere = 1;
     }
 
     // Moyenne matière
-    const moyenneMatiere = (moyenneDevoirs + moyenneCompos) / 2;
+    const moyenneMatiere =
+      moyenneCompos != 0
+        ? (moyenneDevoirs + moyenneCompos) / 2
+        : moyenneDevoirs;
 
     totalPoints += moyenneMatiere * coefMatiere;
     totalCoefs += coefMatiere;
