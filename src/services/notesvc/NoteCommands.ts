@@ -33,7 +33,8 @@ export class CreateNoteCommand {
     public note: number,
     public date: Date,
     public coefficient: number,
-    public appreciation: string | null
+    public appreciation: string | null,
+    public semester: string | null
   ) {}
 }
 

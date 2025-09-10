@@ -45,7 +45,7 @@ const calculateWeightedAverage = (notes: Note[]): number | null => {
     return null; // Avoid division by zero
   }
 
-  return totalWeightedNote / totalCoefficient;
+  return Math.round((totalWeightedNote / totalCoefficient) * 10000) / 10000;
 };
 
 /**

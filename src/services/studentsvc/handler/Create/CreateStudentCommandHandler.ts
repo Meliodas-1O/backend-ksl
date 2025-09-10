@@ -11,9 +11,6 @@ export class CreateStudentCommandHandler implements ICommandHandler<CreateStuden
       command.nom,
       command.prenom,
       command.dateOfBirth,
-      0,
-      0,
-      0,
       command.classe,
       command.schoolId
     );

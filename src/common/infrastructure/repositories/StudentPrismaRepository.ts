@@ -38,9 +38,6 @@ export const studentPrismaRepository: IStudentRepository = {
       nom: entity.getNom(),
       prenom: entity.getPrenom(),
       dateOfBirth: entity.getDateOfBirth(),
-      abscence: entity.getAbscence(),
-      retards: entity.getRetards(),
-      moyenne: entity.getMoyenne(),
       classeId: entity.classe,
       schoolId: entity.schoolId,
     };
@@ -66,9 +63,6 @@ export const studentPrismaRepository: IStudentRepository = {
         nom: entity.getNom(),
         prenom: entity.getPrenom(),
         dateOfBirth: entity.getDateOfBirth(),
-        abscence: entity.getAbscence(),
-        retards: entity.getRetards(),
-        moyenne: entity.getMoyenne(),
       };
       if (entity.parentId != "") {
         request.parentId = entity.parentId;

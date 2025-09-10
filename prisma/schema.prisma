@@ -24,6 +24,7 @@ model AppUser {
   createdAt   DateTime     @default(now())
 
   @@unique([schoolId, email])
+  @@unique([schoolId, telephone])
 
   userRoles   UserRole[]
   children    Student[]    @relation("ParentChildren")
@@ -71,9 +72,6 @@ model Student {
   nom          String
   prenom       String
   dateOfBirth  DateTime
-  abscence     Int
-  retards      Int
-  moyenne      Float
 
   schoolId     String?
   School       School?    @relation(fields: [schoolId], references: [id], onDelete: SetNull)
@@ -147,6 +145,7 @@ model Note {
   date          DateTime
   appreciation  String?
   coefficient   Float
+  semester      String?
 
   disciplineId  String
   discipline    Discipline @relation("DisciplineNotes", fields: [disciplineId], references: [id], onDelete: Cascade)

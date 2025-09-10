@@ -18,9 +18,6 @@ export class UpdateStudentCommandHandler implements ICommandHandler<UpdateStuden
       commandStudent.nom,
       commandStudent.prenom,
       new Date(commandStudent.dateOfBirth),
-      commandStudent.abscence,
-      commandStudent.retards,
-      commandStudent.moyenne,
       existingStudent.classe,
       existingStudent.schoolId
     );

@@ -11,6 +11,11 @@ import { validateStudentData } from "../../services/studentsvc/models/Update/Upd
 export const createStudent: RequestHandler = async (req, res) => {
   try {
     const { nom, prenom, dateOfBirth, schoolId, classe } = req.body;
+    const error = validateStudentData(req.body);
+    if (error) {
+      res.status(error.statusCode).json(error.reason);
+      return;
+    }
     if (isNaN(Date.parse(dateOfBirth))) {
       res.status(400).json({ message: "Invalid date format. Use ISO 8601." });
       return;

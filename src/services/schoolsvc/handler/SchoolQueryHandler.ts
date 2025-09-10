@@ -1,5 +1,6 @@
 import { IQueryHandler } from "../../../common/domain/contracts/IQueryHandler";
 import { ISchoolRepository } from "../../../common/domain/repository/ISchoolRepository";
+import { enrichChildrenWithStats } from "./ProcessParentData";
 
 import {
   GetStudentByIdQuery,
@@ -12,7 +13,7 @@ export class GetStudentByIdQueryHandler implements IQueryHandler<GetStudentByIdQ
   constructor(private schoolRepository: ISchoolRepository) {}
 
   async execute(query: GetStudentByIdQuery): Promise<any | null> {
-    return this.schoolRepository.findStudentById(query.studentId, query.schoolId);
+    return await this.schoolRepository.findStudentById(query.studentId, query.schoolId);
   }
 }
 
@@ -20,7 +21,7 @@ export class GetTeacherByIdQueryHandler implements IQueryHandler<GetTeacherByIdQ
   constructor(private schoolRepository: ISchoolRepository) {}
 
   async execute(query: GetTeacherByIdQuery): Promise<any | null> {
-    return this.schoolRepository.findTeacherById(query.teacherId, query.schoolId);
+    return await this.schoolRepository.findTeacherById(query.teacherId, query.schoolId);
   }
 }
 
@@ -28,7 +29,8 @@ export class GetParentByIdQueryHandler implements IQueryHandler<GetParentByIdQue
   constructor(private schoolRepository: ISchoolRepository) {}
 
   async execute(query: GetParentByIdQuery): Promise<any | null> {
-    return this.schoolRepository.findParentById(query.parentId, query.schoolId);
+    const parentData = await this.schoolRepository.findParentById(query.parentId, query.schoolId);
+    return enrichChildrenWithStats(parentData);
   }
 }
 
@@ -38,6 +40,6 @@ export class GetOneClasseByIdQueryHandler
   constructor(private schoolRepository: ISchoolRepository) {}
 
   async execute(query: GetOneClasseByIdQuery): Promise<any | null> {
-    return this.schoolRepository.findClasseById(query.classeId, query.schoolId);
+    return await this.schoolRepository.findClasseById(query.classeId, query.schoolId);
   }
 }

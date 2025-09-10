@@ -1,4 +1,3 @@
-import { Note } from "@prisma/client";
 import {
   CreateNoteCommand,
   UpdateNoteCommand,
@@ -15,6 +14,7 @@ import { IClasseRepository } from "../../common/domain/repository/IClasseReposit
 import { IDisciplineRepository } from "../../common/domain/repository/IDisciplineRepository";
 import { INoteRepository } from "../../common/domain/repository/INoteRepository";
 import { IStudentRepository } from "../../common/domain/repository/IStudentRepository";
+import { Note } from "@prisma/client";
 
 /**
  * =========================================================================

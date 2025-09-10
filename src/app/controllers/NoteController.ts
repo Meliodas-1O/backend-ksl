@@ -177,7 +177,8 @@ const createNote: RequestHandler = async (req, res) => {
       req.body.note,
       new Date(req.body.date),
       req.body.coefficient,
-      req.body.appreciation ?? null
+      req.body.appreciation ?? null,
+      req.body.semester ?? null
     );
     const result = await mediator.send(command);
     res.status(StatusCode.CREATED).json(result);
