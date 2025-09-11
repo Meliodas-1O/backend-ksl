@@ -716,7 +716,7 @@ mediator.register<FindSchoolAverageQuery>(
 const allowedOrigins = [
   "https://seekids.net",
   "https://test.seekids.net",
-  "https://leaders-school.seekids.net",
+  "https://dakar-leaders-school.seekids.net",
   "http://localhost:8080",
   // add other known client origins here
 ];
