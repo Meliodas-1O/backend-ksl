@@ -14,7 +14,7 @@ export class ResetPasswordCommandHandler implements ICommandHandler<ResetPasswor
       throw new ValidationError(errors);
     }
     // Check if user exists
-    const existingUser = await this.userRepository.findUserByEmailAndSchoolName(
+    const existingUser = await this.userRepository.findUserByEmailAndSchoolId(
       command.email,
       command.schoolId
     );

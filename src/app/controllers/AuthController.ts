@@ -156,12 +156,12 @@ const login: RequestHandler = async (req, res) => {
 
 const resetPassword: RequestHandler = async (req, res) => {
   try {
-    const { schoolName, newPassword, oldPassword, email } = req.body;
+    const { schoolId, newPassword, oldPassword, email } = req.body;
     const trimmedEmail = email?.trim();
     const trimmedPassword = newPassword?.trim();
 
     const bodyRequest: ResetPasswordRequest = {
-      schoolName,
+      schoolId,
       newPassword: trimmedPassword,
       oldPassword,
       email: trimmedEmail,
@@ -173,12 +173,7 @@ const resetPassword: RequestHandler = async (req, res) => {
       return;
     }
 
-    const command = new ResetPasswordCommand(
-      trimmedEmail,
-      oldPassword,
-      trimmedPassword,
-      schoolName
-    );
+    const command = new ResetPasswordCommand(trimmedEmail, oldPassword, trimmedPassword, schoolId);
     await mediator.send<ResetPasswordCommand, void>(command);
 
     res.status(StatusCode.SUCCESS).json({
