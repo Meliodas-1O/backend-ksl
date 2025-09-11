@@ -545,7 +545,7 @@ mediator.register<DeleteSchoolCommand>(
 
 mediator.register<CreateAdminCommand>(
   CreateAdminCommand.name,
-  new CreateAdminCommandHandler(adminRepository)
+  new CreateAdminCommandHandler(adminRepository, passwordHasher)
 );
 mediator.register<DeleteAdminCommand>(
   DeleteAdminCommand.name,

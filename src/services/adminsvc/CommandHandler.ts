@@ -20,6 +20,7 @@ import { IQueryHandler } from "../../common/domain/contracts/IQueryHandler";
 import { Admin } from "../../common/domain/entities/Admin";
 import { RoleEntity } from "../../common/domain/entities/RoleEntity";
 import { School } from "../../common/domain/entities/School";
+import { IPasswordHasher } from "../../common/domain/contracts/IPasswordHasher";
 
 export class CreateRoleCommandHandler implements ICommandHandler<CreateRoleCommand, any> {
   constructor(private adminRepository: IAdminRepository) {}
@@ -59,13 +60,15 @@ export class DeleteSchoolCommandHandler implements ICommandHandler<DeleteSchoolC
   }
 }
 export class CreateAdminCommandHandler implements ICommandHandler<CreateAdminCommand, any> {
-  constructor(private adminRepository: IAdminRepository) {}
+  constructor(private adminRepository: IAdminRepository, private passwordHasher: IPasswordHasher) {}
   async execute(command: CreateAdminCommand): Promise<any> {
+    const hashedPassword = await this.passwordHasher.hash(command.password);
+
     const admin = Admin.createAdmin(
       command.firstName,
       command.lastName,
       command.email,
-      command.password,
+      hashedPassword,
       command.schoolId
     );
     return this.adminRepository.createAdmin(admin);
