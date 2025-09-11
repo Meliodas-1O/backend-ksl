@@ -18,7 +18,7 @@ export const userPrismaRepository: IUserRepository = {
           role: { connect: { name: role } },
         });
       }
-
+      //
       const childrenRequest: any[] = [];
 
       for (const student of user.getChildren()) {
