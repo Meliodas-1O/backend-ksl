@@ -26,9 +26,6 @@ export const userPrismaRepository: IUserRepository = {
           nom: student.nom,
           prenom: student.prenom,
           dateOfBirth: new Date(student.dateOfBirth),
-          abscence: 0,
-          retards: 0,
-          moyenne: 0,
           schoolId: schoolId,
           classeId: student.classe,
         });
