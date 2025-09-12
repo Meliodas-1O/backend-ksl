@@ -27,7 +27,8 @@ export interface SubjectReportDTO {
 
 export interface StudentDetailsDTO {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   classe: string;
   grades: NoteDetailsDTO[];
   attendance: AttendanceDetailsDTO[];

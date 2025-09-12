@@ -45,6 +45,7 @@ const register: RequestHandler = async (req, res) => {
     } = req.body;
     const trimmedEmail = email?.trim();
     const trimmedPassword = password?.trim();
+    const trimmedPhone = telephone?.trim();
     const bodyRequest: RegisterRequest = {
       email: trimmedEmail,
       password: trimmedPassword,
@@ -52,7 +53,7 @@ const register: RequestHandler = async (req, res) => {
       schoolId,
       nom,
       prenom,
-      telephone,
+      telephone: trimmedPhone,
       profession,
       students,
       disciplineIds,
@@ -70,7 +71,7 @@ const register: RequestHandler = async (req, res) => {
       nom,
       prenom,
       schoolId,
-      telephone,
+      trimmedPhone,
       profession,
       students,
       disciplineIds

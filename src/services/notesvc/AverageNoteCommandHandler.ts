@@ -183,7 +183,8 @@ export class FindClasseAverageQueryHandler
 
       studentsData.push({
         id: student.id,
-        name: `${student.prenom} ${student.nom}`,
+        firstName: `${student.prenom}`,
+        lastName: `${student.nom}`,
         grades: detailedNotes,
         attendance: detailedAttendance,
         subjectAverages: subjectAverages,
