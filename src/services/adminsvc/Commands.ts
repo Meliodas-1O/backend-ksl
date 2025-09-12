@@ -64,6 +64,15 @@ export class CreateDisciplineCommand {
   constructor(public name: string) {}
 }
 
+/* Command to delete a Discipline */
+export class DeleteDisciplineCommand {
+  constructor(public disciplineId: string) {}
+}
+
+/*
+ *   Queries to get all Disciplines
+ */
+
 export class GetDisciplinesQuery {
   constructor() {}
 }

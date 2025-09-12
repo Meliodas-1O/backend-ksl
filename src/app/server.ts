@@ -153,6 +153,7 @@ import {
   DeleteSchoolCommandHandler,
   CreateDisciplineCommandHandler,
   GetDisciplinesQueryHandler,
+  DeleteDisciplineCommandHandler,
 } from "../services/adminsvc/CommandHandler";
 import {
   CreateAdminCommand,
@@ -165,6 +166,7 @@ import {
   DeleteSchoolCommand,
   CreateDisciplineCommand,
   GetDisciplinesQuery,
+  DeleteDisciplineCommand,
 } from "../services/adminsvc/Commands";
 import adminRouter from "./routes/AdminRouter";
 import cookieParser from "cookie-parser";
@@ -245,7 +247,8 @@ const classRepository: IClasseRepository = classePrismaRepository;
 const coursRepository: ICoursRepository = coursPrismaRepository;
 const disciplineRepository: IDisciplineRepository = disciplinePrismaRepository;
 const adminRepository: IAdminRepository = adminPrismaRepository;
-const studentAttendanceRepository: IStudentAttendanceRepository = studentAttendancePrismaRepository;
+const studentAttendanceRepository: IStudentAttendanceRepository =
+  studentAttendancePrismaRepository;
 const noteRepository: INoteRepository = NotePrismaRepository;
 // Add services
 const pwdHasher: IPasswordHasher = passwordHasher;
@@ -579,16 +582,27 @@ mediator.register<GetDisciplinesQuery>(
   new GetDisciplinesQueryHandler(adminRepository)
 );
 
+mediator.register<DeleteDisciplineCommand>(
+  DeleteDisciplineCommand.name,
+  new DeleteDisciplineCommandHandler(adminRepository)
+);
+
 // ---------------------------------------------
 // Register StudentAttendance Command Handlers
 // ---------------------------------------------
 mediator.register<CreateStudentAttendanceCommand>(
   CreateStudentAttendanceCommand.name,
-  new CreateStudentAttendanceCommandHandler(studentAttendanceRepository, studentRepository)
+  new CreateStudentAttendanceCommandHandler(
+    studentAttendanceRepository,
+    studentRepository
+  )
 );
 mediator.register<UpdateStudentAttendanceCommand>(
   UpdateStudentAttendanceCommand.name,
-  new UpdateStudentAttendanceCommandHandler(studentAttendanceRepository, studentRepository)
+  new UpdateStudentAttendanceCommandHandler(
+    studentAttendanceRepository,
+    studentRepository
+  )
 );
 mediator.register<DeleteStudentAttendanceCommand>(
   DeleteStudentAttendanceCommand.name,
@@ -608,7 +622,9 @@ mediator.register<FindStudentAttendanceByStudentIdQuery>(
 );
 mediator.register<FindStudentAttendanceByDisciplineIdQuery>(
   FindStudentAttendanceByDisciplineIdQuery.name,
-  new FindStudentAttendanceByDisciplineIdQueryHandler(studentAttendanceRepository)
+  new FindStudentAttendanceByDisciplineIdQueryHandler(
+    studentAttendanceRepository
+  )
 );
 mediator.register<FindStudentAttendanceByTypeQuery>(
   FindStudentAttendanceByTypeQuery.name,
@@ -758,4 +774,6 @@ app.get("/", (req, res) => {
 
 const port = Number(process.env.PORT) || 3000;
 
-app.listen(port, "0.0.0.0", () => console.log(`🚀 Server running on port ${port}`));
+app.listen(port, "0.0.0.0", () =>
+  console.log(`🚀 Server running on port ${port}`)
+);

@@ -13,6 +13,7 @@ import {
   RemoveRoleFromUserCommand,
   CreateDisciplineCommand,
   GetDisciplinesQuery,
+  DeleteDisciplineCommand,
 } from "../../services/adminsvc/Commands";
 
 const createRole: RequestHandler = async (req, res) => {
@@ -79,11 +80,18 @@ const createAdmin: RequestHandler = async (req, res) => {
     const { firstName, lastName, email, password, schoolId } = req.body;
     if (!firstName || !lastName || !email || !password || !schoolId) {
       res.status(400).json({
-        message: "All fields are required : firstName, lastName, email, password, schoolId",
+        message:
+          "All fields are required : firstName, lastName, email, password, schoolId",
       });
       return;
     }
-    const command = new CreateAdminCommand(firstName, lastName, email, password, schoolId);
+    const command = new CreateAdminCommand(
+      firstName,
+      lastName,
+      email,
+      password,
+      schoolId
+    );
     const result = await mediator.send<CreateAdminCommand, any>(command);
     res.status(201).json(result);
   } catch (error: any) {
@@ -167,6 +175,22 @@ const getDisciplines: RequestHandler = async (req, res) => {
   }
 };
 
+const deleteDiscipline: RequestHandler = async (req, res) => {
+  try {
+    const { disciplineId } = req.params;
+    if (!disciplineId) {
+      res.status(400).json({ message: "Discipline ID is required" });
+      return;
+    }
+    const command = new DeleteDisciplineCommand(disciplineId);
+    await mediator.send<DeleteDisciplineCommand, void>(command);
+    res.status(204).send();
+  } catch (error: any) {
+    console.error("Delete Discipline error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const AdminController = {
   createRole,
   getAllRoles,
@@ -178,4 +202,5 @@ export const AdminController = {
   removeRoleFromUser,
   createDiscipline,
   getDisciplines,
+  deleteDiscipline,
 };
