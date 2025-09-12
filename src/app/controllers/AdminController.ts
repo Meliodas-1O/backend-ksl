@@ -1,5 +1,3 @@
-// const register: RequestHandler = async (req, res) => {}
-
 import { RequestHandler } from "express";
 import { mediator } from "../../common/mediator/Mediator";
 import {
@@ -14,6 +12,7 @@ import {
   CreateDisciplineCommand,
   GetDisciplinesQuery,
   DeleteDisciplineCommand,
+  UpdateDisciplineCommand,
 } from "../../services/adminsvc/Commands";
 
 const createRole: RequestHandler = async (req, res) => {
@@ -191,6 +190,23 @@ const deleteDiscipline: RequestHandler = async (req, res) => {
   }
 };
 
+const updateDiscipline: RequestHandler = async (req, res) => {
+  try {
+    const { disciplineId } = req.params;
+    const { name } = req.body;
+    if (!disciplineId || !name) {
+      res.status(400).json({ message: "Discipline ID and name are required" });
+      return;
+    }
+    const command = new UpdateDisciplineCommand(disciplineId, name);
+    const result = await mediator.send<UpdateDisciplineCommand, any>(command);
+    res.status(200).json(result);
+  } catch (error: any) {
+    console.error("Update Discipline error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const AdminController = {
   createRole,
   getAllRoles,
@@ -203,4 +219,5 @@ export const AdminController = {
   createDiscipline,
   getDisciplines,
   deleteDiscipline,
+  updateDiscipline,
 };

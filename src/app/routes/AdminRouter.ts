@@ -63,4 +63,10 @@ adminRouter.delete(
   AdminController.deleteDiscipline
 );
 
+adminRouter.put(
+  "/disciplines/:disciplineId",
+  superAdminAuthenticateToken,
+  AdminController.updateDiscipline
+);
+
 export default adminRouter;

@@ -154,6 +154,7 @@ import {
   CreateDisciplineCommandHandler,
   GetDisciplinesQueryHandler,
   DeleteDisciplineCommandHandler,
+  UpdateDisciplineCommandHandler,
 } from "../services/adminsvc/CommandHandler";
 import {
   CreateAdminCommand,
@@ -167,6 +168,7 @@ import {
   CreateDisciplineCommand,
   GetDisciplinesQuery,
   DeleteDisciplineCommand,
+  UpdateDisciplineCommand,
 } from "../services/adminsvc/Commands";
 import adminRouter from "./routes/AdminRouter";
 import cookieParser from "cookie-parser";
@@ -580,6 +582,11 @@ mediator.register<CreateDisciplineCommand>(
 mediator.register<GetDisciplinesQuery>(
   GetDisciplinesQuery.name,
   new GetDisciplinesQueryHandler(adminRepository)
+);
+
+mediator.register<UpdateDisciplineCommand>(
+  UpdateDisciplineCommand.name,
+  new UpdateDisciplineCommandHandler(adminRepository)
 );
 
 mediator.register<DeleteDisciplineCommand>(

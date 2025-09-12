@@ -74,4 +74,14 @@ export const adminPrismaRepository: IAdminRepository = {
   deleteDiscipline: async function (disciplineId: string): Promise<void> {
     await prisma.discipline.delete({ where: { id: disciplineId } });
   },
+
+  updateDiscipline: async function (
+    disciplineId: string,
+    name: string
+  ): Promise<any> {
+    return await prisma.discipline.update({
+      where: { id: disciplineId },
+      data: { name },
+    });
+  },
 };

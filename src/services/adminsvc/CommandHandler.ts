@@ -14,6 +14,7 @@ import {
   CreateDisciplineCommand,
   GetDisciplinesQuery,
   DeleteDisciplineCommand,
+  UpdateDisciplineCommand,
 } from "./Commands";
 import { IAdminRepository } from "../../common/domain/repository/IAdminRepository";
 import { ICommandHandler } from "../../common/domain/contracts/ICommandHandler";
@@ -140,6 +141,18 @@ export class DeleteDisciplineCommandHandler
   constructor(private adminRepository: IAdminRepository) {}
   async execute(command: DeleteDisciplineCommand): Promise<void> {
     return this.adminRepository.deleteDiscipline(command.disciplineId);
+  }
+}
+
+export class UpdateDisciplineCommandHandler
+  implements ICommandHandler<DeleteDisciplineCommand, void>
+{
+  constructor(private adminRepository: IAdminRepository) {}
+  async execute(command: UpdateDisciplineCommand): Promise<any> {
+    return this.adminRepository.updateDiscipline(
+      command.disciplineId,
+      command.name
+    );
   }
 }
 

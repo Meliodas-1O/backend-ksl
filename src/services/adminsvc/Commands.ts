@@ -69,6 +69,11 @@ export class DeleteDisciplineCommand {
   constructor(public disciplineId: string) {}
 }
 
+/* Commannd to update a Discipline */
+export class UpdateDisciplineCommand {
+  constructor(public disciplineId: string, public name: string) {}
+}
+
 /*
  *   Queries to get all Disciplines
  */
