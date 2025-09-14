@@ -32,7 +32,6 @@ const getDisciplineById: RequestHandler = async (req, res) => {
 
 const assignDisciplinesToTeacher: RequestHandler = async (req, res) => {
   try {
-    console.log("HOLQ");
     const { teacherId, disciplineIds } = req.body;
     const command = new AssignDisciplinesToTeacherCommand(teacherId, disciplineIds);
     const result = await mediator.send(command);

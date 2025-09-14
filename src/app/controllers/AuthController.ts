@@ -43,7 +43,8 @@ const register: RequestHandler = async (req, res) => {
       students,
       disciplineIds,
     } = req.body;
-    const trimmedEmail = email?.trim();
+
+    const trimmedEmail: string = email?.trim()?.toLowerCase();
     const trimmedPassword = password?.trim();
     const trimmedPhone = telephone?.trim();
     const bodyRequest: RegisterRequest = {
@@ -100,7 +101,7 @@ const register: RequestHandler = async (req, res) => {
 const login: RequestHandler = async (req, res) => {
   try {
     const { email, password, schoolName } = req.body;
-    const trimmedEmail = email?.trim();
+    const trimmedEmail: string = email?.trim()?.toLowerCase();
     const trimmedPassword = password?.trim();
     const bodyRequest: LoginRequest = {
       email: trimmedEmail,
@@ -114,7 +115,7 @@ const login: RequestHandler = async (req, res) => {
       return;
     }
 
-    const command = new LoginCommand(email, password, schoolName);
+    const command = new LoginCommand(trimmedEmail, trimmedPassword, schoolName);
     const result: {
       accessToken: string;
       refreshToken: string;
