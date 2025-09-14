@@ -236,6 +236,26 @@ import {
   FindStudentAverageQueryHandler,
 } from "../services/notesvc/AverageNoteCommandHandler";
 import noteAverageRouter from "./routes/AverageNoteRouter";
+import evaluationRouter from "./routes/EvaluationRouter";
+import { evaluationPrismaRepository } from "../common/infrastructure/repositories/EvaluationPrismaRepository";
+import {
+  CreateEvaluationCommand,
+  UpdateEvaluationCommand,
+  DeleteEvaluationCommand,
+  GetAllEvaluationsQuery,
+  GetEvaluationByIdQuery,
+  GetEvaluationsByClasseQuery,
+  GetEvaluationsByTeacherQuery,
+} from "../services/evaluationsvc/Command";
+import {
+  CreateEvaluationCommandHandler,
+  UpdateEvaluationCommandHandler,
+  DeleteEvaluationCommandHandler,
+  GetAllEvaluationsQueryHandler,
+  GetEvaluationByIdQueryHandler,
+  GetEvaluationsByClasseQueryHandler,
+  GetEvaluationsByTeacherQueryHandler,
+} from "../services/evaluationsvc/CommandHandlers";
 
 config();
 
@@ -249,8 +269,7 @@ const classRepository: IClasseRepository = classePrismaRepository;
 const coursRepository: ICoursRepository = coursPrismaRepository;
 const disciplineRepository: IDisciplineRepository = disciplinePrismaRepository;
 const adminRepository: IAdminRepository = adminPrismaRepository;
-const studentAttendanceRepository: IStudentAttendanceRepository =
-  studentAttendancePrismaRepository;
+const studentAttendanceRepository: IStudentAttendanceRepository = studentAttendancePrismaRepository;
 const noteRepository: INoteRepository = NotePrismaRepository;
 // Add services
 const pwdHasher: IPasswordHasher = passwordHasher;
@@ -599,17 +618,11 @@ mediator.register<DeleteDisciplineCommand>(
 // ---------------------------------------------
 mediator.register<CreateStudentAttendanceCommand>(
   CreateStudentAttendanceCommand.name,
-  new CreateStudentAttendanceCommandHandler(
-    studentAttendanceRepository,
-    studentRepository
-  )
+  new CreateStudentAttendanceCommandHandler(studentAttendanceRepository, studentRepository)
 );
 mediator.register<UpdateStudentAttendanceCommand>(
   UpdateStudentAttendanceCommand.name,
-  new UpdateStudentAttendanceCommandHandler(
-    studentAttendanceRepository,
-    studentRepository
-  )
+  new UpdateStudentAttendanceCommandHandler(studentAttendanceRepository, studentRepository)
 );
 mediator.register<DeleteStudentAttendanceCommand>(
   DeleteStudentAttendanceCommand.name,
@@ -629,9 +642,7 @@ mediator.register<FindStudentAttendanceByStudentIdQuery>(
 );
 mediator.register<FindStudentAttendanceByDisciplineIdQuery>(
   FindStudentAttendanceByDisciplineIdQuery.name,
-  new FindStudentAttendanceByDisciplineIdQueryHandler(
-    studentAttendanceRepository
-  )
+  new FindStudentAttendanceByDisciplineIdQueryHandler(studentAttendanceRepository)
 );
 mediator.register<FindStudentAttendanceByTypeQuery>(
   FindStudentAttendanceByTypeQuery.name,
@@ -734,6 +745,45 @@ mediator.register<FindSchoolAverageQuery>(
   )
 );
 
+// ---------------------------------------------
+// Register Evaluation Handlers
+// ---------------------------------------------
+
+mediator.register<CreateEvaluationCommand>(
+  CreateEvaluationCommand.name,
+  new CreateEvaluationCommandHandler(evaluationPrismaRepository, userRepository)
+);
+
+mediator.register<UpdateEvaluationCommand>(
+  UpdateEvaluationCommand.name,
+  new UpdateEvaluationCommandHandler(evaluationPrismaRepository)
+);
+
+mediator.register<DeleteEvaluationCommand>(
+  DeleteEvaluationCommand.name,
+  new DeleteEvaluationCommandHandler(evaluationPrismaRepository)
+);
+
+mediator.register<GetAllEvaluationsQuery>(
+  GetAllEvaluationsQuery.name,
+  new GetAllEvaluationsQueryHandler(evaluationPrismaRepository)
+);
+
+mediator.register<GetEvaluationByIdQuery>(
+  GetEvaluationByIdQuery.name,
+  new GetEvaluationByIdQueryHandler(evaluationPrismaRepository)
+);
+
+mediator.register<GetEvaluationsByClasseQuery>(
+  GetEvaluationsByClasseQuery.name,
+  new GetEvaluationsByClasseQueryHandler(evaluationPrismaRepository)
+);
+
+mediator.register<GetEvaluationsByTeacherQuery>(
+  GetEvaluationsByTeacherQuery.name,
+  new GetEvaluationsByTeacherQueryHandler(evaluationPrismaRepository)
+);
+
 // #endregion
 
 const allowedOrigins = [
@@ -772,6 +822,7 @@ app.use("/api/schools", userRouter);
 app.use("/api/schools", studentAttendanceRouter);
 app.use("/api/schools", noteRouter);
 app.use("/api/schools", noteAverageRouter);
+app.use("/api/schools", evaluationRouter);
 app.use("/api/admin-actions", adminRouter);
 
 // ✅ Simple hello route
@@ -781,6 +832,4 @@ app.get("/", (req, res) => {
 
 const port = Number(process.env.PORT) || 3000;
 
-app.listen(port, "0.0.0.0", () =>
-  console.log(`🚀 Server running on port ${port}`)
-);
+app.listen(port, "0.0.0.0", () => console.log(`🚀 Server running on port ${port}`));

@@ -32,6 +32,7 @@ model AppUser {
   cours       Cours[]      @relation("ProfesseurCours")
   disciplines Discipline[] @relation("TeacherDisciplines")
   notes       Note[]      @relation("ProfesseurNote")
+  evaluation  Evaluation[]
 }
 
 model Role {
@@ -64,6 +65,7 @@ model School {
   users     AppUser[]
   cours     Cours[]
   notes     Note[]
+  evaluation  Evaluation[]
 }
 
 model Student {
@@ -110,6 +112,8 @@ model Classe {
   professeurs ClasseProfesseur[]
   notes       Note[]
   cours       Cours[]
+  evaluation  Evaluation[]
+
 }
 
 model ClasseProfesseur {
@@ -130,6 +134,7 @@ model Discipline {
   notes      Note[]    @relation("DisciplineNotes")
   teachers   AppUser[] @relation("TeacherDisciplines")
   attendances StudentAttendance[]
+  evaluation  Evaluation[] @relation("EvaluationDisciplines")
 }
 
 model Note {
@@ -180,3 +185,23 @@ model Cours {
   School        School     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
+model Evaluation {
+  id            String     @id @default(uuid())
+  createdAt     DateTime   @default(now())
+
+  title         String
+  date          DateTime
+  description   String
+
+  professeurId  String
+  professeur    AppUser    @relation(fields: [professeurId], references: [id], onDelete: Cascade)
+
+  disciplineId  String
+  discipline    Discipline @relation("EvaluationDisciplines", fields: [disciplineId], references: [id], onDelete: Cascade)
+
+  classeId      String
+  classe        Classe     @relation(fields: [classeId], references: [id], onDelete: Cascade)
+
+  schoolId      String
+  School        School     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
