@@ -44,6 +44,12 @@ export interface ISchoolRepository extends IRepository<School> {
   getSchoolById(schoolId: string): Promise<any>;
 
   /**
+   * Retrieves a specific school by its ID.
+   * @param schoolName The ID of the school.
+   */
+  getSchoolByName(schoolName: string): Promise<any>;
+
+  /**
    * Retrieves a specific student by ID and school.
    * @param studentId The ID of the student.
    * @param schoolId The ID of the school.

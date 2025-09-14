@@ -28,6 +28,7 @@ import {
   GetTeacherByIdQuery,
 } from "../../services/schoolsvc/handler/SchoolQueries";
 import { NotFoundError } from "../../common/application/dto/NotFoundError";
+import { VisitService } from "../../services/visitsvc/Visits";
 
 const register: RequestHandler = async (req, res) => {
   try {
@@ -99,8 +100,8 @@ const register: RequestHandler = async (req, res) => {
 };
 
 const login: RequestHandler = async (req, res) => {
+  const { email, password, schoolName } = req.body;
   try {
-    const { email, password, schoolName } = req.body;
     const trimmedEmail: string = email?.trim()?.toLowerCase();
     const trimmedPassword = password?.trim();
     const bodyRequest: LoginRequest = {
@@ -110,7 +111,9 @@ const login: RequestHandler = async (req, res) => {
     };
 
     const error = loginRequestValidator(bodyRequest);
+
     if (error) {
+      await VisitService.createVisit(null, "UNKNOWN", schoolName);
       res.status(error.statusCode).json(error);
       return;
     }
@@ -139,6 +142,7 @@ const login: RequestHandler = async (req, res) => {
     });
     res.status(StatusCode.SUCCESS).json(loginResponse);
   } catch (error: any) {
+    await VisitService.createVisit(null, "UNKNOWN", schoolName);
     console.error("Login error:", error);
     if (error instanceof ValidationError) {
       const apiError: ApiError = {

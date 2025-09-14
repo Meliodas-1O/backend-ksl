@@ -5,6 +5,7 @@ import { IUserRepository } from "../../../../common/domain/repository/IUserRepos
 import { LoginCommand } from "./LoginCommand";
 import { loginValidator } from "./LoginValidator";
 import { IJwtService } from "../../../../common/domain/contracts/IJwtService";
+import { VisitService } from "../../../visitsvc/Visits";
 
 interface tokenResponse {
   accessToken: string;
@@ -64,6 +65,11 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand, tokenR
     const refreshToken: string = this.jwtService.sign(
       { userId: existingUser.id },
       { expiresIn: "1h" }
+    );
+    await VisitService.createVisit(
+      existingUser.id!,
+      existingUser.getRoles().join(","),
+      existingUser.getSchoolId()
     );
 
     return {

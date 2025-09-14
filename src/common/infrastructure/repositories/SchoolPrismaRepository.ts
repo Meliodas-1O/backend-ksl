@@ -327,4 +327,9 @@ export const schoolPrismaRepository: ISchoolRepository = {
       },
     };
   },
+  getSchoolByName: async function (name: string): Promise<any> {
+    return await prisma.school.findFirst({
+      where: { name },
+    });
+  },
 };
