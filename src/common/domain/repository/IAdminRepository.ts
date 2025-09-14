@@ -15,4 +15,6 @@ export interface IAdminRepository {
   findSchoolWithName(name: string): Promise<any | null>;
   createDiscipline(name: string): Promise<any>;
   findAllisciplines(): Promise<any>;
+  deleteDiscipline(disciplineId: string): Promise<void>;
+  updateDiscipline(disciplineId: string, name: string): Promise<any>;
 }
