@@ -37,22 +37,13 @@ export const adminPrismaRepository: IAdminRepository = {
       },
     });
   },
-  deleteAdmin: async function (
-    adminId: string,
-    schoolId: string
-  ): Promise<void> {
+  deleteAdmin: async function (adminId: string, schoolId: string): Promise<void> {
     await prisma.appUser.deleteMany({ where: { id: adminId, schoolId } });
   },
-  assignRoleToUser: async function (
-    userId: string,
-    roleId: string
-  ): Promise<any> {
+  assignRoleToUser: async function (userId: string, roleId: string): Promise<any> {
     return await prisma.userRole.create({ data: { userId, roleId } });
   },
-  removeRoleFromUser: async function (
-    userId: string,
-    roleId: string
-  ): Promise<any> {
+  removeRoleFromUser: async function (userId: string, roleId: string): Promise<any> {
     return await prisma.userRole.deleteMany({ where: { userId, roleId } });
   },
   findSchoolWithName: async function (name: string): Promise<any | null> {
@@ -75,10 +66,7 @@ export const adminPrismaRepository: IAdminRepository = {
     await prisma.discipline.delete({ where: { id: disciplineId } });
   },
 
-  updateDiscipline: async function (
-    disciplineId: string,
-    name: string
-  ): Promise<any> {
+  updateDiscipline: async function (disciplineId: string, name: string): Promise<any> {
     return await prisma.discipline.update({
       where: { id: disciplineId },
       data: { name },

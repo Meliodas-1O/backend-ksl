@@ -39,21 +39,21 @@ export interface INoteRepository {
    * @param studentId The ID of the student.
    * @returns A promise that resolves with an array of notes.
    */
-  findByStudentId(studentId: string, schoolId: string): Promise<Note[]>;
+  findByStudentId(studentId: string, schoolId: string): Promise<any[]>;
 
   /**
    * Finds all notes for a specific class.
    * @param classeId The ID of the class.
    * @returns A promise that resolves with an array of notes.
    */
-  findByClasseId(classeId: string, schoolId: string): Promise<Note[]>;
+  findByClasseId(classeId: string, schoolId: string): Promise<any[]>;
 
   /**
    * Finds all notes for a specific discipline.
    * @param disciplineId The ID of the discipline.
    * @returns A promise that resolves with an array of notes.
    */
-  findByDisciplineId(disciplineId: string, schoolId: string): Promise<Note[]>;
+  findByDisciplineId(disciplineId: string, schoolId: string): Promise<any[]>;
 
   /**
    * Finds all notes for a specific discipline.
@@ -66,5 +66,5 @@ export interface INoteRepository {
    * @param disciplineId The ID of the discipline.
    * @returns A promise that resolves with an array of notes.
    */
-  findBySchoolId(schoolId: string): Promise<Note[]>;
+  findBySchoolId(schoolId: string): Promise<any[]>;
 }

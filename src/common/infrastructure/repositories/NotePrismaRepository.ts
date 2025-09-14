@@ -20,19 +20,28 @@ export const NotePrismaRepository: INoteRepository = {
   },
 
   async findById(id: string, schoolId: string): Promise<Note | null> {
-    return await prisma.note.findUnique({ where: { id, schoolId } });
+    return await prisma.note.findUnique({ where: { id, schoolId }, include: { discipline: true } });
   },
 
-  async findByStudentId(studentId: string, schoolId: string): Promise<Note[]> {
-    return await prisma.note.findMany({ where: { studentId, schoolId } });
+  async findByStudentId(studentId: string, schoolId: string): Promise<any[]> {
+    return await prisma.note.findMany({
+      where: { studentId, schoolId },
+      include: { discipline: true },
+    });
   },
 
   async findByClasseId(classeId: string, schoolId: string): Promise<Note[]> {
-    return await prisma.note.findMany({ where: { classeId, schoolId } });
+    return await prisma.note.findMany({
+      where: { classeId, schoolId },
+      include: { discipline: true },
+    });
   },
 
   async findByDisciplineId(disciplineId: string, schoolId: string): Promise<Note[]> {
-    return await prisma.note.findMany({ where: { disciplineId, schoolId } });
+    return await prisma.note.findMany({
+      where: { disciplineId, schoolId },
+      include: { discipline: true },
+    });
   },
   findByTeacherId: async function (professeurId: string, schoolId: string): Promise<Note[]> {
     return await prisma.note.findMany({
@@ -45,6 +54,6 @@ export const NotePrismaRepository: INoteRepository = {
     });
   },
   findBySchoolId: async function (schoolId: string): Promise<Note[]> {
-    return await prisma.note.findMany({ where: { schoolId } });
+    return await prisma.note.findMany({ where: { schoolId }, include: { discipline: true } });
   },
 };

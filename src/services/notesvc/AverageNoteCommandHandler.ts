@@ -18,6 +18,7 @@ import { ISchoolRepository } from "../../common/domain/repository/ISchoolReposit
 import { IClasseRepository } from "../../common/domain/repository/IClasseRepository";
 import { IDisciplineRepository } from "../../common/domain/repository/IDisciplineRepository";
 import { IStudentAttendanceRepository } from "../../common/domain/repository/IStudentAttendanceRepository";
+import { calculerMoyenneFinale } from "../schoolsvc/handler/ProcessParentData";
 
 // A passing grade is assumed to be 10 or higher.
 const PASSING_GRADE = 10;
@@ -78,7 +79,8 @@ export class FindDisciplineAverageQueryHandler
 
   public async execute(query: FindDisciplineAverageQuery): Promise<number | null> {
     const notes = await this.noteRepository.findByDisciplineId(query.disciplineId, query.schoolId);
-    return calculateWeightedAverage(notes);
+    console.log("notes1", notes);
+    return calculerMoyenneFinale(notes);
   }
 }
 
@@ -116,7 +118,7 @@ export class FindClasseAverageQueryHandler
       const studentNotes = await this.noteRepository.findByStudentId(student.id, query.schoolId);
       const studentAttendance = await this.studentAttendanceRepository.findByStudentId(student.id);
 
-      const studentAverage = calculateWeightedAverage(studentNotes);
+      const studentAverage = calculerMoyenneFinale(studentNotes);
       allStudentAverages.push(studentAverage);
 
       if (studentAverage !== null && studentAverage >= PASSING_GRADE) {
@@ -142,7 +144,7 @@ export class FindClasseAverageQueryHandler
       disciplines.forEach((discipline) => {
         if (discipline) {
           const notes = notesByDiscipline[discipline.id];
-          const average = calculateWeightedAverage(notes);
+          const average = calculerMoyenneFinale(notes);
           if (average !== null) {
             subjectAverages[discipline.name] = parseFloat(average.toFixed(1));
           }
@@ -218,7 +220,7 @@ export class FindClasseAverageQueryHandler
         disciplineId,
         query.schoolId
       );
-      const average = calculateWeightedAverage(notes);
+      const average = calculerMoyenneFinale(notes);
 
       if (discipline && average !== null) {
         subjectReports.push({
@@ -249,7 +251,7 @@ export class FindStudentAverageQueryHandler
 
   public async execute(query: FindStudentAverageQuery): Promise<number | null> {
     const notes = await this.noteRepository.findByStudentId(query.studentId, query.schoolId);
-    return calculateWeightedAverage(notes);
+    return calculerMoyenneFinale(notes);
   }
 }
 
@@ -288,7 +290,7 @@ export class FindSchoolAverageQueryHandler
     const studentAverages = await Promise.all(
       allStudents.map(async (student) => {
         const studentNotes = await this.noteRepository.findByStudentId(student.id, query.schoolId);
-        return calculateWeightedAverage(studentNotes);
+        return calculerMoyenneFinale(studentNotes);
       })
     );
     const passingStudents = studentAverages.filter(
@@ -305,7 +307,7 @@ export class FindSchoolAverageQueryHandler
         query.schoolId
       );
       if (discipline) {
-        const average = calculateWeightedAverage(notesForDiscipline);
+        const average = calculerMoyenneFinale(notesForDiscipline);
         subjectAverages.push({
           subject: discipline.name,
           average: average?.toFixed(1) ?? null,
@@ -326,7 +328,7 @@ export class FindSchoolAverageQueryHandler
               student.id,
               query.schoolId
             );
-            return calculateWeightedAverage(studentNotes);
+            return calculerMoyenneFinale(studentNotes);
           })
         );
         const classAverage = calculateSimpleAverage(studentAverages);
