@@ -22,4 +22,9 @@ export const visitorPrismaRepository: IVisitorRepository = {
       throw new Error("Failed to create visit in database");
     }
   },
+  getAllVisits: async function (): Promise<any> {
+    return await prisma.visits.findMany({
+      include: { user: true, School: true },
+    });
+  },
 };

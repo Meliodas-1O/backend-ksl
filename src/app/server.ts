@@ -256,6 +256,10 @@ import {
   GetEvaluationsByClasseQueryHandler,
   GetEvaluationsByTeacherQueryHandler,
 } from "../services/evaluationsvc/CommandHandlers";
+import { GetAllVisitsQuery } from "../services/visitsvc/GetAllVisitsQuery";
+import { GetAllVisitsQueryHandler } from "../services/visitsvc/GetAllVisitsQueryHandler";
+import { IVisitorRepository } from "../common/domain/repository/IVisitorRepository";
+import { visitorPrismaRepository } from "../common/infrastructure/repositories/VisitorPrismaRepository";
 
 config();
 
@@ -271,6 +275,7 @@ const disciplineRepository: IDisciplineRepository = disciplinePrismaRepository;
 const adminRepository: IAdminRepository = adminPrismaRepository;
 const studentAttendanceRepository: IStudentAttendanceRepository = studentAttendancePrismaRepository;
 const noteRepository: INoteRepository = NotePrismaRepository;
+const visitRepository: IVisitorRepository = visitorPrismaRepository;
 // Add services
 const pwdHasher: IPasswordHasher = passwordHasher;
 const jwtSvc: IJwtService = jwtService;
@@ -611,6 +616,11 @@ mediator.register<UpdateDisciplineCommand>(
 mediator.register<DeleteDisciplineCommand>(
   DeleteDisciplineCommand.name,
   new DeleteDisciplineCommandHandler(adminRepository)
+);
+
+mediator.register<GetAllVisitsQuery>(
+  GetAllVisitsQuery.name,
+  new GetAllVisitsQueryHandler(visitRepository)
 );
 
 // ---------------------------------------------

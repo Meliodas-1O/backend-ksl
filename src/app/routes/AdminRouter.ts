@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { AdminController } from "../controllers/AdminController";
 import { superAdminAuthenticateToken } from "../middlewares/SuperAdminAuthenticateToken";
+import { VisitController } from "../controllers/VisitController";
 
 const adminRouter = Router();
 
@@ -32,5 +33,7 @@ adminRouter.put(
   superAdminAuthenticateToken,
   AdminController.updateDiscipline
 );
+
+adminRouter.get("/visits", superAdminAuthenticateToken, VisitController.GetAllVisitors);
 
 export default adminRouter;
