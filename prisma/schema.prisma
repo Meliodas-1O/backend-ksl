@@ -26,14 +26,16 @@ model AppUser {
   @@unique([schoolId, email])
   @@unique([schoolId, telephone])
 
-  userRoles   UserRole[]
-  children    Student[]    @relation("ParentChildren")
-  classes     ClasseProfesseur[]
-  cours       Cours[]      @relation("ProfesseurCours")
-  disciplines Discipline[] @relation("TeacherDisciplines")
-  notes       Note[]      @relation("ProfesseurNote")
-  evaluation  Evaluation[]
-  visits      Visits[]
+  userRoles         UserRole[]
+  children          Student[]    @relation("ParentChildren")
+  classes           ClasseProfesseur[]
+  cours             Cours[]      @relation("ProfesseurCours")
+  disciplines       Discipline[] @relation("TeacherDisciplines")
+  notes             Note[]      @relation("ProfesseurNote")
+  evaluation        Evaluation[]
+  visits            Visits[]
+  sentMessages      Message[] @relation("SentMessages")
+  receivedMessages  Message[] @relation("ReceivedMessages")
 }
 
 model Role {
@@ -68,6 +70,7 @@ model School {
   notes     Note[]
   evaluation  Evaluation[]
   visits      Visits[]
+  messages     Message[]
 }
 
 model Student {
@@ -219,4 +222,23 @@ model Visits {
 
   schoolId    String
   School      School     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id          String     @id @default(uuid())
+  senderId    String
+  receiverId  String
+  read        Boolean    @default(false)
+  sentAt      DateTime   @default(now())
+  content     String
+  schoolId    String?
+
+  // Relations
+  sender      AppUser    @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver    AppUser    @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  School      School?    @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([schoolId])
 }

@@ -40,7 +40,7 @@ schoolRouter.get(
 schoolRouter.get(
   "/:schoolId/admins",
   authenticateToken,
-  authorizeRole(["SUPER_ADMIN"]),
+  authorizeRole(["ADMIN", "SURVEILLANT", "SUPER_ADMIN"]),
   SchoolController.findAdminsBySchool
 );
 

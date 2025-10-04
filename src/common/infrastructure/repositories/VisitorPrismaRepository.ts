@@ -23,8 +23,27 @@ export const visitorPrismaRepository: IVisitorRepository = {
     }
   },
   getAllVisits: async function (): Promise<any> {
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+
     return await prisma.visits.findMany({
+      where: {
+        visitTime: {
+          gte: ninetyDaysAgo,
+        },
+      },
       include: { user: true, School: true },
+    });
+  },
+
+  deleteOldVisits: async function (): Promise<any> {
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+
+    return await prisma.visits.deleteMany({
+      where: {
+        visitTime: {
+          lt: ninetyDaysAgo, // ⬅️ delete visits older than 90 days
+        },
+      },
     });
   },
 };
