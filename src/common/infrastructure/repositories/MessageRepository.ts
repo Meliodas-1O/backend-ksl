@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { IMessageRepository } from "../../domain/repository/IMessageRepository";
+import { encoder } from "../security/Base64MessageEncoder";
 
 const prisma = new PrismaClient(); // Prisma instance
 
@@ -54,8 +55,10 @@ export const messagePrismaRepository: IMessageRepository = {
       },
     });
     const result = messages.map((msg) => {
+      const decodedMessage = encoder.decode(msg.content);
       return {
         ...msg,
+        content: decodedMessage,
         sender: {
           ...msg.sender,
           userRoles: [...new Set(msg.sender.userRoles.map((ur) => ur.role.name))],
@@ -67,5 +70,27 @@ export const messagePrismaRepository: IMessageRepository = {
       };
     });
     return result;
+  },
+  updateMessageStatus: async function (messageId: string, schoolId: string): Promise<boolean> {
+    const existingMessage = await prisma.message.findFirst({
+      where: {
+        schoolId,
+        id: messageId,
+      },
+    });
+
+    if (!existingMessage) {
+      return false;
+    }
+    const result = await prisma.message.update({
+      where: {
+        id: messageId,
+        schoolId,
+      },
+      data: {
+        read: true,
+      },
+    });
+    return result != null;
   },
 };

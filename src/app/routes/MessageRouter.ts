@@ -10,4 +10,10 @@ messageRouter.get(
   MessageController.getAllMessages
 );
 
+messageRouter.put(
+  "/:schoolId/messages/updateStatus",
+  authenticateToken,
+  MessageController.updateMessageStatus
+);
+
 export default messageRouter;

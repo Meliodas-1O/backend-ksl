@@ -76,4 +76,7 @@ export interface ISchoolRepository extends IRepository<School> {
    * @param schoolId The ID of the school.
    */
   findClasseById(classeId: string, schoolId: string): Promise<any | null>;
+
+  updateSchoolReportGeneratedCounter(counter: number, schoolId: string): Promise<void>;
+  updateStudentReportGeneratedCounter(counter: number, schoolId: string): Promise<void>;
 }

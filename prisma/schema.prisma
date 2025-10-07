@@ -62,6 +62,8 @@ model School {
   telephone String?
   email     String?
   siteWeb   String?
+  schoolreportGenerated  Int?     @default(0)
+  studentReportGenerated Int?     @default(0)
 
   students  Student[]
   classes   Classe[]

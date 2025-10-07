@@ -20,6 +20,8 @@ import {
 } from "../../services/schoolsvc/handler/SchoolQueries";
 import { SchoolUpdateRequest } from "../../services/schoolsvc/models/SchoolUpdateRequest";
 import { UpdateSchoolQuery } from "../../services/schoolsvc/handler/UpdateSchool/UpdateSchoolQuery";
+import { UpdateSchoolReportCounterCommand } from "../../services/schoolsvc/handler/UpdateCounters/UpdateSchoolReportCounterCommand";
+import { UpdateStudentReportCounterCommand } from "../../services/schoolsvc/handler/UpdateCounters/UpdateStudentReportCounterCommand";
 
 const updateSchool: RequestHandler = async (req, res) => {
   try {
@@ -232,6 +234,46 @@ const getClasseById: RequestHandler = async (req, res) => {
   }
 };
 
+// ---------------------------------------------
+// Update School report generated counter
+// ---------------------------------------------
+const UpdateSchoolReportGeneratedCounter: RequestHandler = async (req, res) => {
+  try {
+    const { schoolId } = req.params;
+    const query = new UpdateSchoolReportCounterCommand(schoolId);
+    await mediator.send(query);
+
+    res.status(StatusCode.SUCCESS).json(true);
+  } catch (error: any) {
+    console.error("Get classe by ID error:", error);
+    if (error instanceof NotFoundError) {
+      res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
+      return;
+    }
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+  }
+};
+
+// ---------------------------------------------
+// Update Student report generated counter
+// ---------------------------------------------
+const UpdateStudentReportGeneratedCounter: RequestHandler = async (req, res) => {
+  try {
+    const { schoolId } = req.params;
+    const query = new UpdateStudentReportCounterCommand(schoolId);
+    await mediator.send(query);
+
+    res.status(StatusCode.SUCCESS).json(true);
+  } catch (error: any) {
+    console.error("Get classe by ID error:", error);
+    if (error instanceof NotFoundError) {
+      res.status(StatusCode.NOT_FOUND).json({ reason: error.message });
+      return;
+    }
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+  }
+};
+
 export const SchoolController = {
   updateSchool,
   getSchoolById,
@@ -245,4 +287,6 @@ export const SchoolController = {
   getTeacherById,
   getParentById,
   getClasseById,
+  UpdateSchoolReportGeneratedCounter,
+  UpdateStudentReportGeneratedCounter,
 };

@@ -2,6 +2,12 @@ import { Server as HttpServer } from "http";
 import { Server, Socket } from "socket.io";
 import { PrismaClient } from "@prisma/client";
 import { authenticateSocket } from "./authenticateSocket";
+import { messageEncoderSingleton } from "../common/infrastructure/security/MessageEnocder";
+import * as crypto from "crypto";
+import {
+  Base64MessageEncoder,
+  encoder,
+} from "../common/infrastructure/security/Base64MessageEncoder";
 
 const prisma = new PrismaClient();
 
@@ -16,6 +22,7 @@ export const initSocketServer = (server: HttpServer) => {
       credentials: true,
     },
   });
+  const key = crypto.randomBytes(32); // 256-bit key for AES-256
 
   io.use(authenticateSocket);
 
@@ -32,7 +39,7 @@ export const initSocketServer = (server: HttpServer) => {
       //   Save to DB
       const message = await prisma.message.create({
         data: {
-          content: text,
+          content: encoder.encode(text),
           read: false,
           receiverId,
           schoolId: user.schoolId,

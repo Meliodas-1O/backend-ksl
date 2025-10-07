@@ -332,4 +332,31 @@ export const schoolPrismaRepository: ISchoolRepository = {
       where: { name },
     });
   },
+  updateSchoolReportGeneratedCounter: async function (
+    counter: number,
+    schoolId: string
+  ): Promise<void> {
+    await prisma.school.update({
+      where: {
+        id: schoolId,
+      },
+      data: {
+        schoolreportGenerated: counter,
+      },
+    });
+  },
+
+  updateStudentReportGeneratedCounter: async function (
+    counter: number,
+    schoolId: string
+  ): Promise<void> {
+    await prisma.school.update({
+      where: {
+        id: schoolId,
+      },
+      data: {
+        studentReportGenerated: counter,
+      },
+    });
+  },
 };

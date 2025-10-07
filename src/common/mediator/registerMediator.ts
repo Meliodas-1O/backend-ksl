@@ -116,6 +116,8 @@ import {
   GetEvaluationsByClasseQueryHandler,
   GetEvaluationsByTeacherQueryHandler,
 } from "../../services/evaluationsvc/CommandHandlers";
+import { UpdateMessageStatusCommandHandler } from "../../services/messagesvc/CommandHandlers";
+import { UpdateMessageStatusCommand } from "../../services/messagesvc/Commands";
 import { GetAllMessagesQuery } from "../../services/messagesvc/Queries";
 import { GetAllMessagesQueryHandler } from "../../services/messagesvc/QueryHandler";
 import {
@@ -176,6 +178,10 @@ import {
   GetParentByIdQueryHandler,
   GetOneClasseByIdQueryHandler,
 } from "../../services/schoolsvc/handler/SchoolQueryHandler";
+import { UpdateSchoolReportCounterCommand } from "../../services/schoolsvc/handler/UpdateCounters/UpdateSchoolReportCounterCommand";
+import { UpdateSchoolReportCounterCommandHandler } from "../../services/schoolsvc/handler/UpdateCounters/UpdateSchoolReportCounterCommandHandler";
+import { UpdateStudentReportCounterCommand } from "../../services/schoolsvc/handler/UpdateCounters/UpdateStudentReportCounterCommand";
+import { UpdateStudentReportCounterCommandHandler } from "../../services/schoolsvc/handler/UpdateCounters/UpdateStudentReportCounterCommandHandler";
 import { UpdateSchoolQuery } from "../../services/schoolsvc/handler/UpdateSchool/UpdateSchoolQuery";
 import { UpdateSchoolQueryHandler } from "../../services/schoolsvc/handler/UpdateSchool/UpdateSchoolQueryHandler";
 import {
@@ -789,6 +795,22 @@ export function registerHandlers() {
   mediator.register<GetAllMessagesQuery>(
     GetAllMessagesQuery.name,
     new GetAllMessagesQueryHandler(messageRepository)
+  );
+  mediator.register<UpdateMessageStatusCommand>(
+    UpdateMessageStatusCommand.name,
+    new UpdateMessageStatusCommandHandler(messageRepository)
+  );
+
+  // ---------------------------------------------
+  // Register Report Counter Handlers
+  // ---------------------------------------------
+  mediator.register<UpdateSchoolReportCounterCommand>(
+    UpdateSchoolReportCounterCommand.name,
+    new UpdateSchoolReportCounterCommandHandler(schoolRepository)
+  );
+  mediator.register<UpdateStudentReportCounterCommand>(
+    UpdateStudentReportCounterCommand.name,
+    new UpdateStudentReportCounterCommandHandler(schoolRepository)
   );
 
   // #endregion

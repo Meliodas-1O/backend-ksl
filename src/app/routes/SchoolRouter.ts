@@ -73,5 +73,15 @@ schoolRouter.get(
 );
 
 schoolRouter.get("/:schoolId/classes/:classId", authenticateToken, SchoolController.getClasseById);
+schoolRouter.put(
+  "/:schoolId/counters/schoolReport",
+  authenticateToken,
+  SchoolController.UpdateSchoolReportGeneratedCounter
+);
+schoolRouter.put(
+  "/:schoolId/counters/studentReport",
+  authenticateToken,
+  SchoolController.UpdateStudentReportGeneratedCounter
+);
 
 export default schoolRouter;
