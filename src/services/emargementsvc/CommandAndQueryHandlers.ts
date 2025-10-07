@@ -9,6 +9,7 @@ import {
   GetEmargementByIdQuery,
   GetEmargementByUserIdQuery,
 } from "./CommandsAndQueries";
+import { CreateEmargementDto } from "./Models";
 
 export class CreateEmargementCommandHandler
   implements ICommandHandler<CreateEmargementCommand, any>
@@ -20,7 +21,7 @@ export class CreateEmargementCommandHandler
       throw new Error("Start time (debut) must be before end time (fin).");
     }
 
-    const emargement = {
+    const emargement: CreateEmargementDto = {
       classeId: command.classeId,
       disciplineId: command.disciplineId,
       professeurId: command.professeurId,
@@ -36,9 +37,7 @@ export class CreateEmargementCommandHandler
   }
 }
 // 🔵 Query: Get All Emargements
-export class GetAllEmargementsQueryHandler
-  implements IQueryHandler<GetAllEmargementsQuery, any[]>
-{
+export class GetAllEmargementsQueryHandler implements IQueryHandler<GetAllEmargementsQuery, any[]> {
   constructor(private emargementRepository: IEmargementRepository) {}
 
   async execute(query: GetAllEmargementsQuery): Promise<any[]> {
@@ -50,9 +49,7 @@ export class GetAllEmargementsQueryHandler
   }
 }
 
-export class GetEmargementByIdQueryHandler
-  implements IQueryHandler<GetEmargementByIdQuery, any>
-{
+export class GetEmargementByIdQueryHandler implements IQueryHandler<GetEmargementByIdQuery, any> {
   constructor(private emargementRepository: IEmargementRepository) {}
 
   async execute(query: GetEmargementByIdQuery): Promise<any> {

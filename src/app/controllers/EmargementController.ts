@@ -25,9 +25,9 @@ export const EmargementController = {
       const { schoolId } = req.params;
 
       const command = new CreateEmargementCommand(
+        professeurId,
         classeId,
         disciplineId,
-        professeurId,
         new Date(debut),
         new Date(fin),
         seanceCounter,
@@ -40,9 +40,7 @@ export const EmargementController = {
       res.status(StatusCode.CREATED).json(result);
     } catch (error: any) {
       console.error("Create emargement error:", error);
-      res
-        .status(StatusCode.INTERNAL_SERVER_ERROR)
-        .json({ reason: "Internal server error." });
+      res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
     }
   }) as RequestHandler,
 
@@ -57,9 +55,7 @@ export const EmargementController = {
       res.status(StatusCode.SUCCESS).json(result);
     } catch (error: any) {
       console.error("Get emargement by ID error:", error);
-      res
-        .status(StatusCode.INTERNAL_SERVER_ERROR)
-        .json({ reason: "Internal server error." });
+      res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
     }
   }) as RequestHandler,
 
@@ -72,9 +68,7 @@ export const EmargementController = {
       res.status(StatusCode.SUCCESS).json(result);
     } catch (error: any) {
       console.error("Get all emargements error:", error);
-      res
-        .status(StatusCode.INTERNAL_SERVER_ERROR)
-        .json({ reason: "Internal server error." });
+      res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
     }
   }) as RequestHandler,
 
@@ -87,9 +81,7 @@ export const EmargementController = {
       res.status(StatusCode.SUCCESS).json(result);
     } catch (error: any) {
       console.error("Get emargement by user error:", error);
-      res
-        .status(StatusCode.INTERNAL_SERVER_ERROR)
-        .json({ reason: "Internal server error." });
+      res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
     }
   }) as RequestHandler,
 };
