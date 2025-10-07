@@ -18,6 +18,7 @@ import studentRouter from "./routes/StudentRouter";
 import userRouter from "./routes/UserRouter";
 import { initSocketServer } from "../socket";
 import messageRouter from "./routes/MessageRouter";
+import emargementRouter from "./routes/EmargementRouter";
 
 config();
 
@@ -64,6 +65,7 @@ app.use("/api/schools", noteRouter);
 app.use("/api/schools", noteAverageRouter);
 app.use("/api/schools", evaluationRouter);
 app.use("/api/schools", messageRouter);
+app.use("/api/schools", emargementRouter);
 app.use("/api/admin-actions", adminRouter);
 
 // ✅ Simple hello route
@@ -73,4 +75,6 @@ app.get("/", (req, res) => {
 
 const port = Number(process.env.PORT) || 3000;
 initSocketServer(server);
-server.listen(port, "0.0.0.0", () => console.log(`🚀 Server running on port ${port}`));
+server.listen(port, "0.0.0.0", () =>
+  console.log(`🚀 Server running on port ${port}`)
+);

@@ -99,6 +99,18 @@ import {
   RevokeDisciplinesFromTeacherCommand,
 } from "../../services/courssvc/Commands";
 import {
+  CreateEmargementCommandHandler,
+  GetAllEmargementsQueryHandler,
+  GetEmargementByIdQueryHandler,
+  GetEmargementByUserIdQueryHandler,
+} from "../../services/emargementsvc/CommandAndQueryHandlers";
+import {
+  CreateEmargementCommand,
+  GetAllEmargementsQuery,
+  GetEmargementByIdQuery,
+  GetEmargementByUserIdQuery,
+} from "../../services/emargementsvc/CommandsAndQueries";
+import {
   CreateEvaluationCommand,
   UpdateEvaluationCommand,
   DeleteEvaluationCommand,
@@ -232,6 +244,7 @@ import { IAdminRepository } from "../domain/repository/IAdminRepository";
 import { IClasseRepository } from "../domain/repository/IClasseRepository";
 import { ICoursRepository } from "../domain/repository/ICoursRepository";
 import { IDisciplineRepository } from "../domain/repository/IDisciplineRepository";
+import { IEmargementRepository } from "../domain/repository/IEmargementRepository";
 import { IMessageRepository } from "../domain/repository/IMessageRepository";
 import { INoteRepository } from "../domain/repository/INoteRepository";
 import { ISchoolRepository } from "../domain/repository/ISchoolRepository";
@@ -243,6 +256,7 @@ import { adminPrismaRepository } from "../infrastructure/repositories/AdminPrism
 import { classePrismaRepository } from "../infrastructure/repositories/ClassePrismaRepository";
 import { coursPrismaRepository } from "../infrastructure/repositories/CoursPrismaRepository";
 import { disciplinePrismaRepository } from "../infrastructure/repositories/DisciplinePrismaRepository";
+import { emargementPrismaRepository } from "../infrastructure/repositories/EmargementPrismaRepository";
 import { evaluationPrismaRepository } from "../infrastructure/repositories/EvaluationPrismaRepository";
 import { messagePrismaRepository } from "../infrastructure/repositories/MessageRepository";
 import { NotePrismaRepository } from "../infrastructure/repositories/NotePrismaRepository";
@@ -264,13 +278,16 @@ export function registerHandlers() {
   const schoolRepository: ISchoolRepository = schoolPrismaRepository;
   const classRepository: IClasseRepository = classePrismaRepository;
   const coursRepository: ICoursRepository = coursPrismaRepository;
-  const disciplineRepository: IDisciplineRepository = disciplinePrismaRepository;
+  const disciplineRepository: IDisciplineRepository =
+    disciplinePrismaRepository;
   const adminRepository: IAdminRepository = adminPrismaRepository;
   const studentAttendanceRepository: IStudentAttendanceRepository =
     studentAttendancePrismaRepository;
   const noteRepository: INoteRepository = NotePrismaRepository;
   const visitRepository: IVisitorRepository = visitorPrismaRepository;
   const messageRepository: IMessageRepository = messagePrismaRepository;
+  const emargementRepository: IEmargementRepository =
+    emargementPrismaRepository;
   // Add services
   const pwdHasher: IPasswordHasher = passwordHasher;
   const jwtSvc: IJwtService = jwtService;
@@ -623,11 +640,17 @@ export function registerHandlers() {
   // ---------------------------------------------
   mediator.register<CreateStudentAttendanceCommand>(
     CreateStudentAttendanceCommand.name,
-    new CreateStudentAttendanceCommandHandler(studentAttendanceRepository, studentRepository)
+    new CreateStudentAttendanceCommandHandler(
+      studentAttendanceRepository,
+      studentRepository
+    )
   );
   mediator.register<UpdateStudentAttendanceCommand>(
     UpdateStudentAttendanceCommand.name,
-    new UpdateStudentAttendanceCommandHandler(studentAttendanceRepository, studentRepository)
+    new UpdateStudentAttendanceCommandHandler(
+      studentAttendanceRepository,
+      studentRepository
+    )
   );
   mediator.register<DeleteStudentAttendanceCommand>(
     DeleteStudentAttendanceCommand.name,
@@ -643,11 +666,15 @@ export function registerHandlers() {
   );
   mediator.register<FindStudentAttendanceByStudentIdQuery>(
     FindStudentAttendanceByStudentIdQuery.name,
-    new FindStudentAttendanceByStudentIdQueryHandler(studentAttendanceRepository)
+    new FindStudentAttendanceByStudentIdQueryHandler(
+      studentAttendanceRepository
+    )
   );
   mediator.register<FindStudentAttendanceByDisciplineIdQuery>(
     FindStudentAttendanceByDisciplineIdQuery.name,
-    new FindStudentAttendanceByDisciplineIdQueryHandler(studentAttendanceRepository)
+    new FindStudentAttendanceByDisciplineIdQueryHandler(
+      studentAttendanceRepository
+    )
   );
   mediator.register<FindStudentAttendanceByTypeQuery>(
     FindStudentAttendanceByTypeQuery.name,
@@ -756,7 +783,10 @@ export function registerHandlers() {
 
   mediator.register<CreateEvaluationCommand>(
     CreateEvaluationCommand.name,
-    new CreateEvaluationCommandHandler(evaluationPrismaRepository, userRepository)
+    new CreateEvaluationCommandHandler(
+      evaluationPrismaRepository,
+      userRepository
+    )
   );
 
   mediator.register<UpdateEvaluationCommand>(
@@ -811,6 +841,30 @@ export function registerHandlers() {
   mediator.register<UpdateStudentReportCounterCommand>(
     UpdateStudentReportCounterCommand.name,
     new UpdateStudentReportCounterCommandHandler(schoolRepository)
+  );
+
+  // ---------------------------------------------
+  // Register Emargement Handlers
+  // ---------------------------------------------
+
+  mediator.register<CreateEmargementCommand>(
+    CreateEmargementCommand.name,
+    new CreateEmargementCommandHandler(emargementRepository)
+  );
+
+  mediator.register<GetAllEmargementsQuery>(
+    GetAllEmargementsQuery.name,
+    new GetAllEmargementsQueryHandler(emargementRepository)
+  );
+
+  mediator.register<GetEmargementByIdQuery>(
+    GetEmargementByIdQuery.name,
+    new GetEmargementByIdQueryHandler(emargementRepository)
+  );
+
+  mediator.register<GetEmargementByUserIdQuery>(
+    GetEmargementByUserIdQuery.name,
+    new GetEmargementByUserIdQueryHandler(emargementRepository)
   );
 
   // #endregion

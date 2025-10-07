@@ -36,6 +36,7 @@ model AppUser {
   visits            Visits[]
   sentMessages      Message[] @relation("SentMessages")
   receivedMessages  Message[] @relation("ReceivedMessages")
+  emargements       Emargement[]
 }
 
 model Role {
@@ -73,6 +74,7 @@ model School {
   evaluation  Evaluation[]
   visits      Visits[]
   messages     Message[]
+  emargements   Emargement[]
 }
 
 model Student {
@@ -120,6 +122,7 @@ model Classe {
   notes       Note[]
   cours       Cours[]
   evaluation  Evaluation[]
+  emargements Emargement[]
 
 }
 
@@ -142,6 +145,7 @@ model Discipline {
   teachers   AppUser[] @relation("TeacherDisciplines")
   attendances StudentAttendance[]
   evaluation  Evaluation[] @relation("EvaluationDisciplines")
+  emargements  Emargement[] @relation("EmargementDiscipline")
 }
 
 model Note {
@@ -243,4 +247,28 @@ model Message {
   @@index([senderId])
   @@index([receiverId])
   @@index([schoolId])
+}
+
+model Emargement {
+  id              String     @id @default(uuid())
+  createdAt       DateTime   @default(now())
+  
+  classeId        String
+  classe          Classe     @relation(fields: [classeId], references: [id], onDelete: Cascade)
+
+  disciplineId    String
+  discipline      Discipline @relation("EmargementDiscipline", fields: [disciplineId], references: [id], onDelete: Cascade)
+
+  professeurId    String
+  professeur      AppUser   @relation(fields: [professeurId], references: [id])
+
+  debut           DateTime   
+  fin             DateTime   
+  seanceCounter   Int
+
+  content         String
+  additionalInfo  String?
+
+  schoolId    String
+  School      School     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
