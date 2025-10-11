@@ -1,3 +1,8 @@
+/* Commannd to reset a password */
+export class AdminResetPasswordCommand {
+  constructor(public email: string, public password: string, public schoolId: string) {}
+}
+
 /*
  * Command to create a new Role
  */

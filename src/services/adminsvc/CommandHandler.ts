@@ -15,6 +15,7 @@ import {
   GetDisciplinesQuery,
   DeleteDisciplineCommand,
   UpdateDisciplineCommand,
+  AdminResetPasswordCommand,
 } from "./Commands";
 import { IAdminRepository } from "../../common/domain/repository/IAdminRepository";
 import { ICommandHandler } from "../../common/domain/contracts/ICommandHandler";
@@ -24,14 +25,25 @@ import { RoleEntity } from "../../common/domain/entities/RoleEntity";
 import { School } from "../../common/domain/entities/School";
 import { IPasswordHasher } from "../../common/domain/contracts/IPasswordHasher";
 
-export class CreateRoleCommandHandler
-  implements ICommandHandler<CreateRoleCommand, any>
+export class AdminResetPasswordCommandHandler
+  implements ICommandHandler<AdminResetPasswordCommand, boolean>
 {
+  constructor(private adminRepository: IAdminRepository, private passwordHasher: IPasswordHasher) {}
+  async execute(command: AdminResetPasswordCommand): Promise<boolean> {
+    const hashedPassword = await this.passwordHasher.hash(command.password);
+
+    return await this.adminRepository.resetPassword(
+      command.email,
+      hashedPassword,
+      command.schoolId
+    );
+  }
+}
+
+export class CreateRoleCommandHandler implements ICommandHandler<CreateRoleCommand, any> {
   constructor(private adminRepository: IAdminRepository) {}
   async execute(command: CreateRoleCommand): Promise<any> {
-    const existingRole = await this.adminRepository.findRoleByName(
-      command.role
-    );
+    const existingRole = await this.adminRepository.findRoleByName(command.role);
     if (existingRole) {
       return existingRole;
     }
@@ -40,24 +52,18 @@ export class CreateRoleCommandHandler
   }
 }
 
-export class GetAllRolesQueryHandler
-  implements IQueryHandler<GetAllRolesQuery, any[]>
-{
+export class GetAllRolesQueryHandler implements IQueryHandler<GetAllRolesQuery, any[]> {
   constructor(private adminRepository: IAdminRepository) {}
   async execute(query: GetAllRolesQuery): Promise<any[]> {
     return this.adminRepository.findAllRoles();
   }
 }
 
-export class CreateSchoolCommandHandler
-  implements ICommandHandler<CreateSchoolCommand, any>
-{
+export class CreateSchoolCommandHandler implements ICommandHandler<CreateSchoolCommand, any> {
   constructor(private adminRepository: IAdminRepository) {}
   async execute(command: CreateSchoolCommand): Promise<any> {
     // Check if a school with the same name already exists
-    const existingSchool = await this.adminRepository.findSchoolWithName(
-      command.name
-    );
+    const existingSchool = await this.adminRepository.findSchoolWithName(command.name);
     if (existingSchool) {
       throw new Error("A school with this name already exists.");
     }
@@ -65,21 +71,14 @@ export class CreateSchoolCommandHandler
     return this.adminRepository.createSchool(school);
   }
 }
-export class DeleteSchoolCommandHandler
-  implements ICommandHandler<DeleteSchoolCommand, void>
-{
+export class DeleteSchoolCommandHandler implements ICommandHandler<DeleteSchoolCommand, void> {
   constructor(private adminRepository: IAdminRepository) {}
   async execute(command: DeleteSchoolCommand): Promise<void> {
     return this.adminRepository.deleteSchool(command.schoolId);
   }
 }
-export class CreateAdminCommandHandler
-  implements ICommandHandler<CreateAdminCommand, any>
-{
-  constructor(
-    private adminRepository: IAdminRepository,
-    private passwordHasher: IPasswordHasher
-  ) {}
+export class CreateAdminCommandHandler implements ICommandHandler<CreateAdminCommand, any> {
+  constructor(private adminRepository: IAdminRepository, private passwordHasher: IPasswordHasher) {}
   async execute(command: CreateAdminCommand): Promise<any> {
     const hashedPassword = await this.passwordHasher.hash(command.password);
 
@@ -99,10 +98,7 @@ export class AssignRoleToUserCommandHandler
 {
   constructor(private adminRepository: IAdminRepository) {}
   async execute(command: AssignRoleToUserCommand): Promise<any> {
-    return this.adminRepository.assignRoleToUser(
-      command.userId,
-      command.roleId
-    );
+    return this.adminRepository.assignRoleToUser(command.userId, command.roleId);
   }
 }
 export class RemoveRoleFromUserCommandHandler
@@ -110,15 +106,10 @@ export class RemoveRoleFromUserCommandHandler
 {
   constructor(private adminRepository: IAdminRepository) {}
   async execute(command: RemoveRoleFromUserCommand): Promise<any> {
-    return this.adminRepository.removeRoleFromUser(
-      command.userId,
-      command.roleId
-    );
+    return this.adminRepository.removeRoleFromUser(command.userId, command.roleId);
   }
 }
-export class DeleteAdminCommandHandler
-  implements ICommandHandler<DeleteAdminCommand, void>
-{
+export class DeleteAdminCommandHandler implements ICommandHandler<DeleteAdminCommand, void> {
   constructor(private adminRepository: IAdminRepository) {}
 
   async execute(command: DeleteAdminCommand): Promise<void> {
@@ -149,16 +140,11 @@ export class UpdateDisciplineCommandHandler
 {
   constructor(private adminRepository: IAdminRepository) {}
   async execute(command: UpdateDisciplineCommand): Promise<any> {
-    return this.adminRepository.updateDiscipline(
-      command.disciplineId,
-      command.name
-    );
+    return this.adminRepository.updateDiscipline(command.disciplineId, command.name);
   }
 }
 
-export class GetDisciplinesQueryHandler
-  implements ICommandHandler<GetDisciplinesQuery, any>
-{
+export class GetDisciplinesQueryHandler implements ICommandHandler<GetDisciplinesQuery, any> {
   constructor(private adminRepository: IAdminRepository) {}
   async execute(command: GetDisciplinesQuery): Promise<any> {
     return this.adminRepository.findAllisciplines();

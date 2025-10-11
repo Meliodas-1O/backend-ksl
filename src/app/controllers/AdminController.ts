@@ -13,7 +13,45 @@ import {
   GetDisciplinesQuery,
   DeleteDisciplineCommand,
   UpdateDisciplineCommand,
+  AdminResetPasswordCommand,
 } from "../../services/adminsvc/Commands";
+import { StatusCode } from "../../common/application/dto/StatusCode";
+
+const adminResetPassword: RequestHandler = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const { schoolId } = req.params;
+    if (!(email && password && schoolId)) {
+      res
+        .status(400)
+        .json({ message: "the following fields are required : email, password, schoolId" });
+      return;
+    }
+    if (typeof password !== "string" || password.length < 6) {
+      res.status(400).json({
+        reason: "The password should be of type string and at least 6 characters.",
+        statusCode: StatusCode.NOT_FOUND,
+      });
+      return;
+    }
+    const command = new AdminResetPasswordCommand(email, password, schoolId);
+    const result = await mediator.send<AdminResetPasswordCommand, boolean>(command);
+    if (result) {
+      res.status(201).json(result);
+      return;
+    }
+    res.status(404).json({
+      reason: "User not found. Please check the schoolId and the email.",
+      statusCode: StatusCode.NOT_FOUND,
+    });
+  } catch (error: any) {
+    console.error("Create Role error:", error);
+    res.status(500).json({
+      reason: error.message,
+      statusCode: StatusCode.INTERNAL_SERVER_ERROR,
+    });
+  }
+};
 
 const createRole: RequestHandler = async (req, res) => {
   try {
@@ -79,18 +117,11 @@ const createAdmin: RequestHandler = async (req, res) => {
     const { firstName, lastName, email, password, schoolId } = req.body;
     if (!firstName || !lastName || !email || !password || !schoolId) {
       res.status(400).json({
-        message:
-          "All fields are required : firstName, lastName, email, password, schoolId",
+        message: "All fields are required : firstName, lastName, email, password, schoolId",
       });
       return;
     }
-    const command = new CreateAdminCommand(
-      firstName,
-      lastName,
-      email,
-      password,
-      schoolId
-    );
+    const command = new CreateAdminCommand(firstName, lastName, email, password, schoolId);
     const result = await mediator.send<CreateAdminCommand, any>(command);
     res.status(201).json(result);
   } catch (error: any) {
@@ -208,6 +239,7 @@ const updateDiscipline: RequestHandler = async (req, res) => {
 };
 
 export const AdminController = {
+  adminResetPassword,
   createRole,
   getAllRoles,
   createSchool,

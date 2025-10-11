@@ -5,6 +5,12 @@ import { VisitController } from "../controllers/VisitController";
 
 const adminRouter = Router();
 
+adminRouter.post(
+  "/schools/:schoolId/reset-password",
+  superAdminAuthenticateToken,
+  AdminController.adminResetPassword
+);
+
 adminRouter.post("/roles", superAdminAuthenticateToken, AdminController.createRole);
 adminRouter.get("/roles", superAdminAuthenticateToken, AdminController.getAllRoles);
 

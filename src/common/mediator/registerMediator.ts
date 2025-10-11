@@ -11,6 +11,7 @@ import {
   GetDisciplinesQueryHandler,
   UpdateDisciplineCommandHandler,
   DeleteDisciplineCommandHandler,
+  AdminResetPasswordCommandHandler,
 } from "../../services/adminsvc/CommandHandler";
 import {
   CreateSchoolCommand,
@@ -25,6 +26,7 @@ import {
   GetDisciplinesQuery,
   UpdateDisciplineCommand,
   DeleteDisciplineCommand,
+  AdminResetPasswordCommand,
 } from "../../services/adminsvc/Commands";
 import { DeleteUserCommand } from "../../services/authentication/handler/delete/DeleteUserCommand";
 import { DeleteUserCommandHandler } from "../../services/authentication/handler/delete/DeleteUserCommandHandler";
@@ -278,16 +280,14 @@ export function registerHandlers() {
   const schoolRepository: ISchoolRepository = schoolPrismaRepository;
   const classRepository: IClasseRepository = classePrismaRepository;
   const coursRepository: ICoursRepository = coursPrismaRepository;
-  const disciplineRepository: IDisciplineRepository =
-    disciplinePrismaRepository;
+  const disciplineRepository: IDisciplineRepository = disciplinePrismaRepository;
   const adminRepository: IAdminRepository = adminPrismaRepository;
   const studentAttendanceRepository: IStudentAttendanceRepository =
     studentAttendancePrismaRepository;
   const noteRepository: INoteRepository = NotePrismaRepository;
   const visitRepository: IVisitorRepository = visitorPrismaRepository;
   const messageRepository: IMessageRepository = messagePrismaRepository;
-  const emargementRepository: IEmargementRepository =
-    emargementPrismaRepository;
+  const emargementRepository: IEmargementRepository = emargementPrismaRepository;
   // Add services
   const pwdHasher: IPasswordHasher = passwordHasher;
   const jwtSvc: IJwtService = jwtService;
@@ -574,6 +574,11 @@ export function registerHandlers() {
   // ---------------------------------------------
   // Register Admin action Command Handlers (Mutations)
   // ---------------------------------------------
+  mediator.register<AdminResetPasswordCommand>(
+    AdminResetPasswordCommand.name,
+    new AdminResetPasswordCommandHandler(adminRepository, passwordHasher)
+  );
+
   mediator.register<CreateSchoolCommand>(
     CreateSchoolCommand.name,
     new CreateSchoolCommandHandler(adminRepository)
@@ -640,17 +645,11 @@ export function registerHandlers() {
   // ---------------------------------------------
   mediator.register<CreateStudentAttendanceCommand>(
     CreateStudentAttendanceCommand.name,
-    new CreateStudentAttendanceCommandHandler(
-      studentAttendanceRepository,
-      studentRepository
-    )
+    new CreateStudentAttendanceCommandHandler(studentAttendanceRepository, studentRepository)
   );
   mediator.register<UpdateStudentAttendanceCommand>(
     UpdateStudentAttendanceCommand.name,
-    new UpdateStudentAttendanceCommandHandler(
-      studentAttendanceRepository,
-      studentRepository
-    )
+    new UpdateStudentAttendanceCommandHandler(studentAttendanceRepository, studentRepository)
   );
   mediator.register<DeleteStudentAttendanceCommand>(
     DeleteStudentAttendanceCommand.name,
@@ -666,15 +665,11 @@ export function registerHandlers() {
   );
   mediator.register<FindStudentAttendanceByStudentIdQuery>(
     FindStudentAttendanceByStudentIdQuery.name,
-    new FindStudentAttendanceByStudentIdQueryHandler(
-      studentAttendanceRepository
-    )
+    new FindStudentAttendanceByStudentIdQueryHandler(studentAttendanceRepository)
   );
   mediator.register<FindStudentAttendanceByDisciplineIdQuery>(
     FindStudentAttendanceByDisciplineIdQuery.name,
-    new FindStudentAttendanceByDisciplineIdQueryHandler(
-      studentAttendanceRepository
-    )
+    new FindStudentAttendanceByDisciplineIdQueryHandler(studentAttendanceRepository)
   );
   mediator.register<FindStudentAttendanceByTypeQuery>(
     FindStudentAttendanceByTypeQuery.name,
@@ -783,10 +778,7 @@ export function registerHandlers() {
 
   mediator.register<CreateEvaluationCommand>(
     CreateEvaluationCommand.name,
-    new CreateEvaluationCommandHandler(
-      evaluationPrismaRepository,
-      userRepository
-    )
+    new CreateEvaluationCommandHandler(evaluationPrismaRepository, userRepository)
   );
 
   mediator.register<UpdateEvaluationCommand>(

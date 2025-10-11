@@ -72,4 +72,31 @@ export const adminPrismaRepository: IAdminRepository = {
       data: { name },
     });
   },
+  resetPassword: async function (
+    email: string,
+    password: string,
+    schoolId: string
+  ): Promise<boolean> {
+    const existingUser = await prisma.appUser.findFirst({
+      where: {
+        email,
+        schoolId,
+      },
+    });
+    if (!existingUser) {
+      return false;
+    }
+    await prisma.appUser.update({
+      where: {
+        schoolId_email: {
+          schoolId,
+          email,
+        },
+      },
+      data: {
+        password,
+      },
+    });
+    return true;
+  },
 };
