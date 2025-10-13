@@ -99,6 +99,9 @@ export const schoolPrismaRepository: ISchoolRepository = {
         telephone: true,
         children: true,
       },
+      orderBy: {
+        createdAt: "asc",
+      },
       where: {
         schoolId: schoolId,
         userRoles: {
