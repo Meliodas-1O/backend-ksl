@@ -102,15 +102,19 @@ import {
 } from "../../services/courssvc/Commands";
 import {
   CreateEmargementCommandHandler,
+  DeleteEmargementCommandHandler,
   GetAllEmargementsQueryHandler,
   GetEmargementByIdQueryHandler,
   GetEmargementByUserIdQueryHandler,
+  UpdateEmargementCommandHandler,
 } from "../../services/emargementsvc/CommandAndQueryHandlers";
 import {
   CreateEmargementCommand,
+  DeleteEmargementCommand,
   GetAllEmargementsQuery,
   GetEmargementByIdQuery,
   GetEmargementByUserIdQuery,
+  UpdateEmargementCommand,
 } from "../../services/emargementsvc/CommandsAndQueries";
 import {
   CreateEvaluationCommand,
@@ -842,6 +846,14 @@ export function registerHandlers() {
   mediator.register<CreateEmargementCommand>(
     CreateEmargementCommand.name,
     new CreateEmargementCommandHandler(emargementRepository)
+  );
+  mediator.register<UpdateEmargementCommand>(
+    UpdateEmargementCommand.name,
+    new UpdateEmargementCommandHandler(emargementRepository)
+  );
+  mediator.register<DeleteEmargementCommand>(
+    DeleteEmargementCommand.name,
+    new DeleteEmargementCommandHandler(emargementRepository)
   );
 
   mediator.register<GetAllEmargementsQuery>(

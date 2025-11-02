@@ -27,14 +27,27 @@ export const evaluationPrismaRepository: IEvaluationRepository = {
   },
 
   async findByClasse(classeId: string, schoolId: string): Promise<Evaluation[] | null> {
+    const startOfToday = new Date(new Date().setHours(0, 0, 0, 0));
+
     return await prisma.evaluation.findMany({
-      where: { classeId, schoolId },
+      where: {
+        classeId,
+        schoolId,
+        date: {
+          gte: startOfToday,
+        },
+      },
+      orderBy: {
+        date: "asc", // Optional: show upcoming ones first
+      },
     });
   },
-
   async findByTeacher(professeurId, schoolId): Promise<Evaluation[] | null> {
     return await prisma.evaluation.findMany({
-      where: { professeurId, schoolId },
+      where: {
+        professeurId,
+        schoolId,
+      },
       include: {
         classe: true,
       },

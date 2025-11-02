@@ -32,13 +32,42 @@ export const emargementPrismaRepository: IEmargementRepository = {
             id: emargement.disciplineId,
           },
         },
-        // classeId: emargement.classeId,
-        // disciplineId: emargement.disciplineId,
-        // professeurId: emargement.professeurId,
-        // schoolId: emargement.schoolId,
       },
     });
     return true;
+  },
+
+  async deleteEmargementById(emargementId: string, schoolId: string): Promise<void> {
+    await prisma.emargement.delete({
+      where: { id: emargementId, schoolId },
+    });
+  },
+
+  async updateEmargementById(
+    emargement: any,
+    emargementId: string,
+    schoolId: string
+  ): Promise<void> {
+    await prisma.emargement.update({
+      where: { id: emargementId, schoolId },
+      data: {
+        content: emargement.content,
+        debut: emargement.debut,
+        fin: emargement.fin,
+        seanceCounter: emargement.seanceCounter,
+        additionalInfo: emargement.additionalInfo,
+        discipline: {
+          connect: {
+            id: emargement.disciplineId,
+          },
+        },
+        classe: {
+          connect: {
+            id: emargement.classeId,
+          },
+        },
+      },
+    });
   },
   async getAllEmargements(schoolId: string): Promise<any[]> {
     return await prisma.emargement.findMany({
@@ -70,6 +99,23 @@ export const emargementPrismaRepository: IEmargementRepository = {
   async getEmargementByUserId(professeurId: string, schoolId: string): Promise<any[]> {
     return await prisma.emargement.findMany({
       where: { professeurId, schoolId },
+      include: {
+        classe: {
+          select: {
+            id: true,
+            nom: true,
+            niveau: true,
+          },
+        },
+        discipline: true,
+        professeur: {
+          select: {
+            id: true,
+            prenom: true,
+            nom: true,
+          },
+        },
+      },
     });
   },
 };

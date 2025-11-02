@@ -80,10 +80,6 @@ export const userPrismaRepository: IUserRepository = {
         });
       }
 
-      const schoolRequest = {
-        create: [{ school: { connect: { name: user.getSchoolId() } } }],
-      };
-
       const updatedUser = await prisma.appUser.update({
         where: { id },
         data: {

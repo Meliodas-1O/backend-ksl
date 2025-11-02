@@ -3,9 +3,11 @@ import { StatusCode } from "../../common/application/dto/StatusCode";
 import { mediator } from "../../common/mediator/Mediator";
 import {
   CreateEmargementCommand,
+  DeleteEmargementCommand,
   GetAllEmargementsQuery,
   GetEmargementByIdQuery,
   GetEmargementByUserIdQuery,
+  UpdateEmargementCommand,
 } from "../../services/emargementsvc/CommandsAndQueries";
 
 export const EmargementController = {
@@ -40,6 +42,48 @@ export const EmargementController = {
       res.status(StatusCode.CREATED).json(result);
     } catch (error: any) {
       console.error("Create emargement error:", error);
+      res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+    }
+  }) as RequestHandler,
+
+  updateEmargement: (async (req, res) => {
+    try {
+      const { classeId, disciplineId, debut, fin, seanceCounter, content, additionalInfo } =
+        req.body;
+      const dateDebut = new Date(debut);
+      const dateFin = new Date(fin);
+      const { schoolId, emargementId } = req.params;
+      const command = new UpdateEmargementCommand(
+        emargementId,
+        {
+          classeId,
+          content,
+          debut: dateDebut,
+          fin: dateFin,
+          disciplineId,
+          schoolId,
+          seanceCounter,
+          additionalInfo,
+        },
+        schoolId
+      );
+
+      const result = await mediator.send(command);
+      res.status(StatusCode.SUCCESS).json(result);
+    } catch (error) {
+      console.error("Update emargement error:", error);
+      res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
+    }
+  }) as RequestHandler,
+
+  deleteEmargement: (async (req, res) => {
+    try {
+      const { schoolId, emargementId } = req.params;
+      const command = new DeleteEmargementCommand(emargementId, schoolId);
+      const result = await mediator.send(command);
+      res.status(StatusCode.SUCCESS).json(result);
+    } catch (error) {
+      console.error("Delete emargement error:", error);
       res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ reason: "Internal server error." });
     }
   }) as RequestHandler,

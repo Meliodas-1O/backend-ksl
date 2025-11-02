@@ -10,6 +10,18 @@ emargementRouter.post(
   EmargementController.createEmargement
 );
 
+emargementRouter.put(
+  "/:schoolId/emargements/:emargementId",
+  authenticateToken,
+  EmargementController.updateEmargement
+);
+
+emargementRouter.delete(
+  "/:schoolId/emargements/:emargementId",
+  authenticateToken,
+  EmargementController.deleteEmargement
+);
+
 emargementRouter.get(
   "/:schoolId/emargements/:emargementId",
   authenticateToken,

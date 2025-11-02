@@ -5,9 +5,11 @@ import { IQueryHandler } from "../../common/domain/contracts/IQueryHandler";
 import { IEmargementRepository } from "../../common/domain/repository/IEmargementRepository";
 import {
   CreateEmargementCommand,
+  DeleteEmargementCommand,
   GetAllEmargementsQuery,
   GetEmargementByIdQuery,
   GetEmargementByUserIdQuery,
+  UpdateEmargementCommand,
 } from "./CommandsAndQueries";
 import { CreateEmargementDto } from "./Models";
 
@@ -34,6 +36,61 @@ export class CreateEmargementCommandHandler
     };
 
     return await this.emargementRepository.createEmargement(emargement);
+  }
+}
+
+export class DeleteEmargementCommandHandler
+  implements ICommandHandler<DeleteEmargementCommand, any>
+{
+  constructor(private emargementRepository: IEmargementRepository) {}
+
+  async execute(command: DeleteEmargementCommand): Promise<any> {
+    const existingEmargement = await this.emargementRepository.getEmargementById(
+      command.emargementId,
+      command.schoolId
+    );
+    if (!existingEmargement) {
+      return;
+    }
+    await this.emargementRepository.deleteEmargementById(command.emargementId, command.schoolId);
+  }
+}
+
+export class UpdateEmargementCommandHandler
+  implements ICommandHandler<UpdateEmargementCommand, any>
+{
+  constructor(private emargementRepository: IEmargementRepository) {}
+
+  async execute(command: UpdateEmargementCommand): Promise<any> {
+    if (command.emargement.debut >= command.emargement.fin) {
+      throw new Error("Start time (debut) must be before end time (fin).");
+    }
+
+    const existingEmargement = await this.emargementRepository.getEmargementById(
+      command.emargementId,
+      command.schoolId
+    );
+    if (!existingEmargement) {
+      throw new Error(`Emargement with id : ${command.emargementId} not found.`);
+    }
+
+    const emargement: CreateEmargementDto = {
+      classeId: command.emargement.classeId,
+      disciplineId: command.emargement.disciplineId,
+      professeurId: existingEmargement.professeurId,
+      debut: command.emargement.debut,
+      fin: command.emargement.fin,
+      seanceCounter: command.emargement.seanceCounter,
+      content: command.emargement.content,
+      additionalInfo: command.emargement.additionalInfo,
+      schoolId: command.emargement.schoolId,
+    };
+
+    return await this.emargementRepository.updateEmargementById(
+      emargement,
+      command.emargementId,
+      command.schoolId
+    );
   }
 }
 // 🔵 Query: Get All Emargements

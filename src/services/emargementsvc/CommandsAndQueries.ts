@@ -1,3 +1,14 @@
+interface Emargement {
+  classeId: string;
+  disciplineId: string;
+  debut: Date;
+  fin: Date;
+  seanceCounter: number;
+  content: string;
+  schoolId: string;
+  additionalInfo?: string;
+}
+
 // -------------------------------------------
 // 🟢 Command: Create a new Emargement record
 // -------------------------------------------
@@ -17,6 +28,18 @@ export class CreateEmargementCommand {
     public content: string,
     public schoolId: string,
     public additionalInfo?: string
+  ) {}
+}
+
+export class DeleteEmargementCommand {
+  constructor(public emargementId: string, public schoolId: string) {}
+}
+
+export class UpdateEmargementCommand {
+  constructor(
+    public emargementId: string,
+    public emargement: Emargement,
+    public schoolId: string
   ) {}
 }
 
