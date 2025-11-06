@@ -2,7 +2,7 @@ import { IQueryHandler } from "../../common/domain/contracts/IQueryHandler";
 import { INotificationRepository } from "../../common/domain/repository/INotificationRepository";
 import { GetNotificationsQuery } from "./Queries";
 
-export class GetAllMessagesQueryHandler
+export class GetNotificationsQueryHandler
   implements IQueryHandler<GetNotificationsQuery, any[] | null>
 {
   constructor(private readonly repository: INotificationRepository) {}
