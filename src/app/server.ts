@@ -19,6 +19,7 @@ import userRouter from "./routes/UserRouter";
 import { initSocketServer } from "../socket";
 import messageRouter from "./routes/MessageRouter";
 import emargementRouter from "./routes/EmargementRouter";
+import notificationRouter from "./routes/NotificationRouter";
 
 config();
 
@@ -65,6 +66,7 @@ app.use("/api/schools", noteRouter);
 app.use("/api/schools", noteAverageRouter);
 app.use("/api/schools", evaluationRouter);
 app.use("/api/schools", messageRouter);
+app.use("/api/schools", notificationRouter);
 app.use("/api/schools", emargementRouter);
 app.use("/api/admin-actions", adminRouter);
 

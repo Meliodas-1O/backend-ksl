@@ -2,12 +2,8 @@ import { Server as HttpServer } from "http";
 import { Server, Socket } from "socket.io";
 import { PrismaClient } from "@prisma/client";
 import { authenticateSocket } from "./authenticateSocket";
-import { messageEncoderSingleton } from "../common/infrastructure/security/MessageEnocder";
 import * as crypto from "crypto";
-import {
-  Base64MessageEncoder,
-  encoder,
-} from "../common/infrastructure/security/Base64MessageEncoder";
+import { encoder } from "../common/infrastructure/security/Base64MessageEncoder";
 
 const prisma = new PrismaClient();
 
@@ -22,7 +18,6 @@ export const initSocketServer = (server: HttpServer) => {
       credentials: true,
     },
   });
-  const key = crypto.randomBytes(32); // 256-bit key for AES-256
 
   io.use(authenticateSocket);
 
@@ -53,8 +48,32 @@ export const initSocketServer = (server: HttpServer) => {
       socket.emit("message_sent", message);
     });
 
+    socket.on("send_notification", async (data) => {
+      const { receiverId, text } = data;
+
+      //   Save to DB
+      const notification = await prisma.notification.create({
+        data: {
+          urgent: false,
+          opened: false,
+          receiverId,
+          schoolId: user.schoolId,
+          senderId: userId,
+          receiverType: "ALL",
+          type: "INFO",
+        },
+      });
+
+      // Emit to receiver and sender
+      io.to(receiverId).emit("receive_notification", notification);
+      console.log(`Notification received from : ${userId} to ${receiverId}`);
+      socket.emit("notification_sent", notification);
+    });
+
     socket.on("disconnect", (reason) => {
-      console.log(`User disconnected: ${userId}, socket Id: ${socket.id}, Reason: ${reason}`);
+      console.log(
+        `User disconnected: ${userId}, socket Id: ${socket.id}, Reason: ${reason}`
+      );
     });
   });
 };

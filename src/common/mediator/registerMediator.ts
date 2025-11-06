@@ -172,6 +172,10 @@ import {
   FindNotesByTeacherIdQuery,
   FindNotesBySchoolIdQuery,
 } from "../../services/notesvc/NoteCommands";
+import { UpdateNotificationStatusCommandHandler } from "../../services/notificationsvc/CommandHandlers";
+import { UpdateNotificationStatusCommand } from "../../services/notificationsvc/Commands";
+import { GetNotificationsQuery } from "../../services/notificationsvc/Queries";
+import { GetNotificationsQueryHandler } from "../../services/notificationsvc/QueryHandlers";
 import { GetAdminsBySchoolQuery } from "../../services/schoolsvc/handler/getAdmins/GetAdminsBySchoolQuery";
 import { GetAdminsBySchoolQueryHandler } from "../../services/schoolsvc/handler/getAdmins/GetAdminsBySchoolQueryHandler";
 import { GetClassesBySchoolQuery } from "../../services/schoolsvc/handler/getClass/GetClassesBySchoolQuery";
@@ -253,6 +257,7 @@ import { IDisciplineRepository } from "../domain/repository/IDisciplineRepositor
 import { IEmargementRepository } from "../domain/repository/IEmargementRepository";
 import { IMessageRepository } from "../domain/repository/IMessageRepository";
 import { INoteRepository } from "../domain/repository/INoteRepository";
+import { INotificationRepository } from "../domain/repository/INotificationRepository";
 import { ISchoolRepository } from "../domain/repository/ISchoolRepository";
 import { IStudentAttendanceRepository } from "../domain/repository/IStudentAttendanceRepository";
 import { IStudentRepository } from "../domain/repository/IStudentRepository";
@@ -266,6 +271,7 @@ import { emargementPrismaRepository } from "../infrastructure/repositories/Emarg
 import { evaluationPrismaRepository } from "../infrastructure/repositories/EvaluationPrismaRepository";
 import { messagePrismaRepository } from "../infrastructure/repositories/MessageRepository";
 import { NotePrismaRepository } from "../infrastructure/repositories/NotePrismaRepository";
+import { NotificationPrismaRepository } from "../infrastructure/repositories/NotificationPrismaRepository";
 import { schoolPrismaRepository } from "../infrastructure/repositories/SchoolPrismaRepository";
 import { studentAttendancePrismaRepository } from "../infrastructure/repositories/StudentAttendancePrismaRepository";
 import { studentPrismaRepository } from "../infrastructure/repositories/StudentPrismaRepository";
@@ -284,14 +290,18 @@ export function registerHandlers() {
   const schoolRepository: ISchoolRepository = schoolPrismaRepository;
   const classRepository: IClasseRepository = classePrismaRepository;
   const coursRepository: ICoursRepository = coursPrismaRepository;
-  const disciplineRepository: IDisciplineRepository = disciplinePrismaRepository;
+  const disciplineRepository: IDisciplineRepository =
+    disciplinePrismaRepository;
   const adminRepository: IAdminRepository = adminPrismaRepository;
   const studentAttendanceRepository: IStudentAttendanceRepository =
     studentAttendancePrismaRepository;
   const noteRepository: INoteRepository = NotePrismaRepository;
   const visitRepository: IVisitorRepository = visitorPrismaRepository;
   const messageRepository: IMessageRepository = messagePrismaRepository;
-  const emargementRepository: IEmargementRepository = emargementPrismaRepository;
+  const notificationRepository: INotificationRepository =
+    NotificationPrismaRepository;
+  const emargementRepository: IEmargementRepository =
+    emargementPrismaRepository;
   // Add services
   const pwdHasher: IPasswordHasher = passwordHasher;
   const jwtSvc: IJwtService = jwtService;
@@ -649,11 +659,17 @@ export function registerHandlers() {
   // ---------------------------------------------
   mediator.register<CreateStudentAttendanceCommand>(
     CreateStudentAttendanceCommand.name,
-    new CreateStudentAttendanceCommandHandler(studentAttendanceRepository, studentRepository)
+    new CreateStudentAttendanceCommandHandler(
+      studentAttendanceRepository,
+      studentRepository
+    )
   );
   mediator.register<UpdateStudentAttendanceCommand>(
     UpdateStudentAttendanceCommand.name,
-    new UpdateStudentAttendanceCommandHandler(studentAttendanceRepository, studentRepository)
+    new UpdateStudentAttendanceCommandHandler(
+      studentAttendanceRepository,
+      studentRepository
+    )
   );
   mediator.register<DeleteStudentAttendanceCommand>(
     DeleteStudentAttendanceCommand.name,
@@ -669,11 +685,15 @@ export function registerHandlers() {
   );
   mediator.register<FindStudentAttendanceByStudentIdQuery>(
     FindStudentAttendanceByStudentIdQuery.name,
-    new FindStudentAttendanceByStudentIdQueryHandler(studentAttendanceRepository)
+    new FindStudentAttendanceByStudentIdQueryHandler(
+      studentAttendanceRepository
+    )
   );
   mediator.register<FindStudentAttendanceByDisciplineIdQuery>(
     FindStudentAttendanceByDisciplineIdQuery.name,
-    new FindStudentAttendanceByDisciplineIdQueryHandler(studentAttendanceRepository)
+    new FindStudentAttendanceByDisciplineIdQueryHandler(
+      studentAttendanceRepository
+    )
   );
   mediator.register<FindStudentAttendanceByTypeQuery>(
     FindStudentAttendanceByTypeQuery.name,
@@ -782,7 +802,10 @@ export function registerHandlers() {
 
   mediator.register<CreateEvaluationCommand>(
     CreateEvaluationCommand.name,
-    new CreateEvaluationCommandHandler(evaluationPrismaRepository, userRepository)
+    new CreateEvaluationCommandHandler(
+      evaluationPrismaRepository,
+      userRepository
+    )
   );
 
   mediator.register<UpdateEvaluationCommand>(
@@ -825,6 +848,18 @@ export function registerHandlers() {
   mediator.register<UpdateMessageStatusCommand>(
     UpdateMessageStatusCommand.name,
     new UpdateMessageStatusCommandHandler(messageRepository)
+  );
+
+  // ---------------------------------------------
+  // Register Notification Handlers
+  // ---------------------------------------------
+  mediator.register<GetNotificationsQuery>(
+    GetNotificationsQuery.name,
+    new GetNotificationsQueryHandler(notificationRepository)
+  );
+  mediator.register<UpdateNotificationStatusCommand>(
+    UpdateNotificationStatusCommand.name,
+    new UpdateNotificationStatusCommandHandler(notificationRepository)
   );
 
   // ---------------------------------------------

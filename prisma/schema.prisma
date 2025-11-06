@@ -37,6 +37,8 @@ model AppUser {
   sentMessages      Message[] @relation("SentMessages")
   receivedMessages  Message[] @relation("ReceivedMessages")
   emargements       Emargement[]
+  sentNotifications     Notification[] @relation("SentNotifications")
+  receivedNotifications  Notification[] @relation("ReceivedNotifications")
 }
 
 model Role {
@@ -75,6 +77,7 @@ model School {
   visits      Visits[]
   messages     Message[]
   emargements   Emargement[]
+  notifications Notification[]
 }
 
 model Student {
@@ -271,4 +274,20 @@ model Emargement {
 
   schoolId    String
   School      School     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id            String     @id @default(uuid())
+  senderId      String
+  receiverId    String
+  receiverType  String
+  opened        Boolean    @default(false)
+  type          String
+  time          DateTime   @default(now())
+  urgent        Boolean    
+  schoolId      String?
+  // Relations
+  sender        AppUser    @relation("SentNotifications", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver      AppUser    @relation("ReceivedNotifications", fields: [receiverId], references: [id], onDelete: Cascade)
+  School        School?    @relation(fields: [schoolId], references: [id], onDelete: SetNull)
 }
