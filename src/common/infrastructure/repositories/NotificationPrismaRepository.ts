@@ -4,10 +4,7 @@ import { INotificationRepository } from "../../domain/repository/INotificationRe
 const prisma = new PrismaClient(); // Prisma instance
 
 export const NotificationPrismaRepository: INotificationRepository = {
-  getAllNotifications: async function (
-    userId: string,
-    schoolId: string
-  ): Promise<any[]> {
+  getAllNotifications: async function (userId: string, schoolId: string): Promise<any[]> {
     const roles = await prisma.userRole.findMany({
       where: { userId: userId },
       include: {
@@ -20,7 +17,6 @@ export const NotificationPrismaRepository: INotificationRepository = {
     receiverTypes.push("ALL");
     return await prisma.notification.findMany({
       where: {
-        receiverId: userId,
         schoolId: schoolId,
         receiverType: { in: receiverTypes },
       },
