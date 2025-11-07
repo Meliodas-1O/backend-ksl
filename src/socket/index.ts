@@ -49,18 +49,22 @@ export const initSocketServer = (server: HttpServer) => {
     });
 
     socket.on("send_notification", async (data) => {
-      const { receiverId, text } = data;
-
+      let { receiverId, text } = data;
+      console.log("kkkk", data);
+      console.log("receiverId", receiverId);
+      console.log("userId", userId);
+      receiverId = receiverId ?? userId;
       //   Save to DB
       const notification = await prisma.notification.create({
         data: {
           urgent: false,
           opened: false,
-          receiverId,
+          receiverId: receiverId ?? userId,
           schoolId: user.schoolId,
+          content: text,
           senderId: userId,
           receiverType: "ALL",
-          type: "INFO",
+          type: "Contrôle absence",
         },
       });
 
@@ -71,9 +75,7 @@ export const initSocketServer = (server: HttpServer) => {
     });
 
     socket.on("disconnect", (reason) => {
-      console.log(
-        `User disconnected: ${userId}, socket Id: ${socket.id}, Reason: ${reason}`
-      );
+      console.log(`User disconnected: ${userId}, socket Id: ${socket.id}, Reason: ${reason}`);
     });
   });
 };

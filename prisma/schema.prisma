@@ -284,7 +284,8 @@ model Notification {
   opened        Boolean    @default(false)
   type          String
   time          DateTime   @default(now())
-  urgent        Boolean    
+  urgent        Boolean
+  content       String
   schoolId      String?
   // Relations
   sender        AppUser    @relation("SentNotifications", fields: [senderId], references: [id], onDelete: Cascade)
