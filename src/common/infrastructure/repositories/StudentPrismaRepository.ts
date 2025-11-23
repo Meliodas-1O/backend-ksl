@@ -8,14 +8,17 @@ export const studentPrismaRepository: IStudentRepository = {
   findStudentBySchool: function (schoolId: string): Promise<any> {
     return prisma.student.findMany({
       where: { schoolId },
-      include: { parent: true, classe: true },
+      include: { parent: true, classe: true, attendances: true },
     });
   },
 
-  findStudentByClass: async function (classeId: string, schoolId: string): Promise<any[]> {
+  findStudentByClass: async function (
+    classeId: string,
+    schoolId: string
+  ): Promise<any[]> {
     return prisma.student.findMany({
       where: { schoolId, classeId },
-      include: { parent: true, classe: true },
+      include: { parent: true, classe: true, attendances: true },
     });
   },
 
@@ -102,7 +105,7 @@ export const studentPrismaRepository: IStudentRepository = {
   findStudentById: async function (id: string): Promise<any | null> {
     return prisma.student.findFirst({
       where: { id },
-      include: { parent: true, classe: true },
+      include: { parent: true, classe: true, attendances: true },
     });
   },
 };
