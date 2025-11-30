@@ -5,6 +5,7 @@
 // =========================================================================
 
 export interface NoteDetailsDTO {
+  id: string;
   devoir: boolean;
   subject: string;
   grade: number;
@@ -12,9 +13,11 @@ export interface NoteDetailsDTO {
   date: string;
   type: string;
   appreciation: string | null;
+  semestre: string;
 }
 
 export interface AttendanceDetailsDTO {
+  id: string;
   date: string;
   type: string;
   course: string;

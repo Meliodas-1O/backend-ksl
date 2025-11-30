@@ -158,6 +158,7 @@ export class FindClasseAverageQueryHandler
             query.schoolId
           );
           return {
+            id: note.id,
             devoir: note.devoir,
             subject: discipline?.name || "Unknown",
             grade: note.note,
@@ -165,6 +166,7 @@ export class FindClasseAverageQueryHandler
             date: note.date.toISOString().split("T")[0],
             type: note.type,
             appreciation: note.appreciation,
+            semestre: "1",
           } as NoteDetailsDTO;
         })
       );
@@ -176,6 +178,7 @@ export class FindClasseAverageQueryHandler
             query.schoolId
           );
           return {
+            id: attendance.id,
             date: attendance.date.toISOString().split("T")[0],
             type: attendance.type,
             course: discipline?.name || "Unknown",
