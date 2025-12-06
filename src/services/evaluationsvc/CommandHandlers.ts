@@ -78,6 +78,7 @@ export class CreateEvaluationCommandHandler
       throw new Error("Teacher with id " + command.professeurId + " not found.");
     }
     const request = {
+      type: command.type,
       date: command.date,
       description: command.description,
       title: command.title,

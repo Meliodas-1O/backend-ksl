@@ -206,6 +206,7 @@ model Evaluation {
   title         String
   date          DateTime
   description   String
+  type          String     @default("EVALUATION")
 
   professeurId  String
   professeur    AppUser    @relation(fields: [professeurId], references: [id], onDelete: Cascade)

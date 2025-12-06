@@ -14,7 +14,7 @@ import {
 
 const createEvaluation: RequestHandler = async (req, res) => {
   try {
-    const { title, description, date, classeId, professeurId, disciplineId } = req.body;
+    const { title, description, date, classeId, professeurId, disciplineId, type } = req.body;
     const { schoolId } = req.params;
 
     const formattedDate = new Date(date);
@@ -26,6 +26,7 @@ const createEvaluation: RequestHandler = async (req, res) => {
 
     const command = new CreateEvaluationCommand(
       title,
+      type,
       description,
       formattedDate,
       classeId,

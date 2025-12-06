@@ -37,6 +37,14 @@ export const evaluationPrismaRepository: IEvaluationRepository = {
           gte: startOfToday,
         },
       },
+      include: {
+        discipline: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
       orderBy: {
         date: "asc", // Optional: show upcoming ones first
       },
@@ -62,6 +70,7 @@ export const evaluationPrismaRepository: IEvaluationRepository = {
   async create(data: Omit<Evaluation, "id" | "createdAt">): Promise<Evaluation> {
     return await prisma.evaluation.create({
       data: {
+        type: data.type,
         date: data.date,
         description: data.description,
         title: data.title,
