@@ -29,6 +29,7 @@ const allowedOrigins = [
   "https://test.seekids.net",
   "https://dakar-leaders-school.seekids.net",
   "https://le-refuge-des-petits.seekids.net",
+  "https://symbiose.seekids.net",
   "http://localhost:8080",
   "http://localhost:8081",
   // add other known client origins here
@@ -77,6 +78,4 @@ app.get("/", (req, res) => {
 
 const port = Number(process.env.PORT) || 3000;
 initSocketServer(server);
-server.listen(port, "0.0.0.0", () =>
-  console.log(`🚀 Server running on port ${port}`)
-);
+server.listen(port, "0.0.0.0", () => console.log(`🚀 Server running on port ${port}`));
