@@ -11,7 +11,24 @@ export const evaluationPrismaRepository: IEvaluationRepository = {
    * @returns A promise that resolves to an array of all Evaluations.
    */
   async findAll(schoolId: string): Promise<Evaluation[]> {
-    return await prisma.evaluation.findMany({ where: { schoolId } });
+    return await prisma.evaluation.findMany({
+      where: { schoolId },
+      include: {
+        discipline: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        classe: {
+          select: {
+            id: true,
+            nom: true,
+            niveau: true,
+          },
+        },
+      },
+    });
   },
 
   /**
