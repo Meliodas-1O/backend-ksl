@@ -83,7 +83,8 @@ export const studentAttendancePrismaRepository: IStudentAttendanceRepository = {
       type?: string;
       date?: Date;
       disciplineId?: string;
-    }
+      reason?: string;
+    },
   ): Promise<StudentAttendance> {
     const attendance = await prisma.studentAttendance.update({
       where: { id },

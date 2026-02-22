@@ -17,7 +17,7 @@ import {
 const validateIdAndSchoolId = (
   id: string | undefined,
   schoolId: string | undefined,
-  idType: string
+  idType: string,
 ) => {
   if (!schoolId) {
     throw new Error("School ID is required.");
@@ -56,7 +56,22 @@ const getDisciplineAverage: RequestHandler = async (req, res) => {
 const getClasseAverage: RequestHandler = async (req, res) => {
   try {
     validateIdAndSchoolId(req.params.classeId, req.params.schoolId, "Classe");
-    const query = new FindClasseAverageQuery(req.params.classeId!, req.params.schoolId!);
+    const { schoolId } = req.params;
+    const { semester } = req.query;
+
+    if (!schoolId) {
+      throw new Error("School ID is required.");
+    }
+
+    // Validate semester
+    const allowedValues = ["1", "2", "annual"];
+    const semesterValue = allowedValues.includes(String(semester)) ? String(semester) : "annual";
+
+    const query = new FindClasseAverageQuery(
+      req.params.classeId!,
+      req.params.schoolId!,
+      semesterValue,
+    );
     const result = await mediator.send(query);
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {
@@ -73,7 +88,22 @@ const getClasseAverage: RequestHandler = async (req, res) => {
 const getStudentAverage: RequestHandler = async (req, res) => {
   try {
     validateIdAndSchoolId(req.params.studentId, req.params.schoolId, "Student");
-    const query = new FindStudentAverageQuery(req.params.studentId!, req.params.schoolId!);
+    const { schoolId } = req.params;
+    const { semester } = req.query;
+
+    if (!schoolId) {
+      throw new Error("School ID is required.");
+    }
+
+    // Validate semester
+    const allowedValues = ["1", "2", "annual"];
+    const semesterValue = allowedValues.includes(String(semester)) ? String(semester) : "annual";
+
+    const query = new FindStudentAverageQuery(
+      req.params.studentId!,
+      req.params.schoolId!,
+      semesterValue,
+    );
     const result = await mediator.send(query);
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {
@@ -89,10 +119,18 @@ const getStudentAverage: RequestHandler = async (req, res) => {
  */
 const getSchoolAverage: RequestHandler = async (req, res) => {
   try {
-    if (!req.params.schoolId) {
+    const { schoolId } = req.params;
+    const { semester } = req.query;
+
+    if (!schoolId) {
       throw new Error("School ID is required.");
     }
-    const query = new FindSchoolAverageQuery(req.params.schoolId!);
+
+    // Validate semester
+    const allowedValues = ["1", "2", "annual"];
+    const semesterValue = allowedValues.includes(String(semester)) ? String(semester) : "annual";
+
+    const query = new FindSchoolAverageQuery(schoolId, semesterValue);
     const result = await mediator.send(query);
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {

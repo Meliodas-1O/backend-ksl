@@ -226,6 +226,7 @@ export const schoolPrismaRepository: ISchoolRepository = {
   },
 
   async findParentById(parentId: string, schoolId: string): Promise<any | null> {
+    const secondSemesterDate = new Date("2026-02-21");
     return prisma.appUser.findFirst({
       where: {
         id: parentId,
@@ -249,12 +250,24 @@ export const schoolPrismaRepository: ISchoolRepository = {
         children: {
           include: {
             classe: true,
+
             attendances: {
+              where: {
+                date: {
+                  gte: secondSemesterDate, // 👈 only after this date
+                },
+              },
               include: {
                 discipline: true,
               },
             },
+
             notes: {
+              where: {
+                semester: {
+                  contains: "Semestre 2",
+                },
+              },
               include: {
                 discipline: {
                   select: {
@@ -337,7 +350,7 @@ export const schoolPrismaRepository: ISchoolRepository = {
   },
   updateSchoolReportGeneratedCounter: async function (
     counter: number,
-    schoolId: string
+    schoolId: string,
   ): Promise<void> {
     await prisma.school.update({
       where: {
@@ -351,7 +364,7 @@ export const schoolPrismaRepository: ISchoolRepository = {
 
   updateStudentReportGeneratedCounter: async function (
     counter: number,
-    schoolId: string
+    schoolId: string,
   ): Promise<void> {
     await prisma.school.update({
       where: {

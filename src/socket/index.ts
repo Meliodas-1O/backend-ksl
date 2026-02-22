@@ -49,7 +49,7 @@ export const initSocketServer = (server: HttpServer) => {
     });
 
     socket.on("send_notification", async (data) => {
-      let { receiverId, text } = data;
+      let { receiverId, text, type } = data;
       console.log("kkkk", data);
       console.log("receiverId", receiverId);
       console.log("userId", userId);
@@ -64,7 +64,7 @@ export const initSocketServer = (server: HttpServer) => {
           content: text,
           senderId: userId,
           receiverType: "ALL",
-          type: "Contrôle absence",
+          type: type ?? "Contrôle absence",
         },
       });
 

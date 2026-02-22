@@ -34,7 +34,7 @@ export class CreateNoteCommandHandler implements ICommandHandler<CreateNoteComma
     private noteRepository: INoteRepository,
     private studentRepository: IStudentRepository,
     private disciplineRepository: IDisciplineRepository,
-    private classeRepository: IClasseRepository
+    private classeRepository: IClasseRepository,
   ) {}
 
   async execute(command: CreateNoteCommand): Promise<Note> {
@@ -49,7 +49,7 @@ export class CreateNoteCommandHandler implements ICommandHandler<CreateNoteComma
     // Check if the discipline exists within the specified school
     const disciplineExists = await this.disciplineRepository.findDisciplineById(
       disciplineId,
-      schoolId
+      schoolId,
     );
     if (!disciplineExists) {
       throw new Error(`Discipline with ID ${disciplineId} not found in school ${schoolId}.`);
@@ -81,7 +81,7 @@ export class UpdateNoteCommandHandler implements ICommandHandler<UpdateNoteComma
     private noteRepository: INoteRepository,
     private studentRepository: IStudentRepository,
     private disciplineRepository: IDisciplineRepository,
-    private classeRepository: IClasseRepository
+    private classeRepository: IClasseRepository,
   ) {}
 
   async execute(command: UpdateNoteCommand): Promise<Note> {
@@ -103,7 +103,7 @@ export class UpdateNoteCommandHandler implements ICommandHandler<UpdateNoteComma
     if (data.disciplineId) {
       const disciplineExists = await this.disciplineRepository.findDisciplineById(
         data.disciplineId,
-        schoolId
+        schoolId,
       );
       if (!disciplineExists) {
         throw new Error(`Discipline with ID ${data.disciplineId} not found in school ${schoolId}.`);
@@ -163,23 +163,25 @@ export class FindNoteByIdQueryHandler implements ICommandHandler<FindNoteByIdQue
 /**
  * Handles the fetching of all notes for a given student, scoped by school ID.
  */
-export class FindNotesByStudentIdQueryHandler
-  implements ICommandHandler<FindNotesByStudentIdQuery, Note[]>
-{
+export class FindNotesByStudentIdQueryHandler implements ICommandHandler<
+  FindNotesByStudentIdQuery,
+  Note[]
+> {
   constructor(private noteRepository: INoteRepository) {}
 
   execute(query: FindNotesByStudentIdQuery): Promise<Note[]> {
-    const { studentId, schoolId } = query;
-    return this.noteRepository.findByStudentId(studentId, schoolId);
+    const { studentId, schoolId, semester } = query;
+    return this.noteRepository.findByStudentId(studentId, schoolId, semester);
   }
 }
 
 /**
  * Handles the fetching of all notes for a given class, scoped by school ID.
  */
-export class FindNotesByClasseIdQueryHandler
-  implements ICommandHandler<FindNotesByClasseIdQuery, Note[]>
-{
+export class FindNotesByClasseIdQueryHandler implements ICommandHandler<
+  FindNotesByClasseIdQuery,
+  Note[]
+> {
   constructor(private noteRepository: INoteRepository) {}
 
   execute(query: FindNotesByClasseIdQuery): Promise<Note[]> {
@@ -191,9 +193,10 @@ export class FindNotesByClasseIdQueryHandler
 /**
  * Handles the fetching of all notes for a given discipline, scoped by school ID.
  */
-export class FindNotesByDisciplineIdQueryHandler
-  implements ICommandHandler<FindNotesByDisciplineIdQuery, Note[]>
-{
+export class FindNotesByDisciplineIdQueryHandler implements ICommandHandler<
+  FindNotesByDisciplineIdQuery,
+  Note[]
+> {
   constructor(private noteRepository: INoteRepository) {}
 
   execute(query: FindNotesByDisciplineIdQuery): Promise<Note[]> {
@@ -205,9 +208,10 @@ export class FindNotesByDisciplineIdQueryHandler
 /**
  * Handles the fetching of all notes for a given discipline, scoped by school ID.
  */
-export class FindNotesByTeacherIdQueryHandler
-  implements ICommandHandler<FindNotesByTeacherIdQuery, Note[]>
-{
+export class FindNotesByTeacherIdQueryHandler implements ICommandHandler<
+  FindNotesByTeacherIdQuery,
+  Note[]
+> {
   constructor(private noteRepository: INoteRepository) {}
 
   execute(query: FindNotesByTeacherIdQuery): Promise<Note[]> {
@@ -219,13 +223,14 @@ export class FindNotesByTeacherIdQueryHandler
 /**
  * Handles the fetching of all notes for a given school.
  */
-export class FindNotesBySchoolIdQueryHandler
-  implements ICommandHandler<FindNotesBySchoolIdQuery, Note[]>
-{
+export class FindNotesBySchoolIdQueryHandler implements ICommandHandler<
+  FindNotesBySchoolIdQuery,
+  Note[]
+> {
   constructor(private noteRepository: INoteRepository) {}
 
   execute(query: FindNotesBySchoolIdQuery): Promise<Note[]> {
     const { schoolId } = query;
-    return this.noteRepository.findBySchoolId(schoolId);
+    return this.noteRepository.findBySchoolId(schoolId, query.semester);
   }
 }

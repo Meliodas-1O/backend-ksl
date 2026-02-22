@@ -106,6 +106,7 @@ model StudentAttendance {
   disciplineId String
   type         String
   date         DateTime
+  reason       String?
 
   student    Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
   discipline Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)

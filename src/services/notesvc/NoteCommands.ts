@@ -34,7 +34,7 @@ export class CreateNoteCommand {
     public date: Date,
     public coefficient: number,
     public appreciation: string | null,
-    public semester: string | null
+    public semester: string | null,
   ) {}
 }
 
@@ -48,7 +48,7 @@ export class UpdateNoteCommand {
   constructor(
     public id: string,
     public schoolId: string,
-    public data: Partial<Omit<Note, "id" | "createdAt">>
+    public data: Partial<Omit<Note, "id" | "createdAt">>,
   ) {}
 }
 
@@ -58,7 +58,10 @@ export class UpdateNoteCommand {
  * @property {string} schoolId - The ID of the school to verify ownership.
  */
 export class DeleteNoteCommand {
-  constructor(public id: string, public schoolId: string) {}
+  constructor(
+    public id: string,
+    public schoolId: string,
+  ) {}
 }
 
 /**
@@ -75,7 +78,10 @@ export class DeleteNoteCommand {
  * @property {string} schoolId - The ID of the school to verify ownership.
  */
 export class FindNoteByIdQuery {
-  constructor(public id: string, public schoolId: string) {}
+  constructor(
+    public id: string,
+    public schoolId: string,
+  ) {}
 }
 
 /**
@@ -84,7 +90,11 @@ export class FindNoteByIdQuery {
  * @property {string} schoolId - The ID of the school to verify ownership.
  */
 export class FindNotesByStudentIdQuery {
-  constructor(public studentId: string, public schoolId: string) {}
+  constructor(
+    public studentId: string,
+    public schoolId: string,
+    public semester: string,
+  ) {}
 }
 
 /**
@@ -93,7 +103,10 @@ export class FindNotesByStudentIdQuery {
  * @property {string} schoolId - The ID of the school to verify ownership.
  */
 export class FindNotesByClasseIdQuery {
-  constructor(public classeId: string, public schoolId: string) {}
+  constructor(
+    public classeId: string,
+    public schoolId: string,
+  ) {}
 }
 
 /**
@@ -102,7 +115,10 @@ export class FindNotesByClasseIdQuery {
  * @property {string} schoolId - The ID of the school to verify ownership.
  */
 export class FindNotesByDisciplineIdQuery {
-  constructor(public disciplineId: string, public schoolId: string) {}
+  constructor(
+    public disciplineId: string,
+    public schoolId: string,
+  ) {}
 }
 
 /**
@@ -111,7 +127,10 @@ export class FindNotesByDisciplineIdQuery {
  * @property {string} schoolId - The ID of the school to verify ownership.
  */
 export class FindNotesByTeacherIdQuery {
-  constructor(public teacherId: string, public schoolId: string) {}
+  constructor(
+    public teacherId: string,
+    public schoolId: string,
+  ) {}
 }
 
 /**
@@ -119,5 +138,8 @@ export class FindNotesByTeacherIdQuery {
  * @property {string} schoolId - The ID of the school.
  */
 export class FindNotesBySchoolIdQuery {
-  constructor(public schoolId: string) {}
+  constructor(
+    public schoolId: string,
+    public semester: string,
+  ) {}
 }

@@ -72,9 +72,10 @@ const calculateSimpleAverage = (averages: (number | null)[]): number | null => {
 /**
  * Handles the calculation of the weighted average note for a specific discipline.
  */
-export class FindDisciplineAverageQueryHandler
-  implements IQueryHandler<FindDisciplineAverageQuery, number | null>
-{
+export class FindDisciplineAverageQueryHandler implements IQueryHandler<
+  FindDisciplineAverageQuery,
+  number | null
+> {
   constructor(private noteRepository: INoteRepository) {}
 
   public async execute(query: FindDisciplineAverageQuery): Promise<number | null> {
@@ -87,15 +88,16 @@ export class FindDisciplineAverageQueryHandler
 /**
  * Handles the calculation of the simple average of student averages for a specific class.
  */
-export class FindClasseAverageQueryHandler
-  implements IQueryHandler<FindClasseAverageQuery, ClasseAverageDTO | null>
-{
+export class FindClasseAverageQueryHandler implements IQueryHandler<
+  FindClasseAverageQuery,
+  ClasseAverageDTO | null
+> {
   constructor(
     private noteRepository: INoteRepository,
     private studentRepository: IStudentRepository,
     private classeRepository: IClasseRepository,
     private disciplineRepository: IDisciplineRepository,
-    private studentAttendanceRepository: IStudentAttendanceRepository
+    private studentAttendanceRepository: IStudentAttendanceRepository,
   ) {}
 
   public async execute(query: FindClasseAverageQuery): Promise<ClasseAverageDTO | null> {
@@ -106,7 +108,7 @@ export class FindClasseAverageQueryHandler
 
     const students = await this.studentRepository.findStudentByClass(
       query.classeId,
-      query.schoolId
+      query.schoolId,
     );
     const numberOfStudents = students.length;
 
@@ -115,7 +117,11 @@ export class FindClasseAverageQueryHandler
     let passingStudentsCount = 0;
 
     for (const student of students) {
-      const studentNotes = await this.noteRepository.findByStudentId(student.id, query.schoolId);
+      const studentNotes = await this.noteRepository.findByStudentId(
+        student.id,
+        query.schoolId,
+        query.semester,
+      );
       const studentAttendance = await this.studentAttendanceRepository.findByStudentId(student.id);
 
       const studentAverage = calculerMoyenneFinale(studentNotes);
@@ -126,19 +132,22 @@ export class FindClasseAverageQueryHandler
       }
 
       // Group notes by discipline and calculate individual averages
-      const notesByDiscipline = studentNotes.reduce((acc, note) => {
-        if (!acc[note.disciplineId]) {
-          acc[note.disciplineId] = [];
-        }
-        acc[note.disciplineId].push(note);
-        return acc;
-      }, {} as Record<string, Note[]>);
+      const notesByDiscipline = studentNotes.reduce(
+        (acc, note) => {
+          if (!acc[note.disciplineId]) {
+            acc[note.disciplineId] = [];
+          }
+          acc[note.disciplineId].push(note);
+          return acc;
+        },
+        {} as Record<string, Note[]>,
+      );
 
       const subjectAverages: Record<string, number> = {};
       const disciplines = await Promise.all(
         Object.keys(notesByDiscipline).map((disciplineId) =>
-          this.disciplineRepository.findDisciplineById(disciplineId, query.schoolId)
-        )
+          this.disciplineRepository.findDisciplineById(disciplineId, query.schoolId),
+        ),
       );
 
       disciplines.forEach((discipline) => {
@@ -155,8 +164,9 @@ export class FindClasseAverageQueryHandler
         studentNotes.map(async (note) => {
           const discipline = await this.disciplineRepository.findDisciplineById(
             note.disciplineId,
-            query.schoolId
+            query.schoolId,
           );
+
           return {
             id: note.id,
             devoir: note.devoir,
@@ -166,16 +176,16 @@ export class FindClasseAverageQueryHandler
             date: note.date.toISOString().split("T")[0],
             type: note.type,
             appreciation: note.appreciation,
-            semestre: "1",
+            semestre: note.semester.slice(-1),
           } as NoteDetailsDTO;
-        })
+        }),
       );
 
       const detailedAttendance = await Promise.all(
         studentAttendance.map(async (attendance) => {
           const discipline = await this.disciplineRepository.findDisciplineById(
             attendance.disciplineId,
-            query.schoolId
+            query.schoolId,
           );
           return {
             id: attendance.id,
@@ -183,7 +193,7 @@ export class FindClasseAverageQueryHandler
             type: attendance.type,
             course: discipline?.name || "Unknown",
           } as AttendanceDetailsDTO;
-        })
+        }),
       );
 
       studentsData.push({
@@ -205,13 +215,16 @@ export class FindClasseAverageQueryHandler
     const allClassNotes = await this.noteRepository.findByClasseId(query.classeId, query.schoolId);
 
     // Group all class notes by discipline
-    const classNotesByDiscipline = allClassNotes.reduce((acc, note) => {
-      if (!acc[note.disciplineId]) {
-        acc[note.disciplineId] = [];
-      }
-      acc[note.disciplineId].push(note);
-      return acc;
-    }, {} as Record<string, Note[]>);
+    const classNotesByDiscipline = allClassNotes.reduce(
+      (acc, note) => {
+        if (!acc[note.disciplineId]) {
+          acc[note.disciplineId] = [];
+        }
+        acc[note.disciplineId].push(note);
+        return acc;
+      },
+      {} as Record<string, Note[]>,
+    );
 
     const subjectReports: SubjectReportDTO[] = [];
     const disciplineIds = Object.keys(classNotesByDiscipline);
@@ -221,7 +234,7 @@ export class FindClasseAverageQueryHandler
       const notes = classNotesByDiscipline[disciplineId];
       const discipline = await this.disciplineRepository.findDisciplineById(
         disciplineId,
-        query.schoolId
+        query.schoolId,
       );
       const average = calculerMoyenneFinale(notes);
 
@@ -247,13 +260,18 @@ export class FindClasseAverageQueryHandler
 /**
  * Handles the calculation of the weighted average note for a specific student.
  */
-export class FindStudentAverageQueryHandler
-  implements IQueryHandler<FindStudentAverageQuery, number | null>
-{
+export class FindStudentAverageQueryHandler implements IQueryHandler<
+  FindStudentAverageQuery,
+  number | null
+> {
   constructor(private noteRepository: INoteRepository) {}
 
   public async execute(query: FindStudentAverageQuery): Promise<number | null> {
-    const notes = await this.noteRepository.findByStudentId(query.studentId, query.schoolId);
+    const notes = await this.noteRepository.findByStudentId(
+      query.studentId,
+      query.schoolId,
+      query.semester,
+    );
     return calculerMoyenneFinale(notes);
   }
 }
@@ -261,14 +279,15 @@ export class FindStudentAverageQueryHandler
 /**
  * Handles the calculation of the simple average of class averages for an entire school.
  */
-export class FindSchoolAverageQueryHandler
-  implements IQueryHandler<FindSchoolAverageQuery, SchoolAverageDTO | null>
-{
+export class FindSchoolAverageQueryHandler implements IQueryHandler<
+  FindSchoolAverageQuery,
+  SchoolAverageDTO | null
+> {
   constructor(
     private noteRepository: INoteRepository,
     private schoolRepository: ISchoolRepository,
     private studentRepository: IStudentRepository,
-    private disciplineRepository: IDisciplineRepository
+    private disciplineRepository: IDisciplineRepository,
   ) {}
 
   public async execute(query: FindSchoolAverageQuery): Promise<SchoolAverageDTO | null> {
@@ -286,18 +305,22 @@ export class FindSchoolAverageQueryHandler
     const allStudents = await this.studentRepository.findStudentBySchool(query.schoolId);
     const totalStudents = allStudents.length;
 
-    const allNotes = await this.noteRepository.findBySchoolId(query.schoolId);
+    const allNotes = await this.noteRepository.findBySchoolId(query.schoolId, query.semester);
     const uniqueDisciplines = new Set(allNotes.map((note) => note.disciplineId));
     const disciplinesCount = uniqueDisciplines.size;
 
     const studentAverages = await Promise.all(
       allStudents.map(async (student) => {
-        const studentNotes = await this.noteRepository.findByStudentId(student.id, query.schoolId);
+        const studentNotes = await this.noteRepository.findByStudentId(
+          student.id,
+          query.schoolId,
+          query.semester,
+        );
         return calculerMoyenneFinale(studentNotes);
-      })
+      }),
     );
     const passingStudents = studentAverages.filter(
-      (avg) => avg !== null && avg >= PASSING_GRADE
+      (avg) => avg !== null && avg >= PASSING_GRADE,
     ).length;
     const schoolSuccessRate = (passingStudents / totalStudents) * 100;
 
@@ -307,7 +330,7 @@ export class FindSchoolAverageQueryHandler
       const notesForDiscipline = allNotes.filter((note) => note.disciplineId === disciplineId);
       const discipline = await this.disciplineRepository.findDisciplineById(
         disciplineId,
-        query.schoolId
+        query.schoolId,
       );
       if (discipline) {
         const average = calculerMoyenneFinale(notesForDiscipline);
@@ -329,14 +352,15 @@ export class FindSchoolAverageQueryHandler
           students.map(async (student) => {
             const studentNotes = await this.noteRepository.findByStudentId(
               student.id,
-              query.schoolId
+              query.schoolId,
+              query.semester,
             );
             return calculerMoyenneFinale(studentNotes);
-          })
+          }),
         );
         const classAverage = calculateSimpleAverage(studentAverages);
         const passingClassStudents = studentAverages.filter(
-          (avg) => avg !== null && avg >= PASSING_GRADE
+          (avg) => avg !== null && avg >= PASSING_GRADE,
         ).length;
         const successRate = (passingClassStudents / numberOfStudents) * 100;
 
@@ -349,11 +373,11 @@ export class FindSchoolAverageQueryHandler
           studentsData: [],
           subjectReports: [],
         } as ClasseAverageDTO;
-      })
+      }),
     );
 
     const schoolAverage = calculateSimpleAverage(
-      classAverages.map((ca) => (ca.average ? parseFloat(ca.average) : null))
+      classAverages.map((ca) => (ca.average ? parseFloat(ca.average) : null)),
     );
 
     return {

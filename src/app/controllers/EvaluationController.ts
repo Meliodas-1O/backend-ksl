@@ -32,7 +32,7 @@ const createEvaluation: RequestHandler = async (req, res) => {
       classeId,
       professeurId,
       disciplineId,
-      schoolId
+      schoolId,
     );
     const result: Evaluation = await mediator.send(command);
     res.status(StatusCode.CREATED).json(result);
@@ -44,7 +44,6 @@ const createEvaluation: RequestHandler = async (req, res) => {
 
 const getAllEvaluations: RequestHandler = async (req, res) => {
   try {
-    console.log("fffffffffffff");
     const query = new GetAllEvaluationsQuery(req.params.schoolId);
     const result: Evaluation[] = await mediator.send(query);
     res.status(StatusCode.SUCCESS).json(result);

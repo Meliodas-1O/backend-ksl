@@ -23,9 +23,19 @@ export const NotePrismaRepository: INoteRepository = {
     return await prisma.note.findUnique({ where: { id, schoolId }, include: { discipline: true } });
   },
 
-  async findByStudentId(studentId: string, schoolId: string): Promise<any[]> {
+  async findByStudentId(studentId: string, schoolId: string, semester: string): Promise<any[]> {
     return await prisma.note.findMany({
-      where: { studentId, schoolId },
+      where: {
+        studentId,
+        schoolId,
+        ...(semester && semester !== "annual"
+          ? {
+              semester: {
+                contains: semester,
+              },
+            }
+          : {}),
+      },
       include: { discipline: true },
     });
   },
@@ -53,7 +63,19 @@ export const NotePrismaRepository: INoteRepository = {
       },
     });
   },
-  findBySchoolId: async function (schoolId: string): Promise<Note[]> {
-    return await prisma.note.findMany({ where: { schoolId }, include: { discipline: true } });
+  findBySchoolId: async function (schoolId: string, semester: string): Promise<Note[]> {
+    return await prisma.note.findMany({
+      where: {
+        schoolId,
+        ...(semester && semester !== "annual"
+          ? {
+              semester: {
+                contains: semester,
+              },
+            }
+          : {}),
+      },
+      include: { discipline: true },
+    });
   },
 };

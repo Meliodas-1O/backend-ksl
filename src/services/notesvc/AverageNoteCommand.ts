@@ -65,26 +65,40 @@ export interface SchoolAverageDTO {
  * Query to find the average note for a specific discipline.
  */
 export class FindDisciplineAverageQuery {
-  constructor(public readonly disciplineId: string, public readonly schoolId: string) {}
+  constructor(
+    public readonly disciplineId: string,
+    public readonly schoolId: string,
+  ) {}
 }
 
 /**
  * Query to find the detailed average note for a specific class.
  */
 export class FindClasseAverageQuery {
-  constructor(public readonly classeId: string, public readonly schoolId: string) {}
+  constructor(
+    public readonly classeId: string,
+    public readonly schoolId: string,
+    public readonly semester: string,
+  ) {}
 }
 
 /**
  * Query to find the average note for a specific student.
  */
 export class FindStudentAverageQuery {
-  constructor(public readonly studentId: string, public readonly schoolId: string) {}
+  constructor(
+    public readonly studentId: string,
+    public readonly schoolId: string,
+    public readonly semester: string,
+  ) {}
 }
 
 /**
  * Query to find the detailed average note for an entire school.
  */
 export class FindSchoolAverageQuery {
-  constructor(public readonly schoolId: string) {}
+  constructor(
+    public readonly schoolId: string,
+    public semester: string,
+  ) {}
 }

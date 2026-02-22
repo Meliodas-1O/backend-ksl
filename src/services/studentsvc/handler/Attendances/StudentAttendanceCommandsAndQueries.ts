@@ -15,7 +15,7 @@ export class CreateStudentAttendanceCommand {
     public studentId: string,
     public disciplineId: string,
     public type: string,
-    public date: Date
+    public date: Date,
   ) {}
 }
 
@@ -32,7 +32,8 @@ export class UpdateStudentAttendanceCommand {
       type?: string;
       date?: Date;
       disciplineId?: string;
-    }
+      reason?: string;
+    },
   ) {}
 }
 

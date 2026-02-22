@@ -178,7 +178,7 @@ const createNote: RequestHandler = async (req, res) => {
       new Date(req.body.date),
       req.body.coefficient,
       req.body.appreciation ?? null,
-      req.body.semester ?? null
+      req.body.semester ?? null,
     );
     const result = await mediator.send(command);
     res.status(StatusCode.CREATED).json(result);
@@ -247,7 +247,22 @@ const findNoteById: RequestHandler = async (req, res) => {
 const findNotesByStudentId: RequestHandler = async (req, res) => {
   try {
     validateStudentId(req.params.studentId, req.params.schoolId);
-    const query = new FindNotesByStudentIdQuery(req.params.studentId, req.params.schoolId);
+    const { schoolId } = req.params;
+    const { semester } = req.query;
+
+    if (!schoolId) {
+      throw new Error("School ID is required.");
+    }
+
+    // Validate semester
+    const allowedValues = ["1", "2", "annual"];
+    const semesterValue = allowedValues.includes(String(semester)) ? String(semester) : "annual";
+
+    const query = new FindNotesByStudentIdQuery(
+      req.params.studentId,
+      req.params.schoolId,
+      semesterValue,
+    );
     const result = await mediator.send(query);
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {
@@ -306,8 +321,17 @@ const findNotesByTeacherId: RequestHandler = async (req, res) => {
  */
 const findNotesBySchoolId: RequestHandler = async (req, res) => {
   try {
-    validateSchoolId(req.params.schoolId);
-    const query = new FindNotesBySchoolIdQuery(req.params.schoolId);
+    const { schoolId } = req.params;
+    const { semester } = req.query;
+    if (!schoolId) {
+      throw new Error("School ID is required.");
+    }
+
+    // Validate semester
+    const allowedValues = ["1", "2", "annual"];
+    const semesterValue = allowedValues.includes(String(semester)) ? String(semester) : "annual";
+
+    const query = new FindNotesBySchoolIdQuery(req.params.schoolId, semesterValue);
     const result = await mediator.send(query);
     res.status(StatusCode.SUCCESS).json(result);
   } catch (error: any) {
